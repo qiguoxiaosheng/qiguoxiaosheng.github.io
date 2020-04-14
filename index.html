@@ -64,6 +64,48 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-ClickHouse使用" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/04/14/ClickHouse%E4%BD%BF%E7%94%A8/" class="article-date">
+  <time datetime="2020-04-14T06:01:14.602Z" itemprop="datePublished">2020-04-14</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/04/14/ClickHouse%E4%BD%BF%E7%94%A8/">ClickHouse使用</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>访问Mysql数据库</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">DATABASE</span> mysql_dc <span class="keyword">ENGINE</span> = MySQL(<span class="string">'192.168.0.2:3306'</span>, <span class="string">'dbname'</span>, <span class="string">'user'</span>, <span class="string">'password'</span>)</span><br></pre></td></tr></table></figure>
+
+<p>使用Mysql接口访问ClickHouse</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql --protocol tcp -u default -P 9004 -h 192.168.0.3 -p password</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/04/14/ClickHouse%E4%BD%BF%E7%94%A8/" data-id="ck8zi8as60000s0p554pnct29" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-ClickHouse安装配置" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2020/04/14/ClickHouse%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/" class="article-date">
@@ -86,30 +128,30 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>基础环境：centos7.5</p>
+        <p>系统环境：centos7.5</p>
 <h2 id="1-单机版安装"><a href="#1-单机版安装" class="headerlink" title="1. 单机版安装"></a>1. <strong>单机版安装</strong></h2><ol>
 <li>1 配置yum源，安装服务</li>
 </ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install yum-utils</span><br><span class="line">sudo rpm --import https:&#x2F;&#x2F;repo.yandex.ru&#x2F;clickhouse&#x2F;CLICKHOUSE-KEY.GPG</span><br><span class="line">sudo yum-config-manager --add-repo https:&#x2F;&#x2F;repo.yandex.ru&#x2F;clickhouse&#x2F;rpm&#x2F;stable&#x2F;x86_64</span><br><span class="line">sudo yum install clickhouse-server clickhouse-client</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install yum-utils</span><br><span class="line">sudo rpm --import https://repo.yandex.ru/clickhouse/CLICKHOUSE-KEY.GPG</span><br><span class="line">sudo yum-config-manager --add-repo https://repo.yandex.ru/clickhouse/rpm/stable/x86_64</span><br><span class="line">sudo yum install clickhouse-server clickhouse-client</span><br></pre></td></tr></table></figure>
 
 <p>1.2 启动服务</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo service clickhouse-server start</span><br><span class="line">#指定配置文件启动</span><br><span class="line">clickhouse-server --config-file&#x3D;&#x2F;etc&#x2F;clickhouse-server&#x2F;config.xml</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo service clickhouse-server start</span><br><span class="line"><span class="meta">#</span><span class="bash">指定配置文件启动</span></span><br><span class="line">clickhouse-server --config-file=/etc/clickhouse-server/config.xml</span><br></pre></td></tr></table></figure>
 
 <p>1.3 测试服务</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">clickhouse-client</span><br><span class="line">ClickHouse client version 20.3.5.21 (official build).</span><br><span class="line">Connecting to 127.0.0.1:9000 as user default.</span><br><span class="line">Connected to ClickHouse server version 20.3.5 revision 54433.</span><br><span class="line">:) select 1;</span><br><span class="line"></span><br><span class="line">SELECT 1</span><br><span class="line"></span><br><span class="line">┌─1─┐</span><br><span class="line">│ 1 │</span><br><span class="line">└───┘</span><br><span class="line"></span><br><span class="line">1 rows in set. Elapsed: 0.002 sec.</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">clickhouse-client</span><br><span class="line">ClickHouse client version 20.3.5.21 (official build).</span><br><span class="line">Connecting to 127.0.0.1:9000 as user default.</span><br><span class="line">Connected to ClickHouse server version 20.3.5 revision 54433.</span><br><span class="line">:) <span class="keyword">select</span> <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> <span class="number">1</span></span><br><span class="line"></span><br><span class="line">┌─<span class="number">1</span>─┐</span><br><span class="line">│ <span class="number">1</span> │</span><br><span class="line">└───┘</span><br><span class="line"></span><br><span class="line"><span class="number">1</span> <span class="keyword">rows</span> <span class="keyword">in</span> set. Elapsed: <span class="number">0.002</span> sec.</span><br></pre></td></tr></table></figure>
 
 <h2 id="2-配置"><a href="#2-配置" class="headerlink" title="2. 配置"></a>2. <strong>配置</strong></h2><p>​     默认配置文件地址：/etc/clickhouse-server/config.xml，用户配置文件：/etc/clickhouse-server/users.xml。修改配置时，不要直接修改默认文件，复制一份文件至/etc/clickhouse-server/config.d/，/etc/clickhouse-server/users.d/下，服务启动时，自定义的配置文件会覆盖默认的配置。</p>
 <p>​     config.xml 修改的主要内容有：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">&lt;logger&gt;</span><br><span class="line">   &lt;!-- Possible levels: https:&#x2F;&#x2F;github.com&#x2F;pocoproject&#x2F;poco&#x2F;blob&#x2F;poco-1.9.4-release&#x2F;Foundation&#x2F;include&#x2F;Poco&#x2F;Logger.h#L105 --&gt;</span><br><span class="line">   &lt;level&gt;trace&lt;&#x2F;level&gt;</span><br><span class="line">   &lt;log&gt;&#x2F;var&#x2F;log&#x2F;clickhouse-server&#x2F;clickhouse-server.log&lt;&#x2F;log&gt;</span><br><span class="line">   &lt;errorlog&gt;&#x2F;var&#x2F;log&#x2F;clickhouse-server&#x2F;clickhouse-server.err.log&lt;&#x2F;errorlog&gt;</span><br><span class="line">   &lt;size&gt;1000M&lt;&#x2F;size&gt;</span><br><span class="line">   &lt;count&gt;10&lt;&#x2F;count&gt;</span><br><span class="line">   &lt;!-- &lt;console&gt;1&lt;&#x2F;console&gt; --&gt; &lt;!-- Default behavior is autodetection (log to console if not daemon mode and is tty) --&gt;</span><br><span class="line">&lt;&#x2F;logger&gt;</span><br><span class="line"></span><br><span class="line">&lt;!-- Path to data directory, with trailing slash. --&gt;</span><br><span class="line">&lt;path&gt;&#x2F;var&#x2F;lib&#x2F;clickhouse&#x2F;&lt;&#x2F;path&gt;</span><br><span class="line">&lt;!-- Directory with user provided files that are accessible by &#39;file&#39; table function. --&gt;</span><br><span class="line">&lt;user_files_path&gt;&#x2F;var&#x2F;lib&#x2F;clickhouse&#x2F;user_files&#x2F;&lt;&#x2F;user_files_path&gt;</span><br><span class="line">&lt;!-- Server time zone could be set here.</span><br><span class="line">     Time zone is used when converting between String and DateTime types,</span><br><span class="line">     when printing DateTime in text formats and parsing DateTime from text,</span><br><span class="line">     it is used in date and time related functions, if specific time zone was not passed as an argument.</span><br><span class="line">     Time zone is specified as identifier from IANA time zone database, like UTC or Africa&#x2F;Abidjan.</span><br><span class="line">     If not specified, system time zone at server startup is used.</span><br><span class="line">     Please note, that server could display time zone alias instead of specified name.</span><br><span class="line">     Example: W-SU is an alias for Europe&#x2F;Moscow and Zulu is an alias for UTC.</span><br><span class="line">    --&gt;</span><br><span class="line">&lt;!-- &lt;timezone&gt;Europe&#x2F;Moscow&lt;&#x2F;timezone&gt; --&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">logger</span>&gt;</span></span><br><span class="line">   <span class="comment">&lt;!-- Possible levels: https://github.com/pocoproject/poco/blob/poco-1.9.4-release/Foundation/include/Poco/Logger.h#L105 --&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">level</span>&gt;</span>trace<span class="tag">&lt;/<span class="name">level</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">log</span>&gt;</span>/var/log/clickhouse-server/clickhouse-server.log<span class="tag">&lt;/<span class="name">log</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">errorlog</span>&gt;</span>/var/log/clickhouse-server/clickhouse-server.err.log<span class="tag">&lt;/<span class="name">errorlog</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">size</span>&gt;</span>1000M<span class="tag">&lt;/<span class="name">size</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">count</span>&gt;</span>10<span class="tag">&lt;/<span class="name">count</span>&gt;</span></span><br><span class="line">   <span class="comment">&lt;!-- &lt;console&gt;1&lt;/console&gt; --&gt;</span> <span class="comment">&lt;!-- Default behavior is autodetection (log to console if not daemon mode and is tty) --&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">logger</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!-- Path to data directory, with trailing slash. --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">path</span>&gt;</span>/var/lib/clickhouse/<span class="tag">&lt;/<span class="name">path</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- Directory with user provided files that are accessible by 'file' table function. --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">user_files_path</span>&gt;</span>/var/lib/clickhouse/user_files/<span class="tag">&lt;/<span class="name">user_files_path</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- Server time zone could be set here.</span></span><br><span class="line"><span class="comment">     Time zone is used when converting between String and DateTime types,</span></span><br><span class="line"><span class="comment">     when printing DateTime in text formats and parsing DateTime from text,</span></span><br><span class="line"><span class="comment">     it is used in date and time related functions, if specific time zone was not passed as an argument.</span></span><br><span class="line"><span class="comment">     Time zone is specified as identifier from IANA time zone database, like UTC or Africa/Abidjan.</span></span><br><span class="line"><span class="comment">     If not specified, system time zone at server startup is used.</span></span><br><span class="line"><span class="comment">     Please note, that server could display time zone alias instead of specified name.</span></span><br><span class="line"><span class="comment">     Example: W-SU is an alias for Europe/Moscow and Zulu is an alias for UTC.</span></span><br><span class="line"><span class="comment">    --&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- &lt;timezone&gt;Europe/Moscow&lt;/timezone&gt; --&gt;</span></span><br></pre></td></tr></table></figure>
 
 <p>​      users.xml修改的内容</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- If user name was not specified, &#39;default&#39; user is used. --&gt;</span><br><span class="line">&lt;!-- default password is empty --&gt;</span><br><span class="line">&lt;password&gt;&lt;&#x2F;password&gt;</span><br><span class="line">&lt;!-- Settings profile for user. --&gt;</span><br><span class="line">&lt;profile&gt;default&lt;&#x2F;profile&gt;</span><br><span class="line">&lt;!-- Quota for user. --&gt;</span><br><span class="line">&lt;quota&gt;default&lt;&#x2F;quota&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- If user name was not specified, 'default' user is used. --&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- default password is empty --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">password</span>&gt;</span><span class="tag">&lt;/<span class="name">password</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- Settings profile for user. --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">profile</span>&gt;</span>default<span class="tag">&lt;/<span class="name">profile</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- Quota for user. --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">quota</span>&gt;</span>default<span class="tag">&lt;/<span class="name">quota</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/14/ClickHouse%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/" data-id="ck8zec2260000dcp5ejercunx" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/14/ClickHouse%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/" data-id="ck8zi8asf0002s0p5bqnpgej7" class="article-share-link">Share</a>
       
       
     </footer>
@@ -147,7 +189,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/14/ClickHouse%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE%E4%B8%80/" data-id="ck8zec22f0002dcp5h9qacoam" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/14/ClickHouse%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE%E4%B8%80/" data-id="ck8zi8ase0001s0p54ure1kax" class="article-share-link">Share</a>
       
       
     </footer>
@@ -196,7 +238,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/07/hello-world/" data-id="ck8zec22d0001dcp5bwbv4c52" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/07/hello-world/" data-id="ck8zi8asg0003s0p54f2ldk7g" class="article-share-link">Share</a>
       
       
     </footer>
@@ -235,6 +277,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2020/04/14/ClickHouse%E4%BD%BF%E7%94%A8/">ClickHouse使用</a>
+          </li>
         
           <li>
             <a href="/2020/04/14/ClickHouse%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/">ClickHouse安装配置</a>
