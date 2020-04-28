@@ -15,7 +15,7 @@
 <meta property="og:description" content="在处理IOT数据时，时长会有些数据表示的不规范，比如采集的数据经过接入程序处理后，部分数值是以科学计数法表示的，因此，在后期计算前，需对数据进行规范化处理。 处理科学计数法，一般使用的方式为将原数据转换为BigDecimal，然而，将把处理后的数据以字符串（toString）发送到下游时，发现仍有数据是以科学技术法表示的_。 查阅资料，发现BigDecimal类的中包含多个转成字符串的方法。 12">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-04-28T08:18:11.284Z">
-<meta property="article:modified_time" content="2020-04-28T08:44:35.760Z">
+<meta property="article:modified_time" content="2020-04-28T08:59:44.006Z">
 <meta property="article:author" content="qiguoxiaosheng">
 <meta name="twitter:card" content="summary">
   
@@ -99,12 +99,12 @@
 <p>输出的结果为：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">2.3991984E+17</span><br><span class="line">2.3991984E+17</span><br><span class="line">239919840000000000</span><br><span class="line">239.91984E+15</span><br></pre></td></tr></table></figure>
 
-<p>因此，若希望转换的字符中不以科学计数法表示，则在转换时需要使用toPlainString方法。</p>
+<p>因此，若希望转换的字符中以非科学计数法表示，则在转换时需要使用toPlainString方法。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/28/Java%E4%B8%AD%E7%A7%91%E5%AD%A6%E8%AE%A1%E6%95%B0%E6%B3%95/" data-id="ck9jo00iz0006k0p550d328ft" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/28/Java%E4%B8%AD%E7%A7%91%E5%AD%A6%E8%AE%A1%E6%95%B0%E6%B3%95/" data-id="ck9jojdf3000a34p54s1m61fb" class="article-share-link">Share</a>
       
       
     </footer>
