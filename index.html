@@ -64,6 +64,54 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-Java中科学计数法" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/04/28/Java%E4%B8%AD%E7%A7%91%E5%AD%A6%E8%AE%A1%E6%95%B0%E6%B3%95/" class="article-date">
+  <time datetime="2020-04-28T08:18:11.284Z" itemprop="datePublished">2020-04-28</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/04/28/Java%E4%B8%AD%E7%A7%91%E5%AD%A6%E8%AE%A1%E6%95%B0%E6%B3%95/">Java中科学计数法</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在处理IOT数据时，时长会有些数据表示的不规范，比如采集的数据经过接入程序处理后，部分数值是以科学计数法表示的，因此，在后期计算前，需对数据进行规范化处理。</p>
+<p>处理科学计数法，一般使用的方式为将原数据转换为BigDecimal，然而，将把处理后的数据以字符串（toString）发送到下游时，发现仍有数据是以科学技术法表示的<code>_</code>。</p>
+<p>查阅资料，发现BigDecimal类的中包含多个转成字符串的方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">toEngineeringString()</span><br><span class="line">toPlainString()</span><br><span class="line">toString()</span><br></pre></td></tr></table></figure>
+
+<p>测试不同的方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="keyword">new</span> BigDecimal(<span class="string">"2.3991984E17"</span>));</span><br><span class="line">        System.out.println(<span class="keyword">new</span> BigDecimal(<span class="string">"2.3991984E17"</span>).toString());</span><br><span class="line">        System.out.println(<span class="keyword">new</span> BigDecimal(<span class="string">"2.3991984E17"</span>).toPlainString());</span><br><span class="line">        System.out.println(<span class="keyword">new</span> BigDecimal(<span class="string">"2.3991984E17"</span>).toEngineeringString());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出的结果为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">2.3991984E+17</span><br><span class="line">2.3991984E+17</span><br><span class="line">239919840000000000</span><br><span class="line">239.91984E+15</span><br></pre></td></tr></table></figure>
+
+<p>因此，若希望转换的字符中不以科学计数法表示，则在转换时需要使用toPlainString方法。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/04/28/Java%E4%B8%AD%E7%A7%91%E5%AD%A6%E8%AE%A1%E6%95%B0%E6%B3%95/" data-id="ck9jo00iz0006k0p550d328ft" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-Flink本地开发环境搭建" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2020/04/28/Flink%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" class="article-date">
@@ -90,7 +138,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/28/Flink%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" data-id="ck9jmx5780000p0p51za5aw6k" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/28/Flink%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" data-id="ck9jo00i50000k0p5avmc2rst" class="article-share-link">Share</a>
       
       
     </footer>
@@ -136,7 +184,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/28/Flink%E8%87%AA%E5%AE%9A%E4%B9%89Sink/" data-id="ck9jmx57k0005p0p58jf6crrr" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/28/Flink%E8%87%AA%E5%AE%9A%E4%B9%89Sink/" data-id="ck9jo00iz0007k0p5chxv2cky" class="article-share-link">Share</a>
       
       
     </footer>
@@ -176,7 +224,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/20/OpenTSDB%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/" data-id="ck9jmx57m0008p0p52gzj2to1" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/20/OpenTSDB%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/" data-id="ck9jo00j10009k0p5dik3ab3w" class="article-share-link">Share</a>
       
       
     </footer>
@@ -214,7 +262,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/20/Kafka%E8%BF%90%E7%BB%B4/" data-id="ck9jmx57l0007p0p590fmad1e" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/20/Kafka%E8%BF%90%E7%BB%B4/" data-id="ck9jo00j10008k0p5hvpig80d" class="article-share-link">Share</a>
       
       
     </footer>
@@ -277,7 +325,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/15/ClickHouse%20on%20Zeppelin/" data-id="ck9jmx57f0001p0p52ow7d38k" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/15/ClickHouse%20on%20Zeppelin/" data-id="ck9jo00it0001k0p57fcie5qx" class="article-share-link">Share</a>
       
       
     </footer>
@@ -313,7 +361,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/14/DataX%E5%90%8C%E6%AD%A5Hive%E6%95%B0%E6%8D%AE%E8%87%B3ClickHouse/" data-id="ck9jmx57l0006p0p56jzp4q5o" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/14/DataX%E5%90%8C%E6%AD%A5Hive%E6%95%B0%E6%8D%AE%E8%87%B3ClickHouse/" data-id="ck9jo00ix0004k0p5hgli22qr" class="article-share-link">Share</a>
       
       
     </footer>
@@ -360,7 +408,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/14/ClickHouse%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8/" data-id="ck9jmx57h0002p0p5bbmm7up3" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/14/ClickHouse%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8/" data-id="ck9jo00iu0002k0p5gqkf5zag" class="article-share-link">Share</a>
       
       
     </footer>
@@ -415,7 +463,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/14/ClickHouse%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/" data-id="ck9jmx57i0003p0p57q9z9nph" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/14/ClickHouse%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/" data-id="ck9jo00iv0003k0p54b4a2nfd" class="article-share-link">Share</a>
       
       
     </footer>
@@ -453,56 +501,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/14/ClickHouse%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE/" data-id="ck9jmx57j0004p0p51nnmcz6r" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2020/04/07/hello-world/" class="article-date">
-  <time datetime="2020-04-07T01:23:48.058Z" itemprop="datePublished">2020-04-07</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/04/07/hello-world/">Hello World</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/07/hello-world/" data-id="ck9jmx57n0009p0p579tz8p0h" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/14/ClickHouse%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE/" data-id="ck9jo00iy0005k0p57naqcmkj" class="article-share-link">Share</a>
       
       
     </footer>
@@ -513,6 +512,11 @@
 
   
 
+
+  <nav id="page-nav">
+    
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
+  </nav>
 
 </section>
         
@@ -543,6 +547,10 @@
       <ul>
         
           <li>
+            <a href="/2020/04/28/Java%E4%B8%AD%E7%A7%91%E5%AD%A6%E8%AE%A1%E6%95%B0%E6%B3%95/">Java中科学计数法</a>
+          </li>
+        
+          <li>
             <a href="/2020/04/28/Flink%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">Flink本地开发环境搭建</a>
           </li>
         
@@ -556,10 +564,6 @@
         
           <li>
             <a href="/2020/04/20/Kafka%E8%BF%90%E7%BB%B4/">Kafka运维</a>
-          </li>
-        
-          <li>
-            <a href="/2020/04/15/ClickHouse%20on%20Zeppelin/">ClickHouse on Zeppelin</a>
           </li>
         
       </ul>

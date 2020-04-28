@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>Java中科学计数法 | qiguoxiaosheng&#39;s blogs</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="在处理IOT数据时，时长会有些数据表示的不规范，比如采集的数据经过接入程序处理后，部分数值是以科学计数法表示的，因此，在后期计算前，需对数据进行规范化处理。 处理科学计数法，一般使用的方式为将原数据转换为BigDecimal，然而，将把处理后的数据以字符串（toString）发送到下游时，发现仍有数据是以科学技术法表示的_。 查阅资料，发现BigDecimal类的中包含多个转成字符串的方法。 12">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java中科学计数法">
+<meta property="og:url" content="http://yoursite.com/2020/04/28/Java%E4%B8%AD%E7%A7%91%E5%AD%A6%E8%AE%A1%E6%95%B0%E6%B3%95/index.html">
+<meta property="og:site_name" content="qiguoxiaosheng&#39;s blogs">
+<meta property="og:description" content="在处理IOT数据时，时长会有些数据表示的不规范，比如采集的数据经过接入程序处理后，部分数值是以科学计数法表示的，因此，在后期计算前，需对数据进行规范化处理。 处理科学计数法，一般使用的方式为将原数据转换为BigDecimal，然而，将把处理后的数据以字符串（toString）发送到下游时，发现仍有数据是以科学技术法表示的_。 查阅资料，发现BigDecimal类的中包含多个转成字符串的方法。 12">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-04-28T08:18:11.284Z">
+<meta property="article:modified_time" content="2020-04-28T08:44:35.760Z">
+<meta property="article:author" content="qiguoxiaosheng">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="qiguoxiaosheng&#39;s blogs" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">qiguoxiaosheng&#39;s blogs</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Java中科学计数法" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/04/28/Java%E4%B8%AD%E7%A7%91%E5%AD%A6%E8%AE%A1%E6%95%B0%E6%B3%95/" class="article-date">
+  <time datetime="2020-04-28T08:18:11.284Z" itemprop="datePublished">2020-04-28</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Java中科学计数法
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在处理IOT数据时，时长会有些数据表示的不规范，比如采集的数据经过接入程序处理后，部分数值是以科学计数法表示的，因此，在后期计算前，需对数据进行规范化处理。</p>
+<p>处理科学计数法，一般使用的方式为将原数据转换为BigDecimal，然而，将把处理后的数据以字符串（toString）发送到下游时，发现仍有数据是以科学技术法表示的<code>_</code>。</p>
+<p>查阅资料，发现BigDecimal类的中包含多个转成字符串的方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">toEngineeringString()</span><br><span class="line">toPlainString()</span><br><span class="line">toString()</span><br></pre></td></tr></table></figure>
+
+<p>测试不同的方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="keyword">new</span> BigDecimal(<span class="string">"2.3991984E17"</span>));</span><br><span class="line">        System.out.println(<span class="keyword">new</span> BigDecimal(<span class="string">"2.3991984E17"</span>).toString());</span><br><span class="line">        System.out.println(<span class="keyword">new</span> BigDecimal(<span class="string">"2.3991984E17"</span>).toPlainString());</span><br><span class="line">        System.out.println(<span class="keyword">new</span> BigDecimal(<span class="string">"2.3991984E17"</span>).toEngineeringString());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出的结果为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">2.3991984E+17</span><br><span class="line">2.3991984E+17</span><br><span class="line">239919840000000000</span><br><span class="line">239.91984E+15</span><br></pre></td></tr></table></figure>
+
+<p>因此，若希望转换的字符中不以科学计数法表示，则在转换时需要使用toPlainString方法。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/04/28/Java%E4%B8%AD%E7%A7%91%E5%AD%A6%E8%AE%A1%E6%95%B0%E6%B3%95/" data-id="ck9jo00iz0006k0p550d328ft" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2020/04/28/Flink%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Flink本地开发环境搭建</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/04/28/Java%E4%B8%AD%E7%A7%91%E5%AD%A6%E8%AE%A1%E6%95%B0%E6%B3%95/">Java中科学计数法</a>
+          </li>
+        
+          <li>
+            <a href="/2020/04/28/Flink%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">Flink本地开发环境搭建</a>
+          </li>
+        
+          <li>
+            <a href="/2020/04/28/Flink%E8%87%AA%E5%AE%9A%E4%B9%89Sink/">Flink自定义Sink</a>
+          </li>
+        
+          <li>
+            <a href="/2020/04/20/OpenTSDB%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/">OpenTSDB源码编译</a>
+          </li>
+        
+          <li>
+            <a href="/2020/04/20/Kafka%E8%BF%90%E7%BB%B4/">Kafka运维</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 qiguoxiaosheng<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>
