@@ -86,11 +86,36 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <p>最近尝试使用Flink消费Kafka数据，并将处理后的数据写回Kafka。</p>
+<p>1、从Kafka中消费数据</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">FlinkKafkaConsumer&lt;String&gt; flinkKafkaConsumer = <span class="keyword">new</span> FlinkKafkaConsumer&lt;&gt;(topic, <span class="keyword">new</span> SimpleStringSchema(), props);</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * setStartFromEarliest() 或者 setStartFromLatest()：从最早或者最新的记录开始消费，</span></span><br><span class="line"><span class="comment">  * 在这些模式下，Kafka 中的 committed offset 将被忽略，不会用作起始位置。</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">flinkKafkaConsumer.setStartFromEarliest();</span><br><span class="line">env.addSource(flinkKafkaConsumer);</span><br></pre></td></tr></table></figure>
+
+<p>2、将结果数据写入Kafka</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">FlinkKafkaProducer finkKafkaProducer = <span class="keyword">new</span> FlinkKafkaProducer(topic, <span class="keyword">new</span> SimpleStringSchema(), props);</span><br><span class="line">record.addSink(finkKafkaProducer);</span><br></pre></td></tr></table></figure>
+
+<p>写完代码后，调试、打包、运行，以为万事大吉。程序运行一段时间后，突然发现写入的topic中部分分区没有数据，走查代码，写入的数据没有设置key，理论上讲数据应该是按轮询模式逐个写入目标topic的partition。然而，是我先入为主了，想当然了。查阅Flink相关资料，发现如果未指定分区器Partitioner，默认使用FlinkFixedPartitioner分区器，其分区算法为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">open</span><span class="params">(<span class="keyword">int</span> parallelInstanceId, <span class="keyword">int</span> parallelInstances)</span> </span>&#123;</span><br><span class="line">    Preconditions.checkArgument(parallelInstanceId &gt;= <span class="number">0</span>, <span class="string">"Id of this subtask cannot be negative."</span>);</span><br><span class="line">    Preconditions.checkArgument(parallelInstances &gt; <span class="number">0</span>, <span class="string">"Number of subtasks must be larger than 0."</span>);</span><br><span class="line">    <span class="keyword">this</span>.parallelInstanceId = parallelInstanceId;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">partition</span><span class="params">(T record, <span class="keyword">byte</span>[] key, <span class="keyword">byte</span>[] value, String targetTopic, <span class="keyword">int</span>[] partitions)</span> </span>&#123;</span><br><span class="line">    Preconditions.checkArgument(partitions != <span class="keyword">null</span> &amp;&amp; partitions.length &gt; <span class="number">0</span>, <span class="string">"Partitions of the target topic is empty."</span>);</span><br><span class="line">    <span class="keyword">return</span> partitions[<span class="keyword">this</span>.parallelInstanceId % partitions.length];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中，parallelInstanceId表示当前task的index，partitions表示kafka的topic的分区数。</p>
+<p>重新查看写的代码，并未设置并行度，而运行程序的机器为8core，topic的分区数为10，按默认的分区策略，则会有2个分区一直不会写数据。</p>
+<p>3、解决方法</p>
+<p>找到原因了，就可以有针对性的解决了。解决方法主要有以下几种：</p>
+<ol>
+<li>parallism设置成为与kafka topic 分区数一致大小。</li>
+<li>将flinkKafkaPartitioner指定为空，并且制定写入kafka的key。</li>
+<li>将flinkKafkaPartitioner与写入的key都置为空。</li>
+<li>自定义一个FlinkKafkaPartitioner，重写partition方法</li>
+<li>实现KafkaSerializationSchema接口</li>
+</ol>
+<p>这里选择了方法5</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">KafkaSerializationSchemaImpl</span> <span class="keyword">implements</span> <span class="title">KafkaSerializationSchema</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String topic;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">KafkaSerializationSchemaImpl</span><span class="params">(String topic)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.topic = topic;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> ProducerRecord&lt;<span class="keyword">byte</span>[], <span class="keyword">byte</span>[]&gt; serialize(Object element, <span class="meta">@Nullable</span> Long aLong) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ProducerRecord(<span class="keyword">this</span>.topic, element.toString().getBytes(StandardCharsets.UTF_8));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>重新测试，问题解决。</p>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/29/Flink%E8%AF%BB%E5%86%99Kafka/" data-id="ck9l25w4q0004v8p5e83zhera" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/29/Flink%E8%AF%BB%E5%86%99Kafka/" data-id="ck9l46c3300066cp50fyvaxaw" class="article-share-link">Share</a>
       
       
     </footer>
@@ -138,7 +163,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/28/Java%E4%B8%AD%E7%A7%91%E5%AD%A6%E8%AE%A1%E6%95%B0%E6%B3%95/" data-id="ck9l25w4t0008v8p53psxcw5t" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/28/Java%E4%B8%AD%E7%A7%91%E5%AD%A6%E8%AE%A1%E6%95%B0%E6%B3%95/" data-id="ck9l46c3400086cp5coa68zkn" class="article-share-link">Share</a>
       
       
     </footer>
@@ -191,7 +216,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/28/Idea%E6%90%AD%E5%BB%BAFlink%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/" data-id="ck9l25w4t0007v8p54e7x23nz" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/28/Idea%E6%90%AD%E5%BB%BAFlink%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/" data-id="ck9l46c3300076cp51f7bbh8w" class="article-share-link">Share</a>
       
       
     </footer>
@@ -237,7 +262,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/28/Flink%E8%87%AA%E5%AE%9A%E4%B9%89Sink/" data-id="ck9l25w4r0005v8p54loo1shl" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/28/Flink%E8%87%AA%E5%AE%9A%E4%B9%89Sink/" data-id="ck9l46c3000036cp54cx7g4to" class="article-share-link">Share</a>
       
       
     </footer>
@@ -277,7 +302,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/20/OpenTSDB%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/" data-id="ck9l25w4u0009v8p5fkutcsyk" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/20/OpenTSDB%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/" data-id="ck9l46c35000a6cp5bfcw62yz" class="article-share-link">Share</a>
       
       
     </footer>
@@ -315,7 +340,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/20/Kafka%E8%BF%90%E7%BB%B4/" data-id="ck9l25w4v000av8p50gzb8pbg" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/20/Kafka%E8%BF%90%E7%BB%B4/" data-id="ck9l46c3500096cp5gewl1ktg" class="article-share-link">Share</a>
       
       
     </footer>
@@ -378,7 +403,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/15/ClickHouse%20on%20Zeppelin/" data-id="ck9l25w4f0000v8p53dfrev10" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/15/ClickHouse%20on%20Zeppelin/" data-id="ck9l46c3100046cp5ci56fa5f" class="article-share-link">Share</a>
       
       
     </footer>
@@ -414,7 +439,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/14/DataX%E5%90%8C%E6%AD%A5Hive%E6%95%B0%E6%8D%AE%E8%87%B3ClickHouse/" data-id="ck9l25w4s0006v8p5gec81bjc" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/14/DataX%E5%90%8C%E6%AD%A5Hive%E6%95%B0%E6%8D%AE%E8%87%B3ClickHouse/" data-id="ck9l46c3200056cp5hbdbfi6r" class="article-share-link">Share</a>
       
       
     </footer>
@@ -461,7 +486,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/14/ClickHouse%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8/" data-id="ck9l25w4p0003v8p5f6xt1inx" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/14/ClickHouse%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8/" data-id="ck9l46c2q00006cp52yk1dghu" class="article-share-link">Share</a>
       
       
     </footer>
@@ -516,7 +541,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/14/ClickHouse%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/" data-id="ck9l25w4m0001v8p5dc7t0ct1" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/14/ClickHouse%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/" data-id="ck9l46c2z00026cp59l921529" class="article-share-link">Share</a>
       
       
     </footer>
