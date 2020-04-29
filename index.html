@@ -64,6 +64,42 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-Flink读写Kafka" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/04/29/Flink%E8%AF%BB%E5%86%99Kafka/" class="article-date">
+  <time datetime="2020-04-29T07:15:00.964Z" itemprop="datePublished">2020-04-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/04/29/Flink%E8%AF%BB%E5%86%99Kafka/">Flink读写Kafka</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/04/29/Flink%E8%AF%BB%E5%86%99Kafka/" data-id="ck9l25w4q0004v8p5e83zhera" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-Java中科学计数法" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2020/04/28/Java%E4%B8%AD%E7%A7%91%E5%AD%A6%E8%AE%A1%E6%95%B0%E6%B3%95/" class="article-date">
@@ -102,7 +138,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/28/Java%E4%B8%AD%E7%A7%91%E5%AD%A6%E8%AE%A1%E6%95%B0%E6%B3%95/" data-id="ck9l02xf90004sgp591bk4o7z" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/28/Java%E4%B8%AD%E7%A7%91%E5%AD%A6%E8%AE%A1%E6%95%B0%E6%B3%95/" data-id="ck9l25w4t0008v8p53psxcw5t" class="article-share-link">Share</a>
       
       
     </footer>
@@ -134,11 +170,28 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <p>工欲善其事，必先利其器！打算学习Flink，撸码工具很重要，本文主要记录如何使用IDEA搭建Flink本地代码开发、调试环境，编程语言以Java为例。</p>
+<p>1、创建工程</p>
+<p>在IDEA里依次选择</p>
+<p>New Project –&gt; Maven –&gt; Create from archetype，然后选择flink-quickstart-java，剩下的就是输入Name，groupId，ArtifactId等信息。如果此处没有flink-quickstart-java骨架，选择右上角的“Add Archetype”，填入相关信息。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.flink<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>flink-quickstart-java<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">version</span>&gt;</span>1.10.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/qiguoxiaosheng/webResources/master/Idea%E6%90%AD%E5%BB%BAFlink%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%8301.png" alt=""></p>
+<p>2、本地开发、调试</p>
+<p>创建好的工程结构如下图所示：</p>
+<p><img src="https://raw.githubusercontent.com/qiguoxiaosheng/webResources/master/Idea%E6%90%AD%E5%BB%BAFlink%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%8302.png" alt=""></p>
+<p>接下来，就可以在里面开心的写代码了^_^。一顿操作之后，习惯性右击–&gt;Debug。然鹅，出Exception了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Exception in thread <span class="string">"main"</span> java.lang.NoClassDefFoundError: org/apache/flink/streaming/api/environment/StreamExecutionEnvironment</span><br><span class="line">	at org.example.StreamingJob.main(StreamingJob.java:<span class="number">39</span>)</span><br><span class="line">Caused by: java.lang.ClassNotFoundException: org.apache.flink.streaming.api.environment.StreamExecutionEnvironment</span><br><span class="line">	at java.net.URLClassLoader.findClass(URLClassLoader.java:<span class="number">382</span>)</span><br><span class="line">	at java.lang.ClassLoader.loadClass(ClassLoader.java:<span class="number">424</span>)</span><br><span class="line">	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:<span class="number">349</span>)</span><br><span class="line">	at java.lang.ClassLoader.loadClass(ClassLoader.java:<span class="number">357</span>)</span><br><span class="line">	... <span class="number">1</span> more</span><br></pre></td></tr></table></figure>
+
+<p>麻溜打开了bing，尝试各位大佬的宝典，经测试，下面步骤可行。</p>
+<p>Project Settings –&gt;Dependencies选择添加Library，然后分别选择Flink发行包中的lib、opt目录，并添加ScalaSDK。</p>
+<p><img src="https://raw.githubusercontent.com/qiguoxiaosheng/webResources/master/Idea%E6%90%AD%E5%BB%BAFlink%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%8303.png" alt=""></p>
+<p>完成后，重新Debug，熟悉的Hello World又出现了。</p>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/28/Idea%E6%90%AD%E5%BB%BAFlink%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/" data-id="ck9l02xf80003sgp5et4fd7aa" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/28/Idea%E6%90%AD%E5%BB%BAFlink%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/" data-id="ck9l25w4t0007v8p54e7x23nz" class="article-share-link">Share</a>
       
       
     </footer>
@@ -184,7 +237,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/28/Flink%E8%87%AA%E5%AE%9A%E4%B9%89Sink/" data-id="ck9l02xfb0006sgp555ej51ib" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/28/Flink%E8%87%AA%E5%AE%9A%E4%B9%89Sink/" data-id="ck9l25w4r0005v8p54loo1shl" class="article-share-link">Share</a>
       
       
     </footer>
@@ -224,7 +277,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/20/OpenTSDB%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/" data-id="ck9l02xfd0009sgp5cl27f7gy" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/20/OpenTSDB%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/" data-id="ck9l25w4u0009v8p5fkutcsyk" class="article-share-link">Share</a>
       
       
     </footer>
@@ -262,7 +315,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/20/Kafka%E8%BF%90%E7%BB%B4/" data-id="ck9l02xfc0008sgp51cdw1wgs" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/20/Kafka%E8%BF%90%E7%BB%B4/" data-id="ck9l25w4v000av8p50gzb8pbg" class="article-share-link">Share</a>
       
       
     </footer>
@@ -325,7 +378,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/15/ClickHouse%20on%20Zeppelin/" data-id="ck9l02xey0000sgp57em529iq" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/15/ClickHouse%20on%20Zeppelin/" data-id="ck9l25w4f0000v8p53dfrev10" class="article-share-link">Share</a>
       
       
     </footer>
@@ -361,7 +414,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/14/DataX%E5%90%8C%E6%AD%A5Hive%E6%95%B0%E6%8D%AE%E8%87%B3ClickHouse/" data-id="ck9l02xfb0007sgp57yjz40b9" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/14/DataX%E5%90%8C%E6%AD%A5Hive%E6%95%B0%E6%8D%AE%E8%87%B3ClickHouse/" data-id="ck9l25w4s0006v8p5gec81bjc" class="article-share-link">Share</a>
       
       
     </footer>
@@ -408,7 +461,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/14/ClickHouse%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8/" data-id="ck9l02xf50001sgp59wjh2mo7" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/14/ClickHouse%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8/" data-id="ck9l25w4p0003v8p5f6xt1inx" class="article-share-link">Share</a>
       
       
     </footer>
@@ -463,45 +516,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/14/ClickHouse%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/" data-id="ck9l02xf70002sgp5esoma6f4" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-ClickHouse网络配置" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2020/04/14/ClickHouse%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE/" class="article-date">
-  <time datetime="2020-04-14T03:04:43.609Z" itemprop="datePublished">2020-04-14</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/04/14/ClickHouse%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE/">ClickHouse 网络配置 1</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>【译文】原文地址：[<a href="https://www.altinity.com/blog/2019/3/15/clickhouse-networking-part-1]" target="_blank" rel="noopener">https://www.altinity.com/blog/2019/3/15/clickhouse-networking-part-1]</a>(ClickHouse Networking, Part 1)</p>
-<p>连接概览 监听地址 监听端口</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/14/ClickHouse%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE/" data-id="ck9l02xfa0005sgp5eywu5bzu" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/14/ClickHouse%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/" data-id="ck9l25w4m0001v8p5dc7t0ct1" class="article-share-link">Share</a>
       
       
     </footer>
@@ -547,6 +562,10 @@
       <ul>
         
           <li>
+            <a href="/2020/04/29/Flink%E8%AF%BB%E5%86%99Kafka/">Flink读写Kafka</a>
+          </li>
+        
+          <li>
             <a href="/2020/04/28/Java%E4%B8%AD%E7%A7%91%E5%AD%A6%E8%AE%A1%E6%95%B0%E6%B3%95/">Java中科学计数法</a>
           </li>
         
@@ -560,10 +579,6 @@
         
           <li>
             <a href="/2020/04/20/OpenTSDB%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/">OpenTSDB源码编译</a>
-          </li>
-        
-          <li>
-            <a href="/2020/04/20/Kafka%E8%BF%90%E7%BB%B4/">Kafka运维</a>
           </li>
         
       </ul>

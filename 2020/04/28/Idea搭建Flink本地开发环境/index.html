@@ -7,15 +7,21 @@
   
   <title>Idea搭建Flink本地开发环境 | qiguoxiaosheng&#39;s blogs</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="article">
+  <meta name="description" content="工欲善其事，必先利其器！打算学习Flink，撸码工具很重要，本文主要记录如何使用IDEA搭建Flink本地代码开发、调试环境，编程语言以Java为例。 1、创建工程 在IDEA里依次选择 New Project –&gt; Maven –&gt; Create from archetype，然后选择flink-quickstart-java，剩下的就是输入Name，groupId，Artifact">
+<meta property="og:type" content="article">
 <meta property="og:title" content="Idea搭建Flink本地开发环境">
 <meta property="og:url" content="http://yoursite.com/2020/04/28/Idea%E6%90%AD%E5%BB%BAFlink%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/index.html">
 <meta property="og:site_name" content="qiguoxiaosheng&#39;s blogs">
+<meta property="og:description" content="工欲善其事，必先利其器！打算学习Flink，撸码工具很重要，本文主要记录如何使用IDEA搭建Flink本地代码开发、调试环境，编程语言以Java为例。 1、创建工程 在IDEA里依次选择 New Project –&gt; Maven –&gt; Create from archetype，然后选择flink-quickstart-java，剩下的就是输入Name，groupId，Artifact">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/qiguoxiaosheng/webResources/master/Idea%E6%90%AD%E5%BB%BAFlink%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%8301.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/qiguoxiaosheng/webResources/master/Idea%E6%90%AD%E5%BB%BAFlink%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%8302.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/qiguoxiaosheng/webResources/master/Idea%E6%90%AD%E5%BB%BAFlink%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%8303.png">
 <meta property="article:published_time" content="2020-04-28T07:27:44.804Z">
-<meta property="article:modified_time" content="2020-04-29T07:09:59.530Z">
+<meta property="article:modified_time" content="2020-04-29T08:08:46.187Z">
 <meta property="article:author" content="qiguoxiaosheng">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/qiguoxiaosheng/webResources/master/Idea%E6%90%AD%E5%BB%BAFlink%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%8301.png">
   
     <link rel="alternate" href="/atom.xml" title="qiguoxiaosheng&#39;s blogs" type="application/atom+xml">
   
@@ -86,11 +92,28 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <p>工欲善其事，必先利其器！打算学习Flink，撸码工具很重要，本文主要记录如何使用IDEA搭建Flink本地代码开发、调试环境，编程语言以Java为例。</p>
+<p>1、创建工程</p>
+<p>在IDEA里依次选择</p>
+<p>New Project –&gt; Maven –&gt; Create from archetype，然后选择flink-quickstart-java，剩下的就是输入Name，groupId，ArtifactId等信息。如果此处没有flink-quickstart-java骨架，选择右上角的“Add Archetype”，填入相关信息。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.flink<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>flink-quickstart-java<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">version</span>&gt;</span>1.10.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/qiguoxiaosheng/webResources/master/Idea%E6%90%AD%E5%BB%BAFlink%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%8301.png" alt=""></p>
+<p>2、本地开发、调试</p>
+<p>创建好的工程结构如下图所示：</p>
+<p><img src="https://raw.githubusercontent.com/qiguoxiaosheng/webResources/master/Idea%E6%90%AD%E5%BB%BAFlink%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%8302.png" alt=""></p>
+<p>接下来，就可以在里面开心的写代码了^_^。一顿操作之后，习惯性右击–&gt;Debug。然鹅，出Exception了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Exception in thread <span class="string">"main"</span> java.lang.NoClassDefFoundError: org/apache/flink/streaming/api/environment/StreamExecutionEnvironment</span><br><span class="line">	at org.example.StreamingJob.main(StreamingJob.java:<span class="number">39</span>)</span><br><span class="line">Caused by: java.lang.ClassNotFoundException: org.apache.flink.streaming.api.environment.StreamExecutionEnvironment</span><br><span class="line">	at java.net.URLClassLoader.findClass(URLClassLoader.java:<span class="number">382</span>)</span><br><span class="line">	at java.lang.ClassLoader.loadClass(ClassLoader.java:<span class="number">424</span>)</span><br><span class="line">	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:<span class="number">349</span>)</span><br><span class="line">	at java.lang.ClassLoader.loadClass(ClassLoader.java:<span class="number">357</span>)</span><br><span class="line">	... <span class="number">1</span> more</span><br></pre></td></tr></table></figure>
+
+<p>麻溜打开了bing，尝试各位大佬的宝典，经测试，下面步骤可行。</p>
+<p>Project Settings –&gt;Dependencies选择添加Library，然后分别选择Flink发行包中的lib、opt目录，并添加ScalaSDK。</p>
+<p><img src="https://raw.githubusercontent.com/qiguoxiaosheng/webResources/master/Idea%E6%90%AD%E5%BB%BAFlink%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%8303.png" alt=""></p>
+<p>完成后，重新Debug，熟悉的Hello World又出现了。</p>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/28/Idea%E6%90%AD%E5%BB%BAFlink%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/" data-id="ck9l02xf80003sgp5et4fd7aa" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/28/Idea%E6%90%AD%E5%BB%BAFlink%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/" data-id="ck9l25w4t0007v8p54e7x23nz" class="article-share-link">Share</a>
       
       
     </footer>
@@ -148,6 +171,10 @@
       <ul>
         
           <li>
+            <a href="/2020/04/29/Flink%E8%AF%BB%E5%86%99Kafka/">Flink读写Kafka</a>
+          </li>
+        
+          <li>
             <a href="/2020/04/28/Java%E4%B8%AD%E7%A7%91%E5%AD%A6%E8%AE%A1%E6%95%B0%E6%B3%95/">Java中科学计数法</a>
           </li>
         
@@ -161,10 +188,6 @@
         
           <li>
             <a href="/2020/04/20/OpenTSDB%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/">OpenTSDB源码编译</a>
-          </li>
-        
-          <li>
-            <a href="/2020/04/20/Kafka%E8%BF%90%E7%BB%B4/">Kafka运维</a>
           </li>
         
       </ul>
