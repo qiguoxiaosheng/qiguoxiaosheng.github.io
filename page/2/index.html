@@ -64,6 +64,53 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-ClickHouse使用入门" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/04/14/ClickHouse%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8/" class="article-date">
+  <time datetime="2020-04-14T06:01:14.602Z" itemprop="datePublished">2020-04-14</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/04/14/ClickHouse%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8/">ClickHouse使用入门</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>ClickHouse简介</p>
+<p>应用场景：<br> <code>1.</code>绝大多数请求都是用于读访问的<br> <code>2.</code>数据需要以大批次（大于1000行）进行更新，而不是单行更新；或者根本没有更新操作<br> <code>3.</code>数据只是添加到数据库，没有必要修改<br> <code>4.</code>读取数据时，会从数据库中提取出大量的行，但只用到一小部分列<br> <code>5.</code>表很“宽”，即表中包含大量的列<br> <code>6.</code>查询频率相对较低（通常每台服务器每秒查询数百次或更少）<br> <code>7.</code>对于简单查询，允许大约50毫秒的延迟<br> <code>8.</code>列的值是比较小的数值和短字符串（例如，每个URL只有60个字节）<br> <code>9.</code>在处理单个查询时需要高吞吐量（每台服务器每秒高达数十亿行）<br> <code>10.</code>不需要事务<br> <code>11.</code>数据一致性要求较低<br> <code>12.</code>每次查询中只会查询一个大表。除了一个大表，其余都是小表<br> <code>13.</code>查询结果显著小于数据源。即数据有过滤或聚合。返回结果不超过单个服务器内存大小</p>
+<p>使用ClickHouse也有其本身的限制：</p>
+<p><code>1.</code>不支持真正的删除/更新支持 不支持事务（期待后续版本支持）<br> <code>2.</code>不支持二级索引<br> <code>3.</code>有限的SQL支持，join实现与众不同<br> <code>4.</code>不支持窗口功能<br> <code>5.</code>元数据管理需要人工干预维护</p>
+<p>访问Mysql数据库</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">DATABASE</span> mysql_dc <span class="keyword">ENGINE</span> = MySQL(<span class="string">'192.168.0.2:3306'</span>, <span class="string">'dbname'</span>, <span class="string">'user'</span>, <span class="string">'password'</span>)</span><br></pre></td></tr></table></figure>
+
+<p>使用Mysql接口访问ClickHouse</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql --protocol tcp -u default -P 9004 -h 192.168.0.3 -p password</span><br></pre></td></tr></table></figure>
+
+<p>参考资料</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/04/14/ClickHouse%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8/" data-id="cka5429bv00011cp5047r6kp7" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-ClickHouse安装配置" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2020/04/14/ClickHouse%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/" class="article-date">
@@ -109,7 +156,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/14/ClickHouse%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/" data-id="cka50ud8u00043wp5d9bx7fib" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/14/ClickHouse%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/" data-id="cka5429bx00021cp5c9q6epqk" class="article-share-link">Share</a>
       
       
     </footer>
@@ -147,7 +194,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/14/ClickHouse%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE/" data-id="cka50ud8s00023wp5hf5xdn2c" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/14/ClickHouse%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE/" data-id="cka5429bx00031cp5gln6fz7e" class="article-share-link">Share</a>
       
       
     </footer>
@@ -196,7 +243,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/07/hello-world/" data-id="cka50ud8z000c3wp51qsj1rps" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/07/hello-world/" data-id="cka5429c7000d1cp53mksave7" class="article-share-link">Share</a>
       
       
     </footer>
@@ -242,6 +289,10 @@
       <ul>
         
           <li>
+            <a href="/2020/05/13/OpenTSDB3.0%E5%AE%9E%E8%B7%B5%E4%B8%80/">OpenTSDB3.0实践一</a>
+          </li>
+        
+          <li>
             <a href="/2020/05/09/JMeter%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8/">JMeter工具的使用</a>
           </li>
         
@@ -255,10 +306,6 @@
         
           <li>
             <a href="/2020/04/28/Idea%E6%90%AD%E5%BB%BAFlink%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/">Idea搭建Flink本地开发环境</a>
-          </li>
-        
-          <li>
-            <a href="/2020/04/28/Flink%E8%87%AA%E5%AE%9A%E4%B9%89Sink/">Flink自定义Sink</a>
           </li>
         
       </ul>
