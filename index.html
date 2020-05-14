@@ -78,7 +78,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2020/05/13/OpenTSDB3.0%E5%AE%9E%E8%B7%B5%E4%B8%80/">OpenTSDB3.0实践一</a>
+      <a class="article-title" href="/2020/05/13/OpenTSDB3.0%E5%AE%9E%E8%B7%B5%E4%B8%80/">OpenTSDB 3.0实践一</a>
     </h1>
   
 
@@ -86,8 +86,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <hr>
-<h2 id="OpenTSDB-3-0实践一"><a href="#OpenTSDB-3-0实践一" class="headerlink" title="OpenTSDB 3.0实践一"></a>OpenTSDB 3.0实践一</h2><p>记录OpenTSDB3.0的使用方法</p>
+        <p>记录OpenTSDB3.0的使用方法</p>
 <p>1、创建Hbase表</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="string">'open300:tsdb-uid'</span>,</span><br><span class="line">  &#123;<span class="keyword">NAME</span> =&gt; <span class="string">'id'</span>, COMPRESSION =&gt; <span class="string">'SNAPPY'</span>, BLOOMFILTER =&gt; <span class="string">'ROW'</span>&#125;,</span><br><span class="line">  &#123;<span class="keyword">NAME</span> =&gt; <span class="string">'name'</span>, COMPRESSION =&gt; <span class="string">'SNAPPY'</span>, BLOOMFILTER =&gt; <span class="string">'ROW'</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">create</span> <span class="string">'open300:tsdb'</span>,</span><br><span class="line">  &#123;<span class="keyword">NAME</span> =&gt; <span class="string">'t'</span>, <span class="keyword">VERSIONS</span> =&gt; <span class="number">1</span>, COMPRESSION =&gt; <span class="string">'SNAPPY'</span>, BLOOMFILTER =&gt; <span class="string">'ROW'</span>&#125;</span><br><span class="line">  </span><br><span class="line"><span class="keyword">create</span> <span class="string">'open300:tsdb-tree'</span>,</span><br><span class="line">  &#123;<span class="keyword">NAME</span> =&gt; <span class="string">'t'</span>, <span class="keyword">VERSIONS</span> =&gt; <span class="number">1</span>, COMPRESSION =&gt; <span class="string">'SNAPPY'</span>, BLOOMFILTER =&gt; <span class="string">'ROW'</span>&#125;</span><br><span class="line">  </span><br><span class="line"><span class="keyword">create</span> <span class="string">'open300:tsdb-meta'</span>,</span><br><span class="line">  &#123;<span class="keyword">NAME</span> =&gt; <span class="string">'name'</span>, COMPRESSION =&gt; <span class="string">'SNAPPY'</span>, BLOOMFILTER =&gt; <span class="string">'ROW'</span>&#125;</span><br></pre></td></tr></table></figure>
 
@@ -108,10 +107,12 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">15</span>:<span class="number">57</span>:<span class="number">25.715</span> [XNIO-<span class="number">1</span> task-<span class="number">1</span>] ERROR net.opentsdb.servlet.exceptions.GenericExceptionMapper - Unexpected exception</span><br><span class="line">java.lang.NullPointerException: <span class="keyword">null</span></span><br><span class="line">	at net.opentsdb.servlet.resources.PutDataPointRpc.post(PutDataPointRpc.java:<span class="number">403</span>)</span><br><span class="line">	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)</span><br><span class="line">	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:<span class="number">62</span>)</span><br><span class="line">	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:<span class="number">43</span>)</span><br><span class="line">	at java.lang.reflect.Method.invoke(Method.java:<span class="number">498</span>)</span><br><span class="line">	at org.glassfish.jersey.server.model.internal.ResourceMethodInvocationHandlerFactory$<span class="number">1</span>.invoke(ResourceMethodInvocationHandlerFactory.java:<span class="number">81</span>)</span><br><span class="line">	at org.glassfish.jersey.server.model.internal.AbstractJavaResourceMethodDispatcher$<span class="number">1</span>.run(AbstractJavaResourceMethodDispatcher.java:<span class="number">151</span>)</span><br><span class="line">	at org.glassfish.jersey.server.model.internal.AbstractJavaResourceMethodDispatcher.invoke(AbstractJavaResourceMethodDispatcher.java:<span class="number">171</span>)</span><br><span class="line">	at org.glassfish.jersey.server.model.internal.JavaResourceMethodDispatcherProvider$ResponseOutInvoker.doDispatch(JavaResourceMethodDispatcherProvider.java:<span class="number">152</span>)</span><br><span class="line">	at org.glassfish.jersey.server.model.internal.AbstractJavaResourceMethodDispatcher.dispatch(AbstractJavaResourceMethodDispatcher.java:<span class="number">104</span>)</span><br><span class="line">	at org.glassfish.jersey.server.model.ResourceMethodInvoker.invoke(ResourceMethodInvoker.java:<span class="number">384</span>)</span><br><span class="line">	at org.glassfish.jersey.server.model.ResourceMethodInvoker.apply(ResourceMethodInvoker.java:<span class="number">342</span>)</span><br><span class="line">	at org.glassfish.jersey.server.model.ResourceMethodInvoker.apply(ResourceMethodInvoker.java:<span class="number">101</span>)</span><br><span class="line">	at org.glassfish.jersey.server.ServerRuntime$<span class="number">1</span>.run(ServerRuntime.java:<span class="number">271</span>)</span><br><span class="line">	at org.glassfish.jersey.internal.Errors$<span class="number">1</span>.call(Errors.java:<span class="number">271</span>)</span><br><span class="line">	at org.glassfish.jersey.internal.Errors$<span class="number">1</span>.call(Errors.java:<span class="number">267</span>)</span><br><span class="line">	at org.glassfish.jersey.internal.Errors.process(Errors.java:<span class="number">315</span>)</span><br><span class="line">	at org.glassfish.jersey.internal.Errors.process(Errors.java:<span class="number">297</span>)</span><br><span class="line">	at org.glassfish.jersey.internal.Errors.process(Errors.java:<span class="number">267</span>)</span><br><span class="line">	at org.glassfish.jersey.process.internal.RequestScope.runInScope(RequestScope.java:<span class="number">297</span>)</span><br><span class="line">	at org.glassfish.jersey.server.ServerRuntime.process(ServerRuntime.java:<span class="number">254</span>)</span><br><span class="line">	at org.glassfish.jersey.server.ApplicationHandler.handle(ApplicationHandler.java:<span class="number">1030</span>)</span><br><span class="line">	at org.glassfish.jersey.servlet.WebComponent.service(WebComponent.java:<span class="number">373</span>)</span><br><span class="line">	at org.glassfish.jersey.servlet.ServletContainer.service(ServletContainer.java:<span class="number">381</span>)</span><br><span class="line">	at org.glassfish.jersey.servlet.ServletContainer.service(ServletContainer.java:<span class="number">344</span>)</span><br><span class="line">	at org.glassfish.jersey.servlet.ServletContainer.service(ServletContainer.java:<span class="number">221</span>)</span><br><span class="line">	at io.undertow.servlet.handlers.ServletHandler.handleRequest(ServletHandler.java:<span class="number">74</span>)</span><br><span class="line">	at io.undertow.servlet.handlers.security.ServletSecurityRoleHandler.handleRequest(ServletSecurityRoleHandler.java:<span class="number">62</span>)</span><br><span class="line">	at io.undertow.servlet.handlers.ServletChain$<span class="number">1</span>.handleRequest(ServletChain.java:<span class="number">68</span>)</span><br><span class="line">	at io.undertow.servlet.handlers.ServletDispatchingHandler.handleRequest(ServletDispatchingHandler.java:<span class="number">36</span>)</span><br><span class="line">	at io.undertow.servlet.handlers.security.SSLInformationAssociationHandler.handleRequest(SSLInformationAssociationHandler.java:<span class="number">132</span>)</span><br><span class="line">	at io.undertow.servlet.handlers.security.ServletAuthenticationCallHandler.handleRequest(ServletAuthenticationCallHandler.java:<span class="number">57</span>)</span><br><span class="line">	at io.undertow.server.handlers.PredicateHandler.handleRequest(PredicateHandler.java:<span class="number">43</span>)</span><br><span class="line">	at io.undertow.security.handlers.AbstractConfidentialityHandler.handleRequest(AbstractConfidentialityHandler.java:<span class="number">46</span>)</span><br><span class="line">	at io.undertow.servlet.handlers.security.ServletConfidentialityConstraintHandler.handleRequest(ServletConfidentialityConstraintHandler.java:<span class="number">64</span>)</span><br><span class="line">	at io.undertow.security.handlers.AuthenticationMechanismsHandler.handleRequest(AuthenticationMechanismsHandler.java:<span class="number">60</span>)</span><br><span class="line">	at io.undertow.servlet.handlers.security.CachedAuthenticatedSessionHandler.handleRequest(CachedAuthenticatedSessionHandler.java:<span class="number">77</span>)</span><br><span class="line">	at io.undertow.security.handlers.AbstractSecurityContextAssociationHandler.handleRequest(AbstractSecurityContextAssociationHandler.java:<span class="number">43</span>)</span><br><span class="line">	at io.undertow.server.handlers.PredicateHandler.handleRequest(PredicateHandler.java:<span class="number">43</span>)</span><br><span class="line">	at io.undertow.server.handlers.PredicateHandler.handleRequest(PredicateHandler.java:<span class="number">43</span>)</span><br><span class="line">	at io.undertow.servlet.handlers.ServletInitialHandler.handleFirstRequest(ServletInitialHandler.java:<span class="number">292</span>)</span><br><span class="line">	at io.undertow.servlet.handlers.ServletInitialHandler.access$<span class="number">100</span>(ServletInitialHandler.java:<span class="number">81</span>)</span><br><span class="line">	at io.undertow.servlet.handlers.ServletInitialHandler$<span class="number">2</span>.call(ServletInitialHandler.java:<span class="number">138</span>)</span><br><span class="line">	at io.undertow.servlet.handlers.ServletInitialHandler$<span class="number">2</span>.call(ServletInitialHandler.java:<span class="number">135</span>)</span><br><span class="line">	at io.undertow.servlet.core.ServletRequestContextThreadSetupAction$<span class="number">1</span>.call(ServletRequestContextThreadSetupAction.java:<span class="number">48</span>)</span><br><span class="line">	at io.undertow.servlet.core.ContextClassLoaderSetupAction$<span class="number">1</span>.call(ContextClassLoaderSetupAction.java:<span class="number">43</span>)</span><br><span class="line">	at io.undertow.servlet.handlers.ServletInitialHandler.dispatchRequest(ServletInitialHandler.java:<span class="number">272</span>)</span><br><span class="line">	at io.undertow.servlet.handlers.ServletInitialHandler.access$<span class="number">000</span>(ServletInitialHandler.java:<span class="number">81</span>)</span><br><span class="line">	at io.undertow.servlet.handlers.ServletInitialHandler$<span class="number">1</span>.handleRequest(ServletInitialHandler.java:<span class="number">104</span>)</span><br><span class="line">	at io.undertow.server.Connectors.executeRootHandler(Connectors.java:<span class="number">364</span>)</span><br><span class="line">	at io.undertow.server.HttpServerExchange$<span class="number">1</span>.run(HttpServerExchange.java:<span class="number">830</span>)</span><br><span class="line">	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:<span class="number">1149</span>)</span><br><span class="line">	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:<span class="number">624</span>)</span><br><span class="line">	at java.lang.Thread.run(Thread.java:<span class="number">748</span>)</span><br></pre></td></tr></table></figure>
 
 
+
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/13/OpenTSDB3.0%E5%AE%9E%E8%B7%B5%E4%B8%80/" data-id="cka5429c6000c1cp5cdil31os" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/13/OpenTSDB3.0%E5%AE%9E%E8%B7%B5%E4%B8%80/" data-id="cka62hvp2000b78p543vmeqgm" class="article-share-link">Share</a>
       
       
     </footer>
@@ -147,7 +148,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/09/JMeter%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8/" data-id="cka5429c300091cp5bz7l22at" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/09/JMeter%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8/" data-id="cka62hvp0000878p5eg3t6u64" class="article-share-link">Share</a>
       
       
     </footer>
@@ -213,7 +214,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/29/Flink%E8%AF%BB%E5%86%99Kafka/" data-id="cka5429c000061cp5c3to4yw8" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/29/Flink%E8%AF%BB%E5%86%99Kafka/" data-id="cka62hvoy000578p54v1w8706" class="article-share-link">Share</a>
       
       
     </footer>
@@ -261,7 +262,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/28/Java%E4%B8%AD%E7%A7%91%E5%AD%A6%E8%AE%A1%E6%95%B0%E6%B3%95/" data-id="cka5429c200081cp58zded846" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/28/Java%E4%B8%AD%E7%A7%91%E5%AD%A6%E8%AE%A1%E6%95%B0%E6%B3%95/" data-id="cka62hvp1000978p54vjg79mm" class="article-share-link">Share</a>
       
       
     </footer>
@@ -314,7 +315,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/28/Idea%E6%90%AD%E5%BB%BAFlink%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/" data-id="cka5429bz00051cp5hdaq9wxf" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/28/Idea%E6%90%AD%E5%BB%BAFlink%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/" data-id="cka62hvoz000778p55pxkdmgd" class="article-share-link">Share</a>
       
       
     </footer>
@@ -360,7 +361,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/28/Flink%E8%87%AA%E5%AE%9A%E4%B9%89Sink/" data-id="cka5429by00041cp5ceno0i1v" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/28/Flink%E8%87%AA%E5%AE%9A%E4%B9%89Sink/" data-id="cka62hvoy000678p5hvsi5b9m" class="article-share-link">Share</a>
       
       
     </footer>
@@ -401,7 +402,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/20/OpenTSDB%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/" data-id="cka5429c5000b1cp5b9abaieq" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/20/OpenTSDB%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/" data-id="cka62hvp2000c78p5capfhx7e" class="article-share-link">Share</a>
       
       
     </footer>
@@ -439,7 +440,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/20/Kafka%E8%BF%90%E7%BB%B4/" data-id="cka5429c4000a1cp5hdsj51zx" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/20/Kafka%E8%BF%90%E7%BB%B4/" data-id="cka62hvp1000a78p5cn2vgg1r" class="article-share-link">Share</a>
       
       
     </footer>
@@ -502,7 +503,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/15/ClickHouse%20on%20Zeppelin/" data-id="cka5429bp00001cp57yvw3xnq" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/15/ClickHouse%20on%20Zeppelin/" data-id="cka62hvom000078p5009uhbm7" class="article-share-link">Share</a>
       
       
     </footer>
@@ -538,7 +539,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/14/DataX%E5%90%8C%E6%AD%A5Hive%E6%95%B0%E6%8D%AE%E8%87%B3ClickHouse/" data-id="cka5429c100071cp57et6d0vr" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/14/DataX%E5%90%8C%E6%AD%A5Hive%E6%95%B0%E6%8D%AE%E8%87%B3ClickHouse/" data-id="cka62hvox000478p51f2ycsk4" class="article-share-link">Share</a>
       
       
     </footer>
@@ -584,7 +585,7 @@
       <ul>
         
           <li>
-            <a href="/2020/05/13/OpenTSDB3.0%E5%AE%9E%E8%B7%B5%E4%B8%80/">OpenTSDB3.0实践一</a>
+            <a href="/2020/05/13/OpenTSDB3.0%E5%AE%9E%E8%B7%B5%E4%B8%80/">OpenTSDB 3.0实践一</a>
           </li>
         
           <li>
