@@ -15,8 +15,9 @@
 <meta property="og:description" content="本篇主要记录如何自定义Flink Sink，以OpenTSDB为例。 准备工作开发环境搭建参见Idea搭建Flink本地开发环境 OpenTSDBSink新建一个OpenTSDBSink类，并继承RichSinkFunction，然后重写里面的方法，这里主要重写了open，invoke方法，示例中参数仅做为演示，生产环境建议由外部传入。 123456789101112131415161718192">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-04-28T07:25:07.219Z">
-<meta property="article:modified_time" content="2020-04-29T07:10:22.104Z">
+<meta property="article:modified_time" content="2020-05-18T01:44:29.454Z">
 <meta property="article:author" content="qiguoxiaosheng">
+<meta property="article:tag" content="Flink">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternate" href="/atom.xml" title="qiguoxiaosheng&#39;s blogs" type="application/atom+xml">
@@ -51,6 +52,12 @@
           <a class="main-nav-link" href="/">Home</a>
         
           <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/categories">Categories</a>
+        
+          <a class="main-nav-link" href="/tags">Tags</a>
+        
+          <a class="main-nav-link" href="/about">About</a>
         
       </nav>
       <nav id="sub-nav">
@@ -102,9 +109,11 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/28/Flink%E8%87%AA%E5%AE%9A%E4%B9%89Sink/" data-id="cka62hvoy000678p5hvsi5b9m" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/28/Flink%E8%87%AA%E5%AE%9A%E4%B9%89Sink/" data-id="ckabttzwb0008f0p567v52nkj" class="article-share-link">Share</a>
       
       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flink/" rel="tag">Flink</a></li></ul>
+
     </footer>
   </div>
   
@@ -123,7 +132,7 @@
   
     <a href="/2020/04/20/OpenTSDB%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">OpenTSDB 3.0.0源码编译环境搭建</div>
+      <div class="article-nav-title">OpenTSDB 源码编译环境搭建</div>
     </a>
   
 </nav>
@@ -139,9 +148,23 @@
 
   
     
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ClickHouse/" rel="tag">ClickHouse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DataX/" rel="tag">DataX</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flink/" rel="tag">Flink</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hive/" rel="tag">Hive</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Idea/" rel="tag">Idea</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OpenTSDB/" rel="tag">OpenTSDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Zeppelin/" rel="tag">Zeppelin</a></li></ul>
+    </div>
+  </div>
+
 
   
     
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ClickHouse/" style="font-size: 20px;">ClickHouse</a> <a href="/tags/DataX/" style="font-size: 10px;">DataX</a> <a href="/tags/Flink/" style="font-size: 16.67px;">Flink</a> <a href="/tags/Hive/" style="font-size: 10px;">Hive</a> <a href="/tags/Idea/" style="font-size: 10px;">Idea</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/OpenTSDB/" style="font-size: 13.33px;">OpenTSDB</a> <a href="/tags/Zeppelin/" style="font-size: 10px;">Zeppelin</a>
+    </div>
+  </div>
+
   
     
   <div class="widget-wrap">
@@ -202,6 +225,12 @@
     <a href="/" class="mobile-nav-link">Home</a>
   
     <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/categories" class="mobile-nav-link">Categories</a>
+  
+    <a href="/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/about" class="mobile-nav-link">About</a>
   
 </nav>
     
