@@ -15,7 +15,7 @@
 <meta property="og:description" content="本篇主要记录如何自定义Flink Sink，以OpenTSDB为例。 准备工作开发环境搭建参见Idea搭建Flink本地开发环境 OpenTSDBSink新建一个OpenTSDBSink类，并继承RichSinkFunction，然后重写里面的方法，这里主要重写了open，invoke方法，示例中参数仅做为演示，生产环境建议由外部传入。 123456789101112131415161718192">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-04-28T07:25:07.219Z">
-<meta property="article:modified_time" content="2020-05-18T01:44:29.454Z">
+<meta property="article:modified_time" content="2020-05-19T06:15:13.579Z">
 <meta property="article:author" content="qiguoxiaosheng">
 <meta property="article:tag" content="Flink">
 <meta name="twitter:card" content="summary">
@@ -79,6 +79,10 @@
   <time datetime="2020-04-28T07:25:07.219Z" itemprop="datePublished">2020-04-28</time>
 </a>
     
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Develop/">Develop</a>
+  </div>
+
   </div>
   <div class="article-inner">
     
@@ -109,7 +113,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/28/Flink%E8%87%AA%E5%AE%9A%E4%B9%89Sink/" data-id="ckabtyxxb0008bgp5dhpw6wjc" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/28/Flink%E8%87%AA%E5%AE%9A%E4%B9%89Sink/" data-id="ckadlrxp0000ax4p5970p5s2q" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flink/" rel="tag">Flink</a></li></ul>
@@ -132,7 +136,7 @@
   
     <a href="/2020/04/20/OpenTSDB%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">OpenTSDB 源码编译环境搭建</div>
+      <div class="article-nav-title">OpenTSDB 源码编译</div>
     </a>
   
 </nav>
@@ -145,6 +149,13 @@
           <aside id="sidebar">
   
     
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Develop/">Develop</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Maintenance/">Maintenance</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/TEST/">TEST</a></li></ul>
+    </div>
+  </div>
+
 
   
     
@@ -161,7 +172,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/ClickHouse/" style="font-size: 20px;">ClickHouse</a> <a href="/tags/DataX/" style="font-size: 10px;">DataX</a> <a href="/tags/Flink/" style="font-size: 16.67px;">Flink</a> <a href="/tags/Hive/" style="font-size: 10px;">Hive</a> <a href="/tags/Idea/" style="font-size: 10px;">Idea</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/OpenTSDB/" style="font-size: 13.33px;">OpenTSDB</a> <a href="/tags/Zeppelin/" style="font-size: 10px;">Zeppelin</a>
+      <a href="/tags/ClickHouse/" style="font-size: 20px;">ClickHouse</a> <a href="/tags/DataX/" style="font-size: 10px;">DataX</a> <a href="/tags/Flink/" style="font-size: 15px;">Flink</a> <a href="/tags/Hive/" style="font-size: 10px;">Hive</a> <a href="/tags/Idea/" style="font-size: 10px;">Idea</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/OpenTSDB/" style="font-size: 15px;">OpenTSDB</a> <a href="/tags/Zeppelin/" style="font-size: 10px;">Zeppelin</a>
     </div>
   </div>
 
@@ -183,6 +194,10 @@
       <ul>
         
           <li>
+            <a href="/2020/05/19/OpenTSDB%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/">OpenTSDB安装部署</a>
+          </li>
+        
+          <li>
             <a href="/2020/05/13/OpenTSDB3.0%E5%AE%9E%E8%B7%B5%E4%B8%80/">OpenTSDB 3.0实践一</a>
           </li>
         
@@ -196,10 +211,6 @@
         
           <li>
             <a href="/2020/04/28/Java%E4%B8%AD%E7%A7%91%E5%AD%A6%E8%AE%A1%E6%95%B0%E6%B3%95/">Java中科学计数法</a>
-          </li>
-        
-          <li>
-            <a href="/2020/04/28/Idea%E6%90%AD%E5%BB%BAFlink%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/">Idea搭建Flink本地开发环境</a>
           </li>
         
       </ul>

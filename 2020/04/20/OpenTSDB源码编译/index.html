@@ -5,17 +5,17 @@
   
 
   
-  <title>OpenTSDB 源码编译环境搭建 | qiguoxiaosheng&#39;s blogs</title>
+  <title>OpenTSDB 源码编译 | qiguoxiaosheng&#39;s blogs</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="版本：3.0.01、下载源码  git clone –progress –branch v3.0 -v “https:&#x2F;&#x2F;github.com&#x2F;qiguoxiaosheng&#x2F;opentsdb.git&quot; .&#x2F;opentsdb-3.0 2、导入IEDA opentsdb3.0位maven工程，可以直接编译。 编译后的安装包位于distribution&#x2F;target下，名称为opentsdb-">
+  <meta name="description" content="版本：3.0.01、下载源码 1git clone --progress --branch v3.0 -v &quot;https:&#x2F;&#x2F;github.com&#x2F;qiguoxiaosheng&#x2F;opentsdb.git&quot; .&#x2F;opentsdb-3.0  2、导入IDEA opentsdb3.0位maven工程，可以直接编译。 编译后的安装包位于distribution&#x2F;target下，名称为opentsdb-3.">
 <meta property="og:type" content="article">
-<meta property="og:title" content="OpenTSDB 源码编译环境搭建">
+<meta property="og:title" content="OpenTSDB 源码编译">
 <meta property="og:url" content="http://yoursite.com/2020/04/20/OpenTSDB%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/index.html">
 <meta property="og:site_name" content="qiguoxiaosheng&#39;s blogs">
-<meta property="og:description" content="版本：3.0.01、下载源码  git clone –progress –branch v3.0 -v “https:&#x2F;&#x2F;github.com&#x2F;qiguoxiaosheng&#x2F;opentsdb.git&quot; .&#x2F;opentsdb-3.0 2、导入IEDA opentsdb3.0位maven工程，可以直接编译。 编译后的安装包位于distribution&#x2F;target下，名称为opentsdb-">
+<meta property="og:description" content="版本：3.0.01、下载源码 1git clone --progress --branch v3.0 -v &quot;https:&#x2F;&#x2F;github.com&#x2F;qiguoxiaosheng&#x2F;opentsdb.git&quot; .&#x2F;opentsdb-3.0  2、导入IDEA opentsdb3.0位maven工程，可以直接编译。 编译后的安装包位于distribution&#x2F;target下，名称为opentsdb-3.">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-04-20T07:52:04.933Z">
-<meta property="article:modified_time" content="2020-05-18T01:41:55.974Z">
+<meta property="article:modified_time" content="2020-05-19T07:34:36.514Z">
 <meta property="article:author" content="qiguoxiaosheng">
 <meta property="article:tag" content="OpenTSDB">
 <meta name="twitter:card" content="summary">
@@ -79,6 +79,10 @@
   <time datetime="2020-04-20T07:52:04.933Z" itemprop="datePublished">2020-04-20</time>
 </a>
     
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Develop/">Develop</a>
+  </div>
+
   </div>
   <div class="article-inner">
     
@@ -87,7 +91,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      OpenTSDB 源码编译环境搭建
+      OpenTSDB 源码编译
     </h1>
   
 
@@ -96,15 +100,49 @@
     <div class="article-entry" itemprop="articleBody">
       
         <h2 id="版本：3-0-0"><a href="#版本：3-0-0" class="headerlink" title="版本：3.0.0"></a>版本：3.0.0</h2><p>1、下载源码</p>
-<p> git clone –progress –branch v3.0 -v “<a href="https://github.com/qiguoxiaosheng/opentsdb.git&quot;" target="_blank" rel="noopener">https://github.com/qiguoxiaosheng/opentsdb.git&quot;</a> ./opentsdb-3.0</p>
-<p>2、导入IEDA</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone --progress --branch v3.0 -v "https://github.com/qiguoxiaosheng/opentsdb.git" ./opentsdb-3.0</span><br></pre></td></tr></table></figure>
+
+<p>2、导入IDEA</p>
 <p>opentsdb3.0位maven工程，可以直接编译。</p>
 <p>编译后的安装包位于distribution/target下，名称为opentsdb-3.0.90-SNAPSHOT.tar.gz</p>
-<h2 id="版本：2-4-0"><a href="#版本：2-4-0" class="headerlink" title="版本：2.4.0"></a>版本：2.4.0</h2>
+<h2 id="版本：2-4-0"><a href="#版本：2-4-0" class="headerlink" title="版本：2.4.0"></a>版本：2.4.0</h2><p>OpenTSDB是采用Java编写的，但3.0之前的版本并非采用当前开源社区广泛使用maven/gradle来构建的，而是使用Autotools和GNU进行构建的，这对习惯使用Window操作系统、IDE的码农来说，开发起来相当的不方便。不过，官方网站有使用Eclipse进行源码开发的操作文档，照着搭了一遍，不用Eclipse也有好多年了，不知是手生了还是咋了，感觉照着官方文档操作起来非常的繁琐，最后也没成。于是乎，回到原点，使用一直在用的IDEA捣鼓下，参照前人的经验再加上自己的不懈折腾，最终还是有点小结果。</p>
+<h4 id="下载源码"><a href="#下载源码" class="headerlink" title="下载源码"></a>下载源码</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone --progress --branch v2.4.0 -v &quot;https:&#x2F;&#x2F;github.com&#x2F;qiguoxiaosheng&#x2F;opentsdb.git&quot; opentsdb-2.4.0</span><br></pre></td></tr></table></figure>
+
+<h4 id="在Linux系统中编译"><a href="#在Linux系统中编译" class="headerlink" title="在Linux系统中编译"></a>在Linux系统中编译</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./build.sh</span><br></pre></td></tr></table></figure>
+
+<p>把编译好的文件复制到Windows上，编译后的目录结构为</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">-rw-r--r--.  1 root root    813 Dec 17  2018 AUTHORS</span><br><span class="line">drwxr-xr-x.  2 root root     86 Apr 20 17:58 autom4te.cache</span><br><span class="line">-rwxr-xr-x.  1 root root    740 Dec 17  2018 bootstrap</span><br><span class="line">drwxr-xr-x. 10 root root   4096 Apr 21 09:04 build</span><br><span class="line">drwxr-xr-x.  4 root root    174 Apr 20 17:58 build-aux</span><br><span class="line">-rw-r--r--.  1 root root    221 Dec 17  2018 build-bigtable.sh</span><br><span class="line">-rw-r--r--.  1 root root    222 Dec 17  2018 build-cassandra.sh</span><br><span class="line">-rwxr-xr-x.  1 root root    206 Dec 17  2018 build.sh</span><br><span class="line">-rwxr-xr-x.  1 root root 114476 Apr 20 17:58 configure</span><br><span class="line">-rw-r--r--.  1 root root   2278 Dec 17  2018 configure.ac</span><br><span class="line">-rw-r--r--.  1 root root   4551 Dec 17  2018 CONTRIBUTING.md</span><br><span class="line">-rw-r--r--.  1 root root  35147 Dec 17  2018 COPYING</span><br><span class="line">-rw-r--r--.  1 root root  26530 Dec 17  2018 COPYING.LESSER</span><br><span class="line">drwxr-xr-x.  2 root root    183 May 14 10:03 fat-jar</span><br><span class="line">-rw-r--r--.  1 root root  37327 Dec 17  2018 Makefile.am</span><br><span class="line">-rw-r--r--.  1 root root  97996 Apr 21 08:55 Makefile.in</span><br><span class="line">-rw-r--r--.  1 root root  24959 Dec 17  2018 NEWS</span><br><span class="line">-rw-r--r--.  1 root root   3768 Dec 17  2018 opentsdb.spec.in</span><br><span class="line">-rw-r--r--.  1 root root  18641 Apr 20 17:58 pom.xml</span><br><span class="line">-rw-r--r--.  1 root root  18997 Dec 17  2018 pom.xml.in</span><br><span class="line">-rw-r--r--.  1 root root   1024 Dec 17  2018 README</span><br><span class="line">-rw-r--r--.  1 root root    178 Dec 17  2018 screwdriver.yaml</span><br><span class="line">drwxr-xr-x. 17 root root   4096 Dec 17  2018 src</span><br><span class="line">drwxr-xr-x.  4 root root     28 Apr 20 17:58 src-main</span><br><span class="line">drwxr-xr-x.  3 root root     17 Apr 20 17:58 src-test</span><br><span class="line">drwxr-xr-x. 19 root root    231 Dec 17  2018 test</span><br><span class="line">-rw-r--r--.  1 root root   3288 Dec 17  2018 THANKS</span><br><span class="line">drwxr-xr-x. 26 root root   4096 Dec 17  2018 third_party</span><br><span class="line">drwxr-xr-x.  3 root root    156 Dec 17  2018 tools</span><br><span class="line">-rw-r--r--.  1 root root   3310 Dec 17  2018 tsdb.in</span><br></pre></td></tr></table></figure>
+
+<p>在IDEA里新建一个maven工程，并拷贝相关代码</p>
+<p>将src-main中的代码复制到src/main/java目录下，src-test中的代码复制到src/test/java下;将build/src/net/opentsdb/query/expression/parser下的文件复制至src/main/java目录的net.opentsdb.query.expression.parser包中，将build/src/tools/BuildData.java复制至src/main/java目录的net.opentsdb.tools包中。</p>
+<p>将源文件src目录下的logback.xml、opentsdb.conf、create_table.sh复制到maven工程的src/main/resources下，替换pom.xml。</p>
+<p>使用assembly插件，将工程打成tar包</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.maven.plugins<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>maven-assembly-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">executions</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">execution</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">id</span>&gt;</span>make-assembly<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">phase</span>&gt;</span>package<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">goals</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">goal</span>&gt;</span>single<span class="tag">&lt;/<span class="name">goal</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">goals</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">descriptors</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">descriptor</span>&gt;</span>src/main/package.xml<span class="tag">&lt;/<span class="name">descriptor</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">descriptors</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">appendAssemblyId</span>&gt;</span>false<span class="tag">&lt;/<span class="name">appendAssemblyId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">finalName</span>&gt;</span>opentsdb-$&#123;project.version&#125;<span class="tag">&lt;/<span class="name">finalName</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">tarLongFileMode</span>&gt;</span>gnu<span class="tag">&lt;/<span class="name">tarLongFileMode</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">execution</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">executions</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="maven打包过程中遇到的问题"><a href="#maven打包过程中遇到的问题" class="headerlink" title="maven打包过程中遇到的问题"></a>maven打包过程中遇到的问题</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mvn clean package</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[INFO] --- exec-maven-plugin:<span class="number">1.6</span><span class="number">.0</span>:exec (create-plugin-test-jar) @ opentsdb ---</span><br><span class="line">java.io.FileNotFoundException: test\META-INF\MANIFEST.MF </span><br><span class="line">	at java.io.FileInputStream.open0(Native Method)</span><br><span class="line">	at java.io.FileInputStream.open(FileInputStream.java:<span class="number">195</span>)</span><br><span class="line">	at java.io.FileInputStream.&lt;init&gt;(FileInputStream.java:<span class="number">138</span>)</span><br><span class="line">	at java.io.FileInputStream.&lt;init&gt;(FileInputStream.java:<span class="number">93</span>)</span><br><span class="line">	at sun.tools.jar.Main.run(Main.java:<span class="number">175</span>)</span><br><span class="line">	at sun.tools.jar.Main.main(Main.java:<span class="number">1288</span>)</span><br><span class="line">[ERROR] Command execution failed.</span><br><span class="line">Command execution failed.</span><br></pre></td></tr></table></figure>
+
+<p>未解决，暂时将pom文件中的exec-maven-plugin插件注释掉。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">[ERROR] Source level must be one of [auto, <span class="number">1.6</span>, <span class="number">1.7</span>].</span><br><span class="line">Source level must be one of [auto, <span class="number">1.6</span>, <span class="number">1.7</span>].</span><br><span class="line">Google Web Toolkit <span class="number">2.6</span><span class="number">.0</span></span><br><span class="line">Compiler [-logLevel level] [-workDir dir] [-[no]compileReport] [-X[no]checkCasts] [-X[no]classMetadata] [-[no]draftCompile] [-[no]checkAssertions] [-X[no]closureCompiler] [-XfragmentCount numFragments] [-XfragmentMerge numFragments] [-gen dir] [-optimize level] [-[no]saveSource] [-style style] [-[no]failOnError] [-X[no]enforceStrictResources] [-[no]validateOnly] [-sourceLevel [auto, <span class="number">1.6</span>, <span class="number">1.7</span>]] [-localWorkers count] [-war dir] [-deploy dir] [-extra dir] [-saveSourceOutput dir] <span class="keyword">module</span>[s] </span><br><span class="line">where </span><br><span class="line">  -logLevel                     The level of logging detail: ERROR, WARN, INFO, TRACE, DEBUG, SPAM, or ALL</span><br><span class="line">  -workDir                      The compiler<span class="string">'s working directory for internal use (must be writeable; defaults to a system temp dir)</span></span><br><span class="line"><span class="string">  -[no]compileReport            Compile a report that tells the "Story of Your Compile". (defaults to OFF)</span></span><br><span class="line"><span class="string">  -X[no]checkCasts              EXPERIMENTAL: Insert run-time checking of cast operations. (defaults to ON)</span></span><br><span class="line"><span class="string">  -X[no]classMetadata           EXPERIMENTAL: Include metadata for some java.lang.Class methods (e.g. getName()). (defaults to ON)</span></span><br><span class="line"><span class="string">  -[no]draftCompile             Compile quickly with minimal optimizations. (defaults to OFF)</span></span><br><span class="line"><span class="string">  -[no]checkAssertions          Include assert statements in compiled output. (defaults to ON)</span></span><br><span class="line"><span class="string">  -X[no]closureCompiler         EXPERIMENTAL: Compile output Javascript with the Closure compiler for even further optimizations. (defaults to OFF)</span></span><br><span class="line"><span class="string">  -XfragmentCount               EXPERIMENTAL: Limits of number of fragments using a code splitter that merges split points.</span></span><br><span class="line"><span class="string">  -XfragmentMerge               DEPRECATED (use -XfragmentCount instead): Enables Fragment merging code splitter.</span></span><br><span class="line"><span class="string">  -gen                          Debugging: causes normally-transient generated types to be saved in the specified directory</span></span><br><span class="line"><span class="string">  -optimize                     Sets the optimization level used by the compiler.  0=none 9=maximum.</span></span><br><span class="line"><span class="string">  -[no]saveSource               Enables saving source code needed by debuggers. Also see -debugDir. (defaults to OFF)</span></span><br><span class="line"><span class="string">  -style                        Script output style: OBF[USCATED], PRETTY, or DETAILED (defaults to OBF)</span></span><br><span class="line"><span class="string">  -[no]failOnError              Fail compilation if any input file contains an error. (defaults to OFF)</span></span><br><span class="line"><span class="string">  -X[no]enforceStrictResources  EXPERIMENTAL: Avoid adding implicit dependencies on "client" and "public" for modules that don'</span>t define any dependencies. (defaults to OFF)</span><br><span class="line">  -[no]validateOnly             Validate all source code, but <span class="keyword">do</span> not compile. (defaults to OFF)</span><br><span class="line">  -<span class="function">sourceLevel                  Specifies Java source <span class="title">level</span> <span class="params">(defaults to auto:<span class="number">1.7</span>)</span></span></span><br><span class="line"><span class="function">  -localWorkers                 The number of local workers to use when compiling permutations</span></span><br><span class="line"><span class="function">  -war                          The directory into which deployable output files will be <span class="title">written</span> <span class="params">(defaults to <span class="string">'war'</span>)</span></span></span><br><span class="line"><span class="function">  -deploy                       The directory into which deployable but not servable output files will be <span class="title">written</span> <span class="params">(defaults to <span class="string">'WEB-INF/deploy'</span> under the -war directory/jar, and may be the same as the -extra directory/jar)</span></span></span><br><span class="line"><span class="function">  -extra                        The directory into which extra files, not intended <span class="keyword">for</span> deployment, will be written</span></span><br><span class="line"><span class="function">  -saveSourceOutput             Overrides where source files useful to debuggers will be written. Default: saved with extras.</span></span><br><span class="line"><span class="function">and </span></span><br><span class="line"><span class="function">  <span class="keyword">module</span>[s]                     Specifies the <span class="title">name</span><span class="params">(s)</span> of the <span class="title">module</span><span class="params">(s)</span> to compile</span></span><br></pre></td></tr></table></figure>
+
+<p>源代码中java版本采用的是1.6，本机开发使用的java1.8，此处通过在gwt-maven-plugin中添加配置项解决。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.codehaus.mojo<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>gwt-maven-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.6.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;<span class="name">executions</span>&gt;</span></span><br><span class="line">              <span class="tag">&lt;<span class="name">execution</span>&gt;</span></span><br><span class="line">                  <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">                       <span class="tag">&lt;<span class="name">logLevel</span>&gt;</span>INFO<span class="tag">&lt;/<span class="name">logLevel</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">sourceLevel</span>&gt;</span>1.7<span class="tag">&lt;/<span class="name">sourceLevel</span>&gt;</span></span><br><span class="line">                  <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line">              <span class="tag">&lt;/<span class="name">execution</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;/<span class="name">executions</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<ol>
+<li><a href="https://www.jianshu.com/p/2e02cfded841" target="_blank" rel="noopener">opentsdb源码阅读环境搭建</a></li>
+<li><a href="https://blog.csdn.net/yujimoyouran/article/details/90543217" target="_blank" rel="noopener">opentsdb源码编译 本地调试环境搭建</a></li>
+<li><a href="http://opentsdb.net/docs/build/html/development/development.html" target="_blank" rel="noopener">General Development</a></li>
+</ol>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/20/OpenTSDB%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/" data-id="ckabtyxxj000mbgp5ezgncp6v" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/20/OpenTSDB%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/" data-id="ckadlrxpc0010x4p53fqx3pj9" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenTSDB/" rel="tag">OpenTSDB</a></li></ul>
@@ -140,6 +178,13 @@
           <aside id="sidebar">
   
     
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Develop/">Develop</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Maintenance/">Maintenance</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/TEST/">TEST</a></li></ul>
+    </div>
+  </div>
+
 
   
     
@@ -156,7 +201,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/ClickHouse/" style="font-size: 20px;">ClickHouse</a> <a href="/tags/DataX/" style="font-size: 10px;">DataX</a> <a href="/tags/Flink/" style="font-size: 16.67px;">Flink</a> <a href="/tags/Hive/" style="font-size: 10px;">Hive</a> <a href="/tags/Idea/" style="font-size: 10px;">Idea</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/OpenTSDB/" style="font-size: 13.33px;">OpenTSDB</a> <a href="/tags/Zeppelin/" style="font-size: 10px;">Zeppelin</a>
+      <a href="/tags/ClickHouse/" style="font-size: 20px;">ClickHouse</a> <a href="/tags/DataX/" style="font-size: 10px;">DataX</a> <a href="/tags/Flink/" style="font-size: 15px;">Flink</a> <a href="/tags/Hive/" style="font-size: 10px;">Hive</a> <a href="/tags/Idea/" style="font-size: 10px;">Idea</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/OpenTSDB/" style="font-size: 15px;">OpenTSDB</a> <a href="/tags/Zeppelin/" style="font-size: 10px;">Zeppelin</a>
     </div>
   </div>
 
@@ -178,6 +223,10 @@
       <ul>
         
           <li>
+            <a href="/2020/05/19/OpenTSDB%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/">OpenTSDB安装部署</a>
+          </li>
+        
+          <li>
             <a href="/2020/05/13/OpenTSDB3.0%E5%AE%9E%E8%B7%B5%E4%B8%80/">OpenTSDB 3.0实践一</a>
           </li>
         
@@ -191,10 +240,6 @@
         
           <li>
             <a href="/2020/04/28/Java%E4%B8%AD%E7%A7%91%E5%AD%A6%E8%AE%A1%E6%95%B0%E6%B3%95/">Java中科学计数法</a>
-          </li>
-        
-          <li>
-            <a href="/2020/04/28/Idea%E6%90%AD%E5%BB%BAFlink%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/">Idea搭建Flink本地开发环境</a>
           </li>
         
       </ul>

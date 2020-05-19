@@ -5,20 +5,20 @@
   
 
   
-  <title>Kafka运维 | qiguoxiaosheng&#39;s blogs</title>
+  <title>OpenTSDB安装部署 | qiguoxiaosheng&#39;s blogs</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="article">
-<meta property="og:title" content="Kafka运维">
-<meta property="og:url" content="http://yoursite.com/2020/04/20/Kafka%E8%BF%90%E7%BB%B4/index.html">
+  <meta name="description" content="上一小节主要记录了OpenTSDB 源码编译过程，此文对OpenTSDB的安装做一个简单的说明。 Opentsdb WebUI依赖Gnuplot，Gnuplot是一个命令行的交互式绘图工具。用户通过输入命令，可以设置或修改绘图环境，并以图形描述数据或函数做更进一步的分析。如果用户不需要通过web浏览器访问OpenTSDB，可以跳过此步骤。 1yum install gnuplot  将生成的安装包">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenTSDB安装部署">
+<meta property="og:url" content="http://yoursite.com/2020/05/19/OpenTSDB%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/index.html">
 <meta property="og:site_name" content="qiguoxiaosheng&#39;s blogs">
+<meta property="og:description" content="上一小节主要记录了OpenTSDB 源码编译过程，此文对OpenTSDB的安装做一个简单的说明。 Opentsdb WebUI依赖Gnuplot，Gnuplot是一个命令行的交互式绘图工具。用户通过输入命令，可以设置或修改绘图环境，并以图形描述数据或函数做更进一步的分析。如果用户不需要通过web浏览器访问OpenTSDB，可以跳过此步骤。 1yum install gnuplot  将生成的安装包">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="f:%5Cimage-20200420095526315.png">
-<meta property="og:image" content="f:%5Cimage-20200420095652263.png">
-<meta property="article:published_time" content="2020-04-20T01:54:17.667Z">
-<meta property="article:modified_time" content="2020-05-19T06:13:25.763Z">
+<meta property="article:published_time" content="2020-05-19T06:05:29.838Z">
+<meta property="article:modified_time" content="2020-05-19T07:34:39.219Z">
 <meta property="article:author" content="qiguoxiaosheng">
+<meta property="article:tag" content="OpenTSDB">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="f:%5Cimage-20200420095526315.png">
   
     <link rel="alternate" href="/atom.xml" title="qiguoxiaosheng&#39;s blogs" type="application/atom+xml">
   
@@ -73,10 +73,10 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-Kafka运维" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-OpenTSDB安装部署" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2020/04/20/Kafka%E8%BF%90%E7%BB%B4/" class="article-date">
-  <time datetime="2020-04-20T01:54:17.667Z" itemprop="datePublished">2020-04-20</time>
+    <a href="/2020/05/19/OpenTSDB%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/" class="article-date">
+  <time datetime="2020-05-19T06:05:29.838Z" itemprop="datePublished">2020-05-19</time>
 </a>
     
   <div class="article-category">
@@ -91,7 +91,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      Kafka运维
+      OpenTSDB安装部署
     </h1>
   
 
@@ -99,34 +99,38 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><img src="F:%5Cimage-20200420095526315.png" alt="image-20200420095526315"></p>
-<p><img src="F:%5Cimage-20200420095652263.png" alt="image-20200420095652263"></p>
+        <p>上一小节主要记录了<a href="">OpenTSDB 源码编译过程</a>，此文对OpenTSDB的安装做一个简单的说明。</p>
+<p>Opentsdb WebUI依赖Gnuplot，Gnuplot是一个命令行的交互式绘图工具。用户通过输入命令，可以设置或修改绘图环境，并以图形描述数据或函数做更进一步的分析。如果用户不需要通过web浏览器访问OpenTSDB，可以跳过此步骤。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install gnuplot</span><br></pre></td></tr></table></figure>
+
+<p>将生成的安装包复制至希望运行的环境中，并解压，解压后的目录结构为</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">drwxr-xr-x. 2 root root   54 May 18 17:09 bin</span><br><span class="line">drwxr-xr-x. 2 root root   46 May 18 17:51 conf</span><br><span class="line">drwxr-xr-x. 3 root root 4096 May 18 17:02 gwt</span><br><span class="line">drwxr-xr-x. 2 root root 4096 May 18 17:02 lib</span><br></pre></td></tr></table></figure>
+
+<p>修改配置文件conf/opentsdb.conf</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Where TSD should write it's cache files to</span></span><br><span class="line"><span class="comment"># *** REQUIRED ***</span></span><br><span class="line"><span class="meta">tsd.http.cachedir</span> =<span class="string">../cachedir</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Name of the HBase table where data points are stored, default is "tsdb"</span></span><br><span class="line"><span class="meta">tsd.storage.hbase.data_table</span> = <span class="string">tsdb</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Name of the HBase table where UID information is stored, default is "tsdb-uid"</span></span><br><span class="line"><span class="meta">tsd.storage.hbase.uid_table</span> = <span class="string">tsdb-uid</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># A comma separated list of Zookeeper hosts to connect to, with or without</span></span><br><span class="line"><span class="comment"># port specifiers, default is "localhost"</span></span><br><span class="line"><span class="meta">tsd.storage.hbase.zk_quorum</span> = <span class="string">localhost:2181</span></span><br></pre></td></tr></table></figure>
+
+<p>日志配置文件logback.xml按需修改。</p>
+<p>启动服务</p>
+<p>./opentsdb start</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/20/Kafka%E8%BF%90%E7%BB%B4/" data-id="ckadlrxp7000nx4p54kkvcfxc" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/19/OpenTSDB%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/" data-id="ckadlrxpb000xx4p530eib9do" class="article-share-link">Share</a>
       
       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenTSDB/" rel="tag">OpenTSDB</a></li></ul>
+
     </footer>
   </div>
   
     
 <nav id="article-nav">
   
-    <a href="/2020/04/20/OpenTSDB%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          OpenTSDB 源码编译
-        
-      </div>
-    </a>
   
-  
-    <a href="/2020/04/15/ClickHouse%20on%20Zeppelin/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2020/05/13/OpenTSDB3.0%E5%AE%9E%E8%B7%B5%E4%B8%80/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">ClickHouse on Zeppelin</div>
+      <div class="article-nav-title">OpenTSDB 3.0实践一</div>
     </a>
   
 </nav>
