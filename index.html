@@ -164,13 +164,13 @@
 <p>flag 最高位表示数值的类型: 0表示整数，1表示浮点数；后三位表示值的长度：000表示1个字节，001表示2个字节，011表示4个字节，111表示8个字节。</p>
 <h4 id="压缩优化"><a href="#压缩优化" class="headerlink" title="压缩优化"></a>压缩优化</h4><p>为了节省存储空间，OpenTSDB在写入时会将rowkey记录到compactionQueue中，并启动一个后台线程，定期对compactionQueue中的时序数据进行压缩，压缩的操作为将compactionQueue中同一行中不同列的数据点汇总起来，写入一个列中。具体如：</p>
 <p>假设原数据为 {row1,t:05A,v1}, {row1,t:05B,v2}, {row1,t:05C,v3}，则压缩后的数据为{row1,t:05A05B05C,v1v2v3}</p>
-<h4 id="追加模式"><a href="#追加模式" class="headerlink" title="追加模式"></a>追加模式</h4><p> 除了压缩优化方式外，OpenTSDB还提供了一种直接追加写入点的方式，即在写入时将同一个rowkey的数据写入一个共同的qualifier中，这样可以即可以达到压缩存储的效果，也能省去开启单独压缩线程的资源消耗。具体存储方式为{row1,t:05,Av1Bv2Cv3}，即qualifier固定，值为<offset1><v1><offset2><v2>……<offsetN><vN>。</p>
+<h4 id="追加模式"><a href="#追加模式" class="headerlink" title="追加模式"></a>追加模式</h4><p> 除了压缩优化方式外，OpenTSDB还提供了一种直接追加写入点的方式，即在写入时将同一个rowkey的数据写入一个共同的qualifier中，这样可以即可以达到压缩存储的效果，也能省去开启单独压缩线程的资源消耗。具体存储方式为{row1,t:05,Av1Bv2Cv3}，即qualifier固定，值为&lt;offset1&gt;&lt;v1&gt;&lt;offset2&gt;&lt;v2&gt;……&lt;offsetN&gt;&lt;vN&gt;。</p>
 <p>但追加模式也有它的缺点，数据值保存的顺序是按写入的顺序保存的，并不能保证是按offset值排序的。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/28/OpenTSDB%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/" data-id="ckaqi0yq1000bu0p5gjf9h4x9" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/28/OpenTSDB%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/" data-id="ckaqiavoe0010mcp54fos70s8" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenTSDB/" rel="tag">OpenTSDB</a></li></ul>
@@ -213,7 +213,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/19/OpenTSDB%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" data-id="ckaqi0yq5000mu0p5fj74a5dv" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/19/OpenTSDB%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" data-id="ckaqiavof0012mcp55j1wdd77" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenTSDB/" rel="tag">OpenTSDB</a></li></ul>
@@ -268,7 +268,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/19/OpenTSDB%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/" data-id="ckaqi0yqv001tu0p5bptr5z17" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/19/OpenTSDB%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/" data-id="ckaqiavoc000xmcp5duvbat5j" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenTSDB/" rel="tag">OpenTSDB</a></li></ul>
@@ -332,7 +332,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/13/OpenTSDB3.0%E5%AE%9E%E8%B7%B5%E4%B8%80/" data-id="ckaqi0yqu001su0p5chstfz0h" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/13/OpenTSDB3.0%E5%AE%9E%E8%B7%B5%E4%B8%80/" data-id="ckaqiavo9000umcp5f2xpashw" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenTSDB/" rel="tag">OpenTSDB</a></li></ul>
@@ -374,7 +374,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/09/JMeter%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8/" data-id="ckaqi0ypz000au0p5bsjeayc9" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/09/JMeter%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8/" data-id="ckaqiavo4000imcp537jv4ih0" class="article-share-link">Share</a>
       
       
     </footer>
@@ -444,7 +444,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/29/Flink%E8%AF%BB%E5%86%99Kafka/" data-id="ckaqi0ypw0006u0p5c3v98zuq" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/29/Flink%E8%AF%BB%E5%86%99Kafka/" data-id="ckaqiavnz0009mcp52ve12ham" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flink/" rel="tag">Flink</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li></ul>
@@ -498,7 +498,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/28/Java%E4%B8%AD%E7%A7%91%E5%AD%A6%E8%AE%A1%E6%95%B0%E6%B3%95/" data-id="ckaqi0yq7000uu0p5hub92m8l" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/28/Java%E4%B8%AD%E7%A7%91%E5%AD%A6%E8%AE%A1%E6%95%B0%E6%B3%95/" data-id="ckaqiavo6000nmcp5arklbvy4" class="article-share-link">Share</a>
       
       
     </footer>
@@ -555,7 +555,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/28/Idea%E6%90%AD%E5%BB%BAFlink%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/" data-id="ckaqi0yq6000pu0p507ob3gfu" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/28/Idea%E6%90%AD%E5%BB%BAFlink%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/" data-id="ckaqiavo3000fmcp5h3zhb0od" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flink/" rel="tag">Flink</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Idea/" rel="tag">Idea</a></li></ul>
@@ -607,7 +607,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/28/Flink%E8%87%AA%E5%AE%9A%E4%B9%89Sink/" data-id="ckaqi0ypv0005u0p5cppp4aju" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/28/Flink%E8%87%AA%E5%AE%9A%E4%B9%89Sink/" data-id="ckaqiavo1000bmcp59p1yerex" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flink/" rel="tag">Flink</a></li></ul>
@@ -688,7 +688,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/20/OpenTSDB%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/" data-id="ckaqi0yq3000hu0p52zm3abzv" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/20/OpenTSDB%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/" data-id="ckaqiavog0015mcp50cvgdw0m" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenTSDB/" rel="tag">OpenTSDB</a></li></ul>
