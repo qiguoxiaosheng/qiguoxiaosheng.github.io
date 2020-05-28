@@ -70,6 +70,161 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-OpenTSDB数据存储" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/05/28/OpenTSDB%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/" class="article-date">
+  <time datetime="2020-05-28T06:55:15.884Z" itemprop="datePublished">2020-05-28</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Develop/">Develop</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/05/28/OpenTSDB%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/">OpenTSDB源码解析--数据存储</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本小节主要记录OpenTSDB是如何存储数据的。</p>
+<h4 id="rowkey"><a href="#rowkey" class="headerlink" title="rowkey"></a>rowkey</h4><table>
+<thead>
+<tr>
+<th>salt</th>
+<th>metric_uid</th>
+<th>base_time</th>
+<th>tagk1_uid</th>
+<th>tagv1_uid</th>
+<th>……</th>
+<th>tagkN_uid</th>
+<th>tagvN_uid</th>
+</tr>
+</thead>
+<tbody><tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h4 id="qualifier"><a href="#qualifier" class="headerlink" title="qualifier"></a>qualifier</h4><p>存储的时序数据的精度是秒级时，qualifier的长度为2个字节。从高位到低位来看，其中高12位 保存了从base_time开始的秒级偏移量（offset），接下来的4位是flag标志，主要用来标识该点的数据类型及所占用的字节长度。</p>
+<table>
+<thead>
+<tr>
+<th>2个字节，16位</th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>offset</td>
+<td>flag</td>
+</tr>
+<tr>
+<td>12</td>
+<td>4</td>
+</tr>
+</tbody></table>
+<p>存储的时序数据的精度是毫秒时，qualifier的长度为4个字节，从高位到低位来看，高4位始终为1，用于标识其精度为毫秒级。接下来的22位保存了从base_time开始的毫秒级偏移量，随后的2位为保留位，暂无使用，最后4位为flag标识位，作用同上。</p>
+<table>
+<thead>
+<tr>
+<th>4字节，32位</th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>填充1</td>
+<td>offset</td>
+<td>保留</td>
+<td>flag</td>
+</tr>
+<tr>
+<td>4位</td>
+<td>22位</td>
+<td>2位</td>
+<td>4位</td>
+</tr>
+</tbody></table>
+<p>flag 最高位表示数值的类型: 0表示整数，1表示浮点数；后三位表示值的长度：000表示1个字节，001表示2个字节，011表示4个字节，111表示8个字节。</p>
+<h4 id="压缩优化"><a href="#压缩优化" class="headerlink" title="压缩优化"></a>压缩优化</h4><p>为了节省存储空间，OpenTSDB在写入时会将rowkey记录到compactionQueue中，并启动一个后台线程，定期对compactionQueue中的时序数据进行压缩，压缩的操作为将compactionQueue中同一行中不同列的数据点汇总起来，写入一个列中。具体如：</p>
+<p>假设原数据为 {row1,t:05A,v1}, {row1,t:05B,v2}, {row1,t:05C,v3}，则压缩后的数据为{row1,t:05A05B05C,v1v2v3}</p>
+<h4 id="追加模式"><a href="#追加模式" class="headerlink" title="追加模式"></a>追加模式</h4><p> 除了压缩优化方式外，OpenTSDB还提供了一种直接追加写入点的方式，即在写入时将同一个rowkey的数据写入一个共同的qualifier中，这样可以即可以达到压缩存储的效果，也能省去开启单独压缩线程的资源消耗。具体存储方式为{row1,t:05,Av1Bv2Cv3}，即qualifier固定，值为<offset1><v1><offset2><v2>……<offsetN><vN>。</p>
+<p>但追加模式也有它的缺点，数据值保存的顺序是按写入的顺序保存的，并不能保证是按offset值排序的。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/05/28/OpenTSDB%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/" data-id="ckaqi0yq1000bu0p5gjf9h4x9" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenTSDB/" rel="tag">OpenTSDB</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-OpenTSDB源码解析" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/05/19/OpenTSDB%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" class="article-date">
+  <time datetime="2020-05-19T08:11:31.936Z" itemprop="datePublished">2020-05-19</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Develop/">Develop</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/05/19/OpenTSDB%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/">OpenTSDB源码解析--服务启动过程</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>服务启动类TSDMain位于net.opentsdb.tools包下，服务启动步骤为：</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/05/19/OpenTSDB%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" data-id="ckaqi0yq5000mu0p5fj74a5dv" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenTSDB/" rel="tag">OpenTSDB</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-OpenTSDB安装部署" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2020/05/19/OpenTSDB%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/" class="article-date">
@@ -113,7 +268,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/19/OpenTSDB%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/" data-id="ckadm4wyr000wu8p59wtghjy6" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/19/OpenTSDB%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/" data-id="ckaqi0yqv001tu0p5bptr5z17" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenTSDB/" rel="tag">OpenTSDB</a></li></ul>
@@ -177,7 +332,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/13/OpenTSDB3.0%E5%AE%9E%E8%B7%B5%E4%B8%80/" data-id="ckadm4wyo000tu8p5fwbjeb69" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/13/OpenTSDB3.0%E5%AE%9E%E8%B7%B5%E4%B8%80/" data-id="ckaqi0yqu001su0p5chstfz0h" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenTSDB/" rel="tag">OpenTSDB</a></li></ul>
@@ -219,7 +374,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/09/JMeter%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8/" data-id="ckadm4wyl000iu8p50tehcohe" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/09/JMeter%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8/" data-id="ckaqi0ypz000au0p5bsjeayc9" class="article-share-link">Share</a>
       
       
     </footer>
@@ -289,7 +444,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/29/Flink%E8%AF%BB%E5%86%99Kafka/" data-id="ckadm4wyi000bu8p5dma31q38" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/29/Flink%E8%AF%BB%E5%86%99Kafka/" data-id="ckaqi0ypw0006u0p5c3v98zuq" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flink/" rel="tag">Flink</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li></ul>
@@ -343,7 +498,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/28/Java%E4%B8%AD%E7%A7%91%E5%AD%A6%E8%AE%A1%E6%95%B0%E6%B3%95/" data-id="ckadm4wym000mu8p5asls827x" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/28/Java%E4%B8%AD%E7%A7%91%E5%AD%A6%E8%AE%A1%E6%95%B0%E6%B3%95/" data-id="ckaqi0yq7000uu0p5hub92m8l" class="article-share-link">Share</a>
       
       
     </footer>
@@ -400,7 +555,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/28/Idea%E6%90%AD%E5%BB%BAFlink%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/" data-id="ckadm4wyk000fu8p5dfrjcvhu" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/28/Idea%E6%90%AD%E5%BB%BAFlink%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/" data-id="ckaqi0yq6000pu0p507ob3gfu" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flink/" rel="tag">Flink</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Idea/" rel="tag">Idea</a></li></ul>
@@ -452,7 +607,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/28/Flink%E8%87%AA%E5%AE%9A%E4%B9%89Sink/" data-id="ckadm4wyh000au8p54z7kgqfk" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/28/Flink%E8%87%AA%E5%AE%9A%E4%B9%89Sink/" data-id="ckaqi0ypv0005u0p5cppp4aju" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flink/" rel="tag">Flink</a></li></ul>
@@ -533,121 +688,10 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/20/OpenTSDB%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/" data-id="ckadm4wyt0011u8p5hr1044kc" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/20/OpenTSDB%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/" data-id="ckaqi0yq3000hu0p52zm3abzv" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenTSDB/" rel="tag">OpenTSDB</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-Kafka运维" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2020/04/20/Kafka%E8%BF%90%E7%BB%B4/" class="article-date">
-  <time datetime="2020-04-20T01:54:17.667Z" itemprop="datePublished">2020-04-20</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Maintenance/">Maintenance</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/04/20/Kafka%E8%BF%90%E7%BB%B4/">Kafka运维</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><img src="F:%5Cimage-20200420095526315.png" alt="image-20200420095526315"></p>
-<p><img src="F:%5Cimage-20200420095652263.png" alt="image-20200420095652263"></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/20/Kafka%E8%BF%90%E7%BB%B4/" data-id="ckadm4wyn000qu8p5029x3yox" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-ClickHouse on Zeppelin" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2020/04/15/ClickHouse%20on%20Zeppelin/" class="article-date">
-  <time datetime="2020-04-15T02:49:19.368Z" itemprop="datePublished">2020-04-15</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Develop/">Develop</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/04/15/ClickHouse%20on%20Zeppelin/">ClickHouse on Zeppelin</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>​       Clickhouse是一个新兴OLAP的列式数据库管理系统，当前发展的如火如荼，Zeppelin 作为一个Web笔记形式的交互式数据查询分析工具，为数据分析人员的使用带来了很大的便利。本文主要记录如何在Zeppelin中使用ClickHouse。</p>
-<p>软件版本：Zeppelin 0.9.0，ClickHouse 20.3.5</p>
-<p><strong>1、启动相关服务</strong></p>
-<p>​      启动Zeppelin</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zeppelin-daemon.sh start</span><br></pre></td></tr></table></figure>
-
-<p>​      启动ClickHouse</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service clickhouse-server start</span><br></pre></td></tr></table></figure>
-
-<p>​      打开页面</p>
-<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">http://127.0.0.1:8080</span></span><br></pre></td></tr></table></figure>
-
-<p><strong>2、配置ClickHouse Interpreter</strong></p>
-<p>​       首先，使用具有管理员角色的用户登录Zeppelin，然后在用户下拉选项中选择“Interpreter”。</p>
-<p><img src="https://raw.githubusercontent.com/qiguoxiaosheng/webResources/master/image-20200415120635772.png" alt=""></p>
-<p>​       点击“+Create” 新增Interpreter，Interpreter Name可以自定义，这里输入的是”clickhouse”，Interpreter Group选择“jdbc”。</p>
-<p><img src="https://raw.githubusercontent.com/qiguoxiaosheng/webResources/master/image-20200415120409668.png" alt=""></p>
-<p>​        接下来填入连接ClickHouse的具体信息，需要配置属性包括default.url、default.user、default.password、default.driver，并配置jdbc依赖，配置完成后如下图所示。</p>
-<p><img src="https://raw.githubusercontent.com/qiguoxiaosheng/webResources/master/image-20200415121856190.png" alt=""></p>
-<p> 注：若配置的依赖需从远程maven仓库下载，需确保机器可以访问远程maven仓库，配置完成后，下载依赖需要几分钟时间。</p>
-<p><strong>3、验证ClickHouse Interpreter</strong></p>
-<p>​       在Zeppelin页面Notebook下拉选项中选择+Create new note</p>
-<p><img src="https://raw.githubusercontent.com/qiguoxiaosheng/webResources/master/image-20200415122409650.png" alt=""></p>
-<p>​       其中，Note Name 可以自定义，Default Interpreter选择上文创建的 clickhouse，然后点击右下角的Create按钮。</p>
-<p><img src="https://raw.githubusercontent.com/qiguoxiaosheng/webResources/master/image-20200415122626621.png" alt=""></p>
-<p>​       在查询框中输入sql并执行，此处示例为一个简单的count group by 语句的执行结果。</p>
-<p><img src="https://raw.githubusercontent.com/qiguoxiaosheng/webResources/master/image-20200415123048761.png" alt=""></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/15/ClickHouse%20on%20Zeppelin/" data-id="ckadm4wy20000u8p5cvkh4ahp" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ClickHouse/" rel="tag">ClickHouse</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Zeppelin/" rel="tag">Zeppelin</a></li></ul>
 
     </footer>
   </div>
@@ -691,7 +735,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/ClickHouse/" style="font-size: 20px;">ClickHouse</a> <a href="/tags/DataX/" style="font-size: 10px;">DataX</a> <a href="/tags/Flink/" style="font-size: 15px;">Flink</a> <a href="/tags/Hive/" style="font-size: 10px;">Hive</a> <a href="/tags/Idea/" style="font-size: 10px;">Idea</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/OpenTSDB/" style="font-size: 15px;">OpenTSDB</a> <a href="/tags/Zeppelin/" style="font-size: 10px;">Zeppelin</a>
+      <a href="/tags/ClickHouse/" style="font-size: 20px;">ClickHouse</a> <a href="/tags/DataX/" style="font-size: 10px;">DataX</a> <a href="/tags/Flink/" style="font-size: 15px;">Flink</a> <a href="/tags/Hive/" style="font-size: 10px;">Hive</a> <a href="/tags/Idea/" style="font-size: 10px;">Idea</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/OpenTSDB/" style="font-size: 20px;">OpenTSDB</a> <a href="/tags/Zeppelin/" style="font-size: 10px;">Zeppelin</a>
     </div>
   </div>
 
@@ -713,6 +757,14 @@
       <ul>
         
           <li>
+            <a href="/2020/05/28/OpenTSDB%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/">OpenTSDB源码解析--数据存储</a>
+          </li>
+        
+          <li>
+            <a href="/2020/05/19/OpenTSDB%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/">OpenTSDB源码解析--服务启动过程</a>
+          </li>
+        
+          <li>
             <a href="/2020/05/19/OpenTSDB%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/">OpenTSDB安装部署</a>
           </li>
         
@@ -722,14 +774,6 @@
         
           <li>
             <a href="/2020/05/09/JMeter%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8/">JMeter工具的使用</a>
-          </li>
-        
-          <li>
-            <a href="/2020/04/29/Flink%E8%AF%BB%E5%86%99Kafka/">Flink读写Kafka</a>
-          </li>
-        
-          <li>
-            <a href="/2020/04/28/Java%E4%B8%AD%E7%A7%91%E5%AD%A6%E8%AE%A1%E6%95%B0%E6%B3%95/">Java中科学计数法</a>
           </li>
         
       </ul>

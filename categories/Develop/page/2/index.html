@@ -5,17 +5,13 @@
   
 
   
-  <title>Java中科学计数法 | qiguoxiaosheng&#39;s blogs</title>
+  <title>Category: Develop | qiguoxiaosheng&#39;s blogs</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="在处理IOT数据时，时长会有些数据表示的不规范，比如采集的数据经过接入程序处理后，部分数值是以科学计数法表示的，因此，在后期计算前，需对数据进行规范化处理。 处理科学计数法，一般使用的方式为将原数据转换为BigDecimal，然而，将把处理后的数据以字符串（toString）发送到下游时，发现仍有数据是以科学技术法表示的_。 查阅资料，发现BigDecimal类的中包含多个转成字符串的方法。 12">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Java中科学计数法">
-<meta property="og:url" content="http://yoursite.com/2020/04/28/Java%E4%B8%AD%E7%A7%91%E5%AD%A6%E8%AE%A1%E6%95%B0%E6%B3%95/index.html">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="qiguoxiaosheng&#39;s blogs">
+<meta property="og:url" content="http://yoursite.com/categories/Develop/page/2/index.html">
 <meta property="og:site_name" content="qiguoxiaosheng&#39;s blogs">
-<meta property="og:description" content="在处理IOT数据时，时长会有些数据表示的不规范，比如采集的数据经过接入程序处理后，部分数值是以科学计数法表示的，因此，在后期计算前，需对数据进行规范化处理。 处理科学计数法，一般使用的方式为将原数据转换为BigDecimal，然而，将把处理后的数据以字符串（toString）发送到下游时，发现仍有数据是以科学技术法表示的_。 查阅资料，发现BigDecimal类的中包含多个转成字符串的方法。 12">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2020-04-28T08:18:11.284Z">
-<meta property="article:modified_time" content="2020-05-19T06:15:03.955Z">
 <meta property="article:author" content="qiguoxiaosheng">
 <meta name="twitter:card" content="summary">
   
@@ -72,76 +68,64 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-Java中科学计数法" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2020/04/28/Java%E4%B8%AD%E7%A7%91%E5%AD%A6%E8%AE%A1%E6%95%B0%E6%B3%95/" class="article-date">
-  <time datetime="2020-04-28T08:18:11.284Z" itemprop="datePublished">2020-04-28</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Develop/">Develop</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
+        <section id="main">
   
-    <h1 class="article-title" itemprop="name">
-      Java中科学计数法
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2020" class="archive-year">2020</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      <a href="/2020/04/14/ClickHouse%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8/" class="archive-article-date">
+  <time datetime="2020-04-14T06:01:14.602Z" itemprop="datePublished">Apr 14</time>
+</a>
+      
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2020/04/14/ClickHouse%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8/">ClickHouse使用入门</a>
     </h1>
   
 
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在处理IOT数据时，时长会有些数据表示的不规范，比如采集的数据经过接入程序处理后，部分数值是以科学计数法表示的，因此，在后期计算前，需对数据进行规范化处理。</p>
-<p>处理科学计数法，一般使用的方式为将原数据转换为BigDecimal，然而，将把处理后的数据以字符串（toString）发送到下游时，发现仍有数据是以科学技术法表示的<code>_</code>。</p>
-<p>查阅资料，发现BigDecimal类的中包含多个转成字符串的方法。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">toEngineeringString()</span><br><span class="line">toPlainString()</span><br><span class="line">toString()</span><br></pre></td></tr></table></figure>
-
-<p>测试不同的方法</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="keyword">new</span> BigDecimal(<span class="string">"2.3991984E17"</span>));</span><br><span class="line">        System.out.println(<span class="keyword">new</span> BigDecimal(<span class="string">"2.3991984E17"</span>).toString());</span><br><span class="line">        System.out.println(<span class="keyword">new</span> BigDecimal(<span class="string">"2.3991984E17"</span>).toPlainString());</span><br><span class="line">        System.out.println(<span class="keyword">new</span> BigDecimal(<span class="string">"2.3991984E17"</span>).toEngineeringString());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>输出的结果为：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">2.3991984E+17</span><br><span class="line">2.3991984E+17</span><br><span class="line">239919840000000000</span><br><span class="line">239.91984E+15</span><br></pre></td></tr></table></figure>
-
-<p>因此，若希望转换的字符中以非科学计数法表示，则在转换时需要使用toPlainString方法。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/28/Java%E4%B8%AD%E7%A7%91%E5%AD%A6%E8%AE%A1%E6%95%B0%E6%B3%95/" data-id="ckaqi0yq7000uu0p5hub92m8l" class="article-share-link">Share</a>
-      
-      
-    </footer>
+    </header>
   </div>
+</article>
   
     
-<nav id="article-nav">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      <a href="/2020/04/14/ClickHouse%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE/" class="archive-article-date">
+  <time datetime="2020-04-14T03:04:43.609Z" itemprop="datePublished">Apr 14</time>
+</a>
+      
   
-    <a href="/2020/04/29/Flink%E8%AF%BB%E5%86%99Kafka/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          Flink读写Kafka
-        
-      </div>
-    </a>
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2020/04/14/ClickHouse%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE/">ClickHouse 网络配置 1</a>
+    </h1>
   
-  
-    <a href="/2020/04/28/Idea%E6%90%AD%E5%BB%BAFlink%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">Idea搭建Flink本地开发环境</div>
-    </a>
-  
-</nav>
 
-  
+    </header>
+  </div>
 </article>
+  
+  
+    </div></section>
+  
+
+
+  <nav id="page-nav">
+    
+    <a class="extend prev" rel="prev" href="/categories/Develop/">&amp;laquo; Prev</a><a class="page-number" href="/categories/Develop/">1</a><span class="page-number current">2</span>
+  </nav>
 
 </section>
         

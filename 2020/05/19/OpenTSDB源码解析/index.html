@@ -5,18 +5,19 @@
   
 
   
-  <title>Java中科学计数法 | qiguoxiaosheng&#39;s blogs</title>
+  <title>OpenTSDB源码解析--服务启动过程 | qiguoxiaosheng&#39;s blogs</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="在处理IOT数据时，时长会有些数据表示的不规范，比如采集的数据经过接入程序处理后，部分数值是以科学计数法表示的，因此，在后期计算前，需对数据进行规范化处理。 处理科学计数法，一般使用的方式为将原数据转换为BigDecimal，然而，将把处理后的数据以字符串（toString）发送到下游时，发现仍有数据是以科学技术法表示的_。 查阅资料，发现BigDecimal类的中包含多个转成字符串的方法。 12">
+  <meta name="description" content="服务启动类TSDMain位于net.opentsdb.tools包下，服务启动步骤为：">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Java中科学计数法">
-<meta property="og:url" content="http://yoursite.com/2020/04/28/Java%E4%B8%AD%E7%A7%91%E5%AD%A6%E8%AE%A1%E6%95%B0%E6%B3%95/index.html">
+<meta property="og:title" content="OpenTSDB源码解析--服务启动过程">
+<meta property="og:url" content="http://yoursite.com/2020/05/19/OpenTSDB%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/index.html">
 <meta property="og:site_name" content="qiguoxiaosheng&#39;s blogs">
-<meta property="og:description" content="在处理IOT数据时，时长会有些数据表示的不规范，比如采集的数据经过接入程序处理后，部分数值是以科学计数法表示的，因此，在后期计算前，需对数据进行规范化处理。 处理科学计数法，一般使用的方式为将原数据转换为BigDecimal，然而，将把处理后的数据以字符串（toString）发送到下游时，发现仍有数据是以科学技术法表示的_。 查阅资料，发现BigDecimal类的中包含多个转成字符串的方法。 12">
+<meta property="og:description" content="服务启动类TSDMain位于net.opentsdb.tools包下，服务启动步骤为：">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2020-04-28T08:18:11.284Z">
-<meta property="article:modified_time" content="2020-05-19T06:15:03.955Z">
+<meta property="article:published_time" content="2020-05-19T08:11:31.936Z">
+<meta property="article:modified_time" content="2020-05-28T06:55:35.101Z">
 <meta property="article:author" content="qiguoxiaosheng">
+<meta property="article:tag" content="OpenTSDB">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternate" href="/atom.xml" title="qiguoxiaosheng&#39;s blogs" type="application/atom+xml">
@@ -72,10 +73,10 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-Java中科学计数法" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-OpenTSDB源码解析" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2020/04/28/Java%E4%B8%AD%E7%A7%91%E5%AD%A6%E8%AE%A1%E6%95%B0%E6%B3%95/" class="article-date">
-  <time datetime="2020-04-28T08:18:11.284Z" itemprop="datePublished">2020-04-28</time>
+    <a href="/2020/05/19/OpenTSDB%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" class="article-date">
+  <time datetime="2020-05-19T08:11:31.936Z" itemprop="datePublished">2020-05-19</time>
 </a>
     
   <div class="article-category">
@@ -90,7 +91,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      Java中科学计数法
+      OpenTSDB源码解析--服务启动过程
     </h1>
   
 
@@ -98,44 +99,35 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>在处理IOT数据时，时长会有些数据表示的不规范，比如采集的数据经过接入程序处理后，部分数值是以科学计数法表示的，因此，在后期计算前，需对数据进行规范化处理。</p>
-<p>处理科学计数法，一般使用的方式为将原数据转换为BigDecimal，然而，将把处理后的数据以字符串（toString）发送到下游时，发现仍有数据是以科学技术法表示的<code>_</code>。</p>
-<p>查阅资料，发现BigDecimal类的中包含多个转成字符串的方法。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">toEngineeringString()</span><br><span class="line">toPlainString()</span><br><span class="line">toString()</span><br></pre></td></tr></table></figure>
-
-<p>测试不同的方法</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="keyword">new</span> BigDecimal(<span class="string">"2.3991984E17"</span>));</span><br><span class="line">        System.out.println(<span class="keyword">new</span> BigDecimal(<span class="string">"2.3991984E17"</span>).toString());</span><br><span class="line">        System.out.println(<span class="keyword">new</span> BigDecimal(<span class="string">"2.3991984E17"</span>).toPlainString());</span><br><span class="line">        System.out.println(<span class="keyword">new</span> BigDecimal(<span class="string">"2.3991984E17"</span>).toEngineeringString());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>输出的结果为：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">2.3991984E+17</span><br><span class="line">2.3991984E+17</span><br><span class="line">239919840000000000</span><br><span class="line">239.91984E+15</span><br></pre></td></tr></table></figure>
-
-<p>因此，若希望转换的字符中以非科学计数法表示，则在转换时需要使用toPlainString方法。</p>
+        <p>服务启动类TSDMain位于net.opentsdb.tools包下，服务启动步骤为：</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/28/Java%E4%B8%AD%E7%A7%91%E5%AD%A6%E8%AE%A1%E6%95%B0%E6%B3%95/" data-id="ckaqi0yq7000uu0p5hub92m8l" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/19/OpenTSDB%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" data-id="ckaqi0yq5000mu0p5fj74a5dv" class="article-share-link">Share</a>
       
       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenTSDB/" rel="tag">OpenTSDB</a></li></ul>
+
     </footer>
   </div>
   
     
 <nav id="article-nav">
   
-    <a href="/2020/04/29/Flink%E8%AF%BB%E5%86%99Kafka/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2020/05/28/OpenTSDB%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          Flink读写Kafka
+          OpenTSDB源码解析--数据存储
         
       </div>
     </a>
   
   
-    <a href="/2020/04/28/Idea%E6%90%AD%E5%BB%BAFlink%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2020/05/19/OpenTSDB%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">Idea搭建Flink本地开发环境</div>
+      <div class="article-nav-title">OpenTSDB安装部署</div>
     </a>
   
 </nav>

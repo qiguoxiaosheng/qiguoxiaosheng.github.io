@@ -70,6 +70,117 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-Kafka运维" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/04/20/Kafka%E8%BF%90%E7%BB%B4/" class="article-date">
+  <time datetime="2020-04-20T01:54:17.667Z" itemprop="datePublished">2020-04-20</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Maintenance/">Maintenance</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/04/20/Kafka%E8%BF%90%E7%BB%B4/">Kafka运维</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><img src="F:%5Cimage-20200420095526315.png" alt="image-20200420095526315"></p>
+<p><img src="F:%5Cimage-20200420095652263.png" alt="image-20200420095652263"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/04/20/Kafka%E8%BF%90%E7%BB%B4/" data-id="ckaqi0yq9000wu0p5gkr15jw0" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-ClickHouse on Zeppelin" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/04/15/ClickHouse%20on%20Zeppelin/" class="article-date">
+  <time datetime="2020-04-15T02:49:19.368Z" itemprop="datePublished">2020-04-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Develop/">Develop</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/04/15/ClickHouse%20on%20Zeppelin/">ClickHouse on Zeppelin</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>​       Clickhouse是一个新兴OLAP的列式数据库管理系统，当前发展的如火如荼，Zeppelin 作为一个Web笔记形式的交互式数据查询分析工具，为数据分析人员的使用带来了很大的便利。本文主要记录如何在Zeppelin中使用ClickHouse。</p>
+<p>软件版本：Zeppelin 0.9.0，ClickHouse 20.3.5</p>
+<p><strong>1、启动相关服务</strong></p>
+<p>​      启动Zeppelin</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zeppelin-daemon.sh start</span><br></pre></td></tr></table></figure>
+
+<p>​      启动ClickHouse</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service clickhouse-server start</span><br></pre></td></tr></table></figure>
+
+<p>​      打开页面</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">http://127.0.0.1:8080</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>2、配置ClickHouse Interpreter</strong></p>
+<p>​       首先，使用具有管理员角色的用户登录Zeppelin，然后在用户下拉选项中选择“Interpreter”。</p>
+<p><img src="https://raw.githubusercontent.com/qiguoxiaosheng/webResources/master/image-20200415120635772.png" alt=""></p>
+<p>​       点击“+Create” 新增Interpreter，Interpreter Name可以自定义，这里输入的是”clickhouse”，Interpreter Group选择“jdbc”。</p>
+<p><img src="https://raw.githubusercontent.com/qiguoxiaosheng/webResources/master/image-20200415120409668.png" alt=""></p>
+<p>​        接下来填入连接ClickHouse的具体信息，需要配置属性包括default.url、default.user、default.password、default.driver，并配置jdbc依赖，配置完成后如下图所示。</p>
+<p><img src="https://raw.githubusercontent.com/qiguoxiaosheng/webResources/master/image-20200415121856190.png" alt=""></p>
+<p> 注：若配置的依赖需从远程maven仓库下载，需确保机器可以访问远程maven仓库，配置完成后，下载依赖需要几分钟时间。</p>
+<p><strong>3、验证ClickHouse Interpreter</strong></p>
+<p>​       在Zeppelin页面Notebook下拉选项中选择+Create new note</p>
+<p><img src="https://raw.githubusercontent.com/qiguoxiaosheng/webResources/master/image-20200415122409650.png" alt=""></p>
+<p>​       其中，Note Name 可以自定义，Default Interpreter选择上文创建的 clickhouse，然后点击右下角的Create按钮。</p>
+<p><img src="https://raw.githubusercontent.com/qiguoxiaosheng/webResources/master/image-20200415122626621.png" alt=""></p>
+<p>​       在查询框中输入sql并执行，此处示例为一个简单的count group by 语句的执行结果。</p>
+<p><img src="https://raw.githubusercontent.com/qiguoxiaosheng/webResources/master/image-20200415123048761.png" alt=""></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/04/15/ClickHouse%20on%20Zeppelin/" data-id="ckaqi0ypr0001u0p57a7098q6" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ClickHouse/" rel="tag">ClickHouse</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Zeppelin/" rel="tag">Zeppelin</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-DataX同步Hive数据至ClickHouse" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2020/04/14/DataX%E5%90%8C%E6%AD%A5Hive%E6%95%B0%E6%8D%AE%E8%87%B3ClickHouse/" class="article-date">
@@ -100,7 +211,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/14/DataX%E5%90%8C%E6%AD%A5Hive%E6%95%B0%E6%8D%AE%E8%87%B3ClickHouse/" data-id="ckadm4wyf0006u8p5hyez936s" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/14/DataX%E5%90%8C%E6%AD%A5Hive%E6%95%B0%E6%8D%AE%E8%87%B3ClickHouse/" data-id="ckaqi0ypu0004u0p5dcyn0zq1" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ClickHouse/" rel="tag">ClickHouse</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DataX/" rel="tag">DataX</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Hive/" rel="tag">Hive</a></li></ul>
@@ -153,7 +264,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/14/ClickHouse%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8/" data-id="ckadm4wy80001u8p5b4lkbsyl" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/14/ClickHouse%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8/" data-id="ckaqi0yqb0011u0p5f5upd0ru" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ClickHouse/" rel="tag">ClickHouse</a></li></ul>
@@ -214,7 +325,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/14/ClickHouse%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/" data-id="ckadm4wyc0004u8p5dvnc50di" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/14/ClickHouse%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/" data-id="ckaqi0yq2000fu0p53r785qdn" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ClickHouse/" rel="tag">ClickHouse</a></li></ul>
@@ -258,7 +369,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/14/ClickHouse%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE/" data-id="ckadm4wyd0005u8p5dcehh1cp" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/14/ClickHouse%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE/" data-id="ckaqi0ypg0000u0p58t0j6pm5" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ClickHouse/" rel="tag">ClickHouse</a></li></ul>
@@ -309,7 +420,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/07/hello-world/" data-id="ckadm4wys000zu8p51svz44jm" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/07/hello-world/" data-id="ckaqi0yqa000zu0p57qoa9kcd" class="article-share-link">Share</a>
       
       
     </footer>
@@ -354,7 +465,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/ClickHouse/" style="font-size: 20px;">ClickHouse</a> <a href="/tags/DataX/" style="font-size: 10px;">DataX</a> <a href="/tags/Flink/" style="font-size: 15px;">Flink</a> <a href="/tags/Hive/" style="font-size: 10px;">Hive</a> <a href="/tags/Idea/" style="font-size: 10px;">Idea</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/OpenTSDB/" style="font-size: 15px;">OpenTSDB</a> <a href="/tags/Zeppelin/" style="font-size: 10px;">Zeppelin</a>
+      <a href="/tags/ClickHouse/" style="font-size: 20px;">ClickHouse</a> <a href="/tags/DataX/" style="font-size: 10px;">DataX</a> <a href="/tags/Flink/" style="font-size: 15px;">Flink</a> <a href="/tags/Hive/" style="font-size: 10px;">Hive</a> <a href="/tags/Idea/" style="font-size: 10px;">Idea</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/OpenTSDB/" style="font-size: 20px;">OpenTSDB</a> <a href="/tags/Zeppelin/" style="font-size: 10px;">Zeppelin</a>
     </div>
   </div>
 
@@ -376,6 +487,14 @@
       <ul>
         
           <li>
+            <a href="/2020/05/28/OpenTSDB%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/">OpenTSDB源码解析--数据存储</a>
+          </li>
+        
+          <li>
+            <a href="/2020/05/19/OpenTSDB%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/">OpenTSDB源码解析--服务启动过程</a>
+          </li>
+        
+          <li>
             <a href="/2020/05/19/OpenTSDB%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/">OpenTSDB安装部署</a>
           </li>
         
@@ -385,14 +504,6 @@
         
           <li>
             <a href="/2020/05/09/JMeter%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8/">JMeter工具的使用</a>
-          </li>
-        
-          <li>
-            <a href="/2020/04/29/Flink%E8%AF%BB%E5%86%99Kafka/">Flink读写Kafka</a>
-          </li>
-        
-          <li>
-            <a href="/2020/04/28/Java%E4%B8%AD%E7%A7%91%E5%AD%A6%E8%AE%A1%E6%95%B0%E6%B3%95/">Java中科学计数法</a>
           </li>
         
       </ul>
