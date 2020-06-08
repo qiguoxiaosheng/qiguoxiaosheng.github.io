@@ -5,17 +5,17 @@
   
 
   
-  <title>OpenTSDB源码解析--服务启动过程 | qiguoxiaosheng&#39;s blogs</title>
+  <title>OpenTSDB服务启动过程解析 | qiguoxiaosheng&#39;s blogs</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="服务启动类TSDMain位于net.opentsdb.tools包下，服务启动步骤为：">
 <meta property="og:type" content="article">
-<meta property="og:title" content="OpenTSDB源码解析--服务启动过程">
-<meta property="og:url" content="http://yoursite.com/2020/05/19/OpenTSDB%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/index.html">
+<meta property="og:title" content="OpenTSDB服务启动过程解析">
+<meta property="og:url" content="http://yoursite.com/2020/05/19/OpenTSDB%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/index.html">
 <meta property="og:site_name" content="qiguoxiaosheng&#39;s blogs">
 <meta property="og:description" content="服务启动类TSDMain位于net.opentsdb.tools包下，服务启动步骤为：">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-05-19T08:11:31.936Z">
-<meta property="article:modified_time" content="2020-05-28T06:55:35.101Z">
+<meta property="article:modified_time" content="2020-06-08T09:07:41.468Z">
 <meta property="article:author" content="qiguoxiaosheng">
 <meta property="article:tag" content="OpenTSDB">
 <meta name="twitter:card" content="summary">
@@ -73,9 +73,9 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-OpenTSDB源码解析" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-OpenTSDB启动过程解析" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2020/05/19/OpenTSDB%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" class="article-date">
+    <a href="/2020/05/19/OpenTSDB%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/" class="article-date">
   <time datetime="2020-05-19T08:11:31.936Z" itemprop="datePublished">2020-05-19</time>
 </a>
     
@@ -91,7 +91,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      OpenTSDB源码解析--服务启动过程
+      OpenTSDB服务启动过程解析
     </h1>
   
 
@@ -104,7 +104,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/19/OpenTSDB%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" data-id="ckaqiavof0012mcp55j1wdd77" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/19/OpenTSDB%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/" data-id="ckb6c9ygb000jusp5d7yc6113" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenTSDB/" rel="tag">OpenTSDB</a></li></ul>
@@ -163,7 +163,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/ClickHouse/" style="font-size: 20px;">ClickHouse</a> <a href="/tags/DataX/" style="font-size: 10px;">DataX</a> <a href="/tags/Flink/" style="font-size: 15px;">Flink</a> <a href="/tags/Hive/" style="font-size: 10px;">Hive</a> <a href="/tags/Idea/" style="font-size: 10px;">Idea</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/OpenTSDB/" style="font-size: 20px;">OpenTSDB</a> <a href="/tags/Zeppelin/" style="font-size: 10px;">Zeppelin</a>
+      <a href="/tags/ClickHouse/" style="font-size: 16.67px;">ClickHouse</a> <a href="/tags/DataX/" style="font-size: 10px;">DataX</a> <a href="/tags/Flink/" style="font-size: 13.33px;">Flink</a> <a href="/tags/Hive/" style="font-size: 10px;">Hive</a> <a href="/tags/Idea/" style="font-size: 10px;">Idea</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/OpenTSDB/" style="font-size: 20px;">OpenTSDB</a> <a href="/tags/Zeppelin/" style="font-size: 10px;">Zeppelin</a>
     </div>
   </div>
 
@@ -172,7 +172,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li></ul>
     </div>
   </div>
 
@@ -185,11 +185,15 @@
       <ul>
         
           <li>
+            <a href="/2020/06/08/OpenTSDB%E6%9F%A5%E8%AF%A2%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/">OpenTSDB查询过程解析</a>
+          </li>
+        
+          <li>
             <a href="/2020/05/28/OpenTSDB%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/">OpenTSDB源码解析--数据存储</a>
           </li>
         
           <li>
-            <a href="/2020/05/19/OpenTSDB%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/">OpenTSDB源码解析--服务启动过程</a>
+            <a href="/2020/05/19/OpenTSDB%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/">OpenTSDB服务启动过程解析</a>
           </li>
         
           <li>
@@ -198,10 +202,6 @@
         
           <li>
             <a href="/2020/05/13/OpenTSDB3.0%E5%AE%9E%E8%B7%B5%E4%B8%80/">OpenTSDB 3.0实践一</a>
-          </li>
-        
-          <li>
-            <a href="/2020/05/09/JMeter%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8/">JMeter工具的使用</a>
           </li>
         
       </ul>
