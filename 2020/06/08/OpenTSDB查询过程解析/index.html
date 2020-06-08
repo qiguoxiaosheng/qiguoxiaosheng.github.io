@@ -7,15 +7,15 @@
   
   <title>OpenTSDB查询过程解析 | qiguoxiaosheng&#39;s blogs</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="OpenTSDB进行查询过程的大致步骤为：  网络层收到客户端的请求，将查询条件解析成TSQuery对象； 调用TSQuery.buildQueries()方法或buildQueriesAsync()方法，根据TSQuery封装TSSubQuery对象创建Query对象； 调用Query.run()方法或者runAsync()方法，该方法完成对Hbase表额查询及查询结果的整理。">
+  <meta name="description" content="OpenTSDB进行查询过程的大致步骤为：  网络层收到客户端的请求，将查询条件解析成TSQuery对象； 调用TSQuery.buildQueries()方法或buildQueriesAsync()方法，根据TSQuery封装TSSubQuery对象创建Query对象； 调用Query.run()方法或者runAsync()方法，该方法完成对Hbase表额查询及查询结果的整理。  其中，TSQu">
 <meta property="og:type" content="article">
 <meta property="og:title" content="OpenTSDB查询过程解析">
 <meta property="og:url" content="http://yoursite.com/2020/06/08/OpenTSDB%E6%9F%A5%E8%AF%A2%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/index.html">
 <meta property="og:site_name" content="qiguoxiaosheng&#39;s blogs">
-<meta property="og:description" content="OpenTSDB进行查询过程的大致步骤为：  网络层收到客户端的请求，将查询条件解析成TSQuery对象； 调用TSQuery.buildQueries()方法或buildQueriesAsync()方法，根据TSQuery封装TSSubQuery对象创建Query对象； 调用Query.run()方法或者runAsync()方法，该方法完成对Hbase表额查询及查询结果的整理。">
+<meta property="og:description" content="OpenTSDB进行查询过程的大致步骤为：  网络层收到客户端的请求，将查询条件解析成TSQuery对象； 调用TSQuery.buildQueries()方法或buildQueriesAsync()方法，根据TSQuery封装TSSubQuery对象创建Query对象； 调用Query.run()方法或者runAsync()方法，该方法完成对Hbase表额查询及查询结果的整理。  其中，TSQu">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-06-08T09:05:11.233Z">
-<meta property="article:modified_time" content="2020-06-08T10:14:16.889Z">
+<meta property="article:modified_time" content="2020-06-08T11:32:02.201Z">
 <meta property="article:author" content="qiguoxiaosheng">
 <meta property="article:tag" content="OpenTSDB">
 <meta name="twitter:card" content="summary">
@@ -105,11 +105,30 @@
 <li>调用TSQuery.buildQueries()方法或buildQueriesAsync()方法，根据TSQuery封装TSSubQuery对象创建Query对象；</li>
 <li>调用Query.run()方法或者runAsync()方法，该方法完成对Hbase表额查询及查询结果的整理。</li>
 </ol>
+<p>其中，TSQuery.buildQueries()也是通过调用buildQueriesAsync()方法来实现的。buildQueries()处代码为</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Compiles the TSQuery into an array of Query objects for execution.</span></span><br><span class="line"><span class="comment"> * If the user has not set a down sampler explicitly, and they don't want </span></span><br><span class="line"><span class="comment"> * millisecond resolution, then we set the down sampler to 1 second to handle</span></span><br><span class="line"><span class="comment"> * situations where storage may have multiple data points per second.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> tsdb The tsdb to use for &#123;<span class="doctag">@link</span> TSDB#newQuery&#125;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> A deferred array of queries to wait on for compilation.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 2.2</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> Deferred&lt;Query[]&gt; buildQueriesAsync(<span class="keyword">final</span> TSDB tsdb) &#123;</span><br><span class="line">  <span class="comment">// 将TSSubQuery对象与解析得到的TsdbQuery对应一一对应</span></span><br><span class="line">  <span class="keyword">final</span> Query[] tsdb_queries = <span class="keyword">new</span> Query[queries.size()];</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">final</span> List&lt;Deferred&lt;Object&gt;&gt; deferreds =</span><br><span class="line">      <span class="keyword">new</span> ArrayList&lt;Deferred&lt;Object&gt;&gt;(queries.size());</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; queries.size(); i++) &#123;</span><br><span class="line">    <span class="comment">// 创建TsdbQuery对象</span></span><br><span class="line">    <span class="keyword">final</span> Query query = tsdb.newQuery();</span><br><span class="line">    <span class="comment">// 初始化TsdbQuery对象</span></span><br><span class="line">    deferreds.add(query.configureFromQuery(<span class="keyword">this</span>, i));</span><br><span class="line">    tsdb_queries[i] = query;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  class GroupFinished implements Callback&lt;Query[], ArrayList&lt;Object&gt;&gt; &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Query[] call(<span class="keyword">final</span> ArrayList&lt;Object&gt; deferreds) &#123;</span><br><span class="line">      <span class="keyword">return</span> tsdb_queries;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="string">"Query compile group callback"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> Deferred.group(deferreds).addCallback(<span class="keyword">new</span> GroupFinished());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>query.configureFromQuery()初始化TsdbQuery对象的大致过程如下：</p>
+<ol>
+<li>从TSQuery中查找相应的TSSubQuery对象，并根据该对象初始化TsdbQuery中的start_time，end_time，aggregator，downsampler，query_index等字段。</li>
+<li>若该子查询使用tsuid进行查询，则检测tsuids字段中所有的metric是否相等</li>
+<li>若该子查询未使用tsuid进行查询，则<ol>
+<li>解析metric字段，获取对应的UID；</li>
+<li>如果该子查询中使用了TagVFilter进行过滤，则需要解析其中涉及的tagk及tagv，获取对应的UID；</li>
+<li>调用findGroupBys()方法，初始化group_bys字段及row_key_literals字段。findGroupBys()方法执行步骤如下：<ol>
+<li>对TsdbQuery.filters集合按tagk进行排序；</li>
+<li>迭代tagk相同的TagVFilter，记录TagVFilter.group_by字段为true的TagFilter的个数。如果此次迭代中存在的TagVLiteralOrFilter类型的TagFilter，则同时会用literals集合和literal_filters集合记录其相关信息。</li>
+<li>根据步骤2中获取的信息，初始化TsdbQuery.group_bys字段及row_key_literals字段。</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/06/08/OpenTSDB%E6%9F%A5%E8%AF%A2%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/" data-id="ckb6c9ygh000xusp53tehf2h1" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/06/08/OpenTSDB%E6%9F%A5%E8%AF%A2%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/" data-id="ckb6f1fd000115kp5807ravcg" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenTSDB/" rel="tag">OpenTSDB</a></li></ul>
