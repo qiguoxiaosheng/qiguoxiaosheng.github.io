@@ -15,7 +15,7 @@
 <meta property="og:description" content="OpenTSDB进行查询过程的大致步骤为：  网络层收到客户端的请求，将查询条件解析成TSQuery对象； 调用TSQuery.buildQueries()方法或buildQueriesAsync()方法，根据TSQuery封装TSSubQuery对象创建Query对象； 调用Query.run()方法或者runAsync()方法，该方法完成对Hbase表额查询及查询结果的整理。  其中，TSQu">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-06-08T09:05:11.233Z">
-<meta property="article:modified_time" content="2020-06-08T11:32:02.201Z">
+<meta property="article:modified_time" content="2020-06-22T02:27:10.688Z">
 <meta property="article:author" content="qiguoxiaosheng">
 <meta property="article:tag" content="OpenTSDB">
 <meta name="twitter:card" content="summary">
@@ -106,7 +106,7 @@
 <li>调用Query.run()方法或者runAsync()方法，该方法完成对Hbase表额查询及查询结果的整理。</li>
 </ol>
 <p>其中，TSQuery.buildQueries()也是通过调用buildQueriesAsync()方法来实现的。buildQueries()处代码为</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Compiles the TSQuery into an array of Query objects for execution.</span></span><br><span class="line"><span class="comment"> * If the user has not set a down sampler explicitly, and they don't want </span></span><br><span class="line"><span class="comment"> * millisecond resolution, then we set the down sampler to 1 second to handle</span></span><br><span class="line"><span class="comment"> * situations where storage may have multiple data points per second.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> tsdb The tsdb to use for &#123;<span class="doctag">@link</span> TSDB#newQuery&#125;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> A deferred array of queries to wait on for compilation.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 2.2</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> Deferred&lt;Query[]&gt; buildQueriesAsync(<span class="keyword">final</span> TSDB tsdb) &#123;</span><br><span class="line">  <span class="comment">// 将TSSubQuery对象与解析得到的TsdbQuery对应一一对应</span></span><br><span class="line">  <span class="keyword">final</span> Query[] tsdb_queries = <span class="keyword">new</span> Query[queries.size()];</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">final</span> List&lt;Deferred&lt;Object&gt;&gt; deferreds =</span><br><span class="line">      <span class="keyword">new</span> ArrayList&lt;Deferred&lt;Object&gt;&gt;(queries.size());</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; queries.size(); i++) &#123;</span><br><span class="line">    <span class="comment">// 创建TsdbQuery对象</span></span><br><span class="line">    <span class="keyword">final</span> Query query = tsdb.newQuery();</span><br><span class="line">    <span class="comment">// 初始化TsdbQuery对象</span></span><br><span class="line">    deferreds.add(query.configureFromQuery(<span class="keyword">this</span>, i));</span><br><span class="line">    tsdb_queries[i] = query;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  class GroupFinished implements Callback&lt;Query[], ArrayList&lt;Object&gt;&gt; &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Query[] call(<span class="keyword">final</span> ArrayList&lt;Object&gt; deferreds) &#123;</span><br><span class="line">      <span class="keyword">return</span> tsdb_queries;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="string">"Query compile group callback"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> Deferred.group(deferreds).addCallback(<span class="keyword">new</span> GroupFinished());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Compiles the TSQuery into an array of Query objects for execution.</span></span><br><span class="line"><span class="comment"> * If the user has not set a down sampler explicitly, and they don't want </span></span><br><span class="line"><span class="comment"> * millisecond resolution, then we set the down sampler to 1 second to handle</span></span><br><span class="line"><span class="comment"> * situations where storage may have multiple data points per second.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> tsdb The tsdb to use for &#123;<span class="doctag">@link</span> TSDB#newQuery&#125;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> A deferred array of queries to wait on for compilation.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 2.2</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> Deferred&lt;Query[]&gt; buildQueriesAsync(<span class="keyword">final</span> TSDB tsdb) &#123;</span><br><span class="line">  <span class="comment">// 将TSSubQuery对象与解析得到的TsdbQuery对象一一对应</span></span><br><span class="line">  <span class="keyword">final</span> Query[] tsdb_queries = <span class="keyword">new</span> Query[queries.size()];</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">final</span> List&lt;Deferred&lt;Object&gt;&gt; deferreds =</span><br><span class="line">      <span class="keyword">new</span> ArrayList&lt;Deferred&lt;Object&gt;&gt;(queries.size());</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; queries.size(); i++) &#123;</span><br><span class="line">    <span class="comment">// 创建TsdbQuery对象</span></span><br><span class="line">    <span class="keyword">final</span> Query query = tsdb.newQuery();</span><br><span class="line">    <span class="comment">// 初始化TsdbQuery对象</span></span><br><span class="line">    deferreds.add(query.configureFromQuery(<span class="keyword">this</span>, i));</span><br><span class="line">    tsdb_queries[i] = query;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  class GroupFinished implements Callback&lt;Query[], ArrayList&lt;Object&gt;&gt; &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Query[] call(<span class="keyword">final</span> ArrayList&lt;Object&gt; deferreds) &#123;</span><br><span class="line">      <span class="keyword">return</span> tsdb_queries;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="string">"Query compile group callback"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> Deferred.group(deferreds).addCallback(<span class="keyword">new</span> GroupFinished());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>query.configureFromQuery()初始化TsdbQuery对象的大致过程如下：</p>
 <ol>
@@ -128,7 +128,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/06/08/OpenTSDB%E6%9F%A5%E8%AF%A2%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/" data-id="ckb6f1fd000115kp5807ravcg" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/06/08/OpenTSDB%E6%9F%A5%E8%AF%A2%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/" data-id="ckc2oa1g0000wpsp51p9nehlg" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenTSDB/" rel="tag">OpenTSDB</a></li></ul>
@@ -138,6 +138,15 @@
   
     
 <nav id="article-nav">
+  
+    <a href="/2020/07/01/%E5%85%A5%E5%9D%91JavaCC/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          入坑JavaCC
+        
+      </div>
+    </a>
   
   
     <a href="/2020/05/28/OpenTSDB%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/" id="article-nav-older" class="article-nav-link-wrap">
@@ -187,7 +196,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li></ul>
     </div>
   </div>
 
@@ -198,6 +207,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2020/07/01/%E5%85%A5%E5%9D%91JavaCC/">入坑JavaCC</a>
+          </li>
         
           <li>
             <a href="/2020/06/08/OpenTSDB%E6%9F%A5%E8%AF%A2%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/">OpenTSDB查询过程解析</a>
@@ -213,10 +226,6 @@
         
           <li>
             <a href="/2020/05/19/OpenTSDB%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/">OpenTSDB安装部署</a>
-          </li>
-        
-          <li>
-            <a href="/2020/05/13/OpenTSDB3.0%E5%AE%9E%E8%B7%B5%E4%B8%80/">OpenTSDB 3.0实践一</a>
           </li>
         
       </ul>

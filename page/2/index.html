@@ -70,6 +70,58 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-Flink自定义Sink" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/04/28/Flink%E8%87%AA%E5%AE%9A%E4%B9%89Sink/" class="article-date">
+  <time datetime="2020-04-28T07:25:07.219Z" itemprop="datePublished">2020-04-28</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Develop/">Develop</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/04/28/Flink%E8%87%AA%E5%AE%9A%E4%B9%89Sink/">Flink自定义Sink</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本篇主要记录如何自定义Flink Sink，以OpenTSDB为例。</p>
+<h4 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h4><p>开发环境搭建参见<a href="https://qiguoxiaosheng.github.io/2020/04/28/Idea搭建Flink本地开发环境/" target="_blank" rel="noopener">Idea搭建Flink本地开发环境</a></p>
+<h4 id="OpenTSDBSink"><a href="#OpenTSDBSink" class="headerlink" title="OpenTSDBSink"></a>OpenTSDBSink</h4><p>新建一个OpenTSDBSink类，并继承RichSinkFunction，然后重写里面的方法，这里主要重写了open，invoke方法，示例中参数仅做为演示，生产环境建议由外部传入。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OpenTSDBSink</span> <span class="keyword">extends</span> <span class="title">RichSinkFunction</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> OpenTSDBConnection conn;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> retrySize;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setRuntimeContext</span><span class="params">(RuntimeContext t)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.setRuntimeContext(t);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> RuntimeContext <span class="title">getRuntimeContext</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">super</span>.getRuntimeContext();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> IterationRuntimeContext <span class="title">getIterationRuntimeContext</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">super</span>.getIterationRuntimeContext();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * open方法在sink第一次启动时调用，一般用于sink的初始化操作</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">open</span><span class="params">(Configuration parameters)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.open(parameters);</span><br><span class="line">        String address = <span class="string">"http://127.0.0.1:4242/"</span>;</span><br><span class="line">        <span class="keyword">this</span>.conn = <span class="keyword">new</span> OpenTSDBConnection(address);</span><br><span class="line">        <span class="keyword">this</span>.retrySize = <span class="number">3</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * close方法在sink结束时调用，一般用于资源的回收操作</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">close</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.close();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * invoke方法是sink数据处理逻辑的方法，source端传来的数据都在invoke方法中进行处理</span></span><br><span class="line"><span class="comment">     * 其中invoke方法中第一个参数类型与RichSinkFunction&lt;String&gt;中的泛型对应。第二个参数</span></span><br><span class="line"><span class="comment">     * 为上下文信息</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">invoke</span><span class="params">(String value, Context context)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            RetryUtil.executeWithRetry(<span class="keyword">new</span> Callable&lt;Integer&gt;() &#123;</span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> Integer <span class="title">call</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                    <span class="keyword">if</span> (!conn.put(value)) &#123;</span><br><span class="line">                        log.error(<span class="string">"写入数据失败！"</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;, retrySize, <span class="number">30000L</span>, <span class="keyword">true</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            log.error(e.toString());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>参考资料：</p>
+<ol>
+<li><a href="http://www.54tianzhisheng.cn/2018/10/31/flink-create-sink" target="_blank" rel="noopener">Flink 从 0 到 1 学习 —— 如何自定义 Data Sink</a></li>
+<li><a href="https://blog.csdn.net/gxd520/article/details/92768829" target="_blank" rel="noopener">Flink自定义Sink</a></li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/04/28/Flink%E8%87%AA%E5%AE%9A%E4%B9%89Sink/" data-id="ckc2oa1fn0006psp53z857bgk" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flink/" rel="tag">Flink</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-OpenTSDB源码编译" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2020/04/20/OpenTSDB%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/" class="article-date">
@@ -139,7 +191,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/20/OpenTSDB%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/" data-id="ckb6f1fd200175kp56s116dns" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/20/OpenTSDB%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/" data-id="ckc2oa1gd001wpsp5hgzl237k" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenTSDB/" rel="tag">OpenTSDB</a></li></ul>
@@ -183,7 +235,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/20/Kafka%E8%BF%90%E7%BB%B4/" data-id="ckb6f1fcu000i5kp580ln4ehu" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/20/Kafka%E8%BF%90%E7%BB%B4/" data-id="ckc2oa1fm0005psp53zu9e8v6" class="article-share-link">Share</a>
       
       
     </footer>
@@ -250,7 +302,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/15/ClickHouse%20on%20Zeppelin/" data-id="ckb6f1fca00005kp5aji987qz" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/15/ClickHouse%20on%20Zeppelin/" data-id="ckc2oa1g50017psp59zex208r" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ClickHouse/" rel="tag">ClickHouse</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Zeppelin/" rel="tag">Zeppelin</a></li></ul>
@@ -292,7 +344,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/14/DataX%E5%90%8C%E6%AD%A5Hive%E6%95%B0%E6%8D%AE%E8%87%B3ClickHouse/" data-id="ckb6f1fcm00065kp53068c4w5" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/14/DataX%E5%90%8C%E6%AD%A5Hive%E6%95%B0%E6%8D%AE%E8%87%B3ClickHouse/" data-id="ckc2oa1fq000apsp5gd4j4z9h" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ClickHouse/" rel="tag">ClickHouse</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DataX/" rel="tag">DataX</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Hive/" rel="tag">Hive</a></li></ul>
@@ -345,7 +397,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/14/ClickHouse%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8/" data-id="ckb6f1fch00015kp50dpg8dh9" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/14/ClickHouse%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8/" data-id="ckc2oa1fl0004psp58nm2gkfd" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ClickHouse/" rel="tag">ClickHouse</a></li></ul>
@@ -406,7 +458,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/14/ClickHouse%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/" data-id="ckb6f1fck00045kp57ryjguuo" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/14/ClickHouse%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/" data-id="ckc2oa1fa0000psp5ggbsdtfu" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ClickHouse/" rel="tag">ClickHouse</a></li></ul>
@@ -450,7 +502,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/14/ClickHouse%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE/" data-id="ckb6f1fcl00055kp5agcudg7n" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/14/ClickHouse%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE/" data-id="ckc2oa1fi0001psp50uq94snw" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ClickHouse/" rel="tag">ClickHouse</a></li></ul>
@@ -501,7 +553,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/07/hello-world/" data-id="ckb6f1fd3001a5kp5bxrh9kgx" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/07/hello-world/" data-id="ckc2oa1g20011psp59bgi1jna" class="article-share-link">Share</a>
       
       
     </footer>
@@ -555,7 +607,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li></ul>
     </div>
   </div>
 
@@ -566,6 +618,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2020/07/01/%E5%85%A5%E5%9D%91JavaCC/">入坑JavaCC</a>
+          </li>
         
           <li>
             <a href="/2020/06/08/OpenTSDB%E6%9F%A5%E8%AF%A2%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/">OpenTSDB查询过程解析</a>
@@ -581,10 +637,6 @@
         
           <li>
             <a href="/2020/05/19/OpenTSDB%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/">OpenTSDB安装部署</a>
-          </li>
-        
-          <li>
-            <a href="/2020/05/13/OpenTSDB3.0%E5%AE%9E%E8%B7%B5%E4%B8%80/">OpenTSDB 3.0实践一</a>
           </li>
         
       </ul>
