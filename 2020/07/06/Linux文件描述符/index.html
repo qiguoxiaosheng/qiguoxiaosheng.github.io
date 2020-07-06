@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>Linux文件描述符 | qiguoxiaosheng&#39;s blogs</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Linux系统将所有设备都当作文件来处理，而Linux用文件描述符来标识每个文件对象。文件描述符是一个非负的整数，它是一个索引值，指向内核中每个进程打开文件的记录表。 它描述了数据资源，以及如何访问该资源。 Linux标准文件描述符    文件描述符 缩写 描述    0 STDIN 标准输入   1 STDOUT 标准输出   2 STDERR 标准错误输出   查看硬盘信息：df -m查看内存">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux文件描述符">
+<meta property="og:url" content="http://yoursite.com/2020/07/06/Linux%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6/index.html">
+<meta property="og:site_name" content="qiguoxiaosheng&#39;s blogs">
+<meta property="og:description" content="Linux系统将所有设备都当作文件来处理，而Linux用文件描述符来标识每个文件对象。文件描述符是一个非负的整数，它是一个索引值，指向内核中每个进程打开文件的记录表。 它描述了数据资源，以及如何访问该资源。 Linux标准文件描述符    文件描述符 缩写 描述    0 STDIN 标准输入   1 STDOUT 标准输出   2 STDERR 标准错误输出   查看硬盘信息：df -m查看内存">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-07-06T02:05:12.540Z">
+<meta property="article:modified_time" content="2020-07-06T06:26:20.496Z">
+<meta property="article:author" content="qiguoxiaosheng">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="qiguoxiaosheng&#39;s blogs" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">qiguoxiaosheng&#39;s blogs</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/categories">Categories</a>
+        
+          <a class="main-nav-link" href="/tags">Tags</a>
+        
+          <a class="main-nav-link" href="/about">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Linux文件描述符" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/07/06/Linux%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6/" class="article-date">
+  <time datetime="2020-07-06T02:05:12.540Z" itemprop="datePublished">2020-07-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Linux文件描述符
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Linux系统将所有设备都当作文件来处理，而Linux用文件描述符来标识每个文件对象。文件描述符是一个非负的整数，它是一个索引值，指向内核中每个进程打开文件的记录表。 它描述了数据资源，以及如何访问该资源。</p>
+<p>Linux标准文件描述符</p>
+<table>
+<thead>
+<tr>
+<th>文件描述符</th>
+<th>缩写</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>STDIN</td>
+<td>标准输入</td>
+</tr>
+<tr>
+<td>1</td>
+<td>STDOUT</td>
+<td>标准输出</td>
+</tr>
+<tr>
+<td>2</td>
+<td>STDERR</td>
+<td>标准错误输出</td>
+</tr>
+</tbody></table>
+<p>查看硬盘信息：df -m<br>查看内存信息：free -m<br>查看CPU信息：cat /proc/cpuinfo<br>查看内核所能打开的线程数：cat /proc/sys/kernel/threads-max</p>
+<p>文件描述符是内核存储的文件描述符表的索引。 内核响应调用而创建文件描述符，并将文件描述符与底层文件对象的某种抽象相关联，这些对象是实际的硬件设备，文件系统或其他任何东西。 因此，引用该文件描述符的进程的读取或写入调用将由内核来索引到正确的位置。lsof(list open files)是一个列出当前系统打开文件的工具。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">[root@local ~]# lsof -p 109110</span><br><span class="line">COMMAND    PID  USER   FD      TYPE             DEVICE  SIZE/OFF      NODE NAME</span><br><span class="line">java    109110 hbase  cwd       DIR               0,39       420  87083228 /run/cloudera-scm-agent/process/1031-hbase-MASTER</span><br><span class="line">java    109110 hbase  rtd       DIR              8,195       254       128 /</span><br><span class="line">java    109110 hbase  txt       REG              8,195      7734  33706485 /usr/java/java_1.8/bin/java</span><br><span class="line">java    109110 hbase  mem       REG              8,195    995840  50332155 /usr/lib64/libstdc++.so.6.0.19</span><br><span class="line">java    109110 hbase  mem       REG              8,198     23800  16793677 /opt/cloudera/parcels/CDH-5.15.0-1.cdh5.15.0.p0.21/lib/hadoop/lib/native/libsnappy.so.1.1.4</span><br><span class="line">java    109110 hbase  mem       REG              8,198    139608  16793668 /opt/cloudera/parcels/CDH-5.15.0-1.cdh5.15.0.p0.21/lib/hadoop/lib/native/libhadoop.so.1.0.0</span><br><span class="line">java    109110 hbase  mem       REG              8,195      7652  51793784 /usr/java/java_1.8/jre/lib/amd64/libjaas_unix.so</span><br><span class="line">java    109110 hbase  mem       REG              8,195     68192  50332271 /usr/lib64/libbz2.so.1.0.6</span><br><span class="line">java    109110 hbase  mem       REG              8,195    157424  50332265 /usr/lib64/liblzma.so.5.2.2</span><br><span class="line">java    109110 hbase  mem       REG              8,195     90248  50507691 /usr/lib64/libz.so.1.2.7</span><br><span class="line">java    109110 hbase  mem       REG              8,195     99944  50332272 /usr/lib64/libelf-0.170.so</span><br><span class="line">java    109110 hbase  mem       REG              8,195     19896  50332190 /usr/lib64/libattr.so.1.1.0</span><br><span class="line">java    109110 hbase  mem       REG              8,195     88776  50764564 /usr/lib64/libgcc_s-4.8.5-20150702.so.1</span><br><span class="line">java    109110 hbase  mem       REG              8,195    297360  50431748 /usr/lib64/libdw-0.170.so</span><br><span class="line">java    109110 hbase  mem       REG              8,195     20032  50332193 /usr/lib64/libcap.so.2.22</span><br><span class="line">java    109110 hbase  mem       REG              8,195     86544  50431750 /usr/lib64/libnss_myhostname.so.2</span><br><span class="line">java    109110 hbase  mem       REG              8,195    105824  50764592 /usr/lib64/libresolv-2.17.so</span><br><span class="line">java    109110 hbase  mem       REG              8,195     31408  50764580 /usr/lib64/libnss_dns-2.17.so</span><br><span class="line">java    109110 hbase  mem       REG              8,195     93112  51794942 /usr/java/java_1.8/jre/lib/amd64/libnio.so</span><br><span class="line">java    109110 hbase  mem       REG              8,195    115814  51793778 /usr/java/java_1.8/jre/lib/amd64/libnet.so</span><br><span class="line">java    109110 hbase  mem       REG              8,195    647051  92507000 /usr/java/java_1.8/jre/lib/jsse.jar</span><br><span class="line">java    109110 hbase  mem       REG              8,195     50289  51793764 /usr/java/java_1.8/jre/lib/amd64/libmanagement.so</span><br><span class="line">java    109110 hbase  mem       REG              8,198    481535 167776404 /opt/cloudera/parcels/CDH-5.15.0-1.cdh5.15.0.p0.21/jars/log4j-1.2.16.jar</span><br></pre></td></tr></table></figure>
+
+<p>lsof输出各列信息含义：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">COMMAND：进程的名称</span><br><span class="line">PID： 进程标识符</span><br><span class="line">USER：进程所有者</span><br><span class="line">FD：文件描述符，应用程序通过文件描述符识别该文件。如cwd, rtd, txt, mem, DEL, 0u, 3w, 4r等</span><br><span class="line">TYPE：文件类型，如DIR, REG, CHR, Ipv6, unix, FIFO等</span><br><span class="line">DEVICE：指定磁盘的名称</span><br><span class="line">SIZE/OFF：文件的大小</span><br><span class="line">NODE：索引节点</span><br><span class="line">NAME：打开文件的确切名称</span><br></pre></td></tr></table></figure>
+
+<p>FD中r表示只读，w为只写模式，u表示该文件被打开处于读写模式；大写的W表示该应用程序具有对整个文件的写锁。TYPE列文件和目录分别为REG和DIR。而CHR和BLK分别表示字符和块设备或者unix, FIFO, Ipv6分表表示UNIX域套接字，FIFO队列和IP套接字。</p>
+<p>查看当前进程打开了多少文件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lsof -n|awk ‘&#123;print $2&#125;’|sort|uniq -c|sort -nr|more | grep [PID]</span><br></pre></td></tr></table></figure>
+
+<p>查看当前进程打开文件描述符数：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls /proc/[PID]/fd |wc -l</span><br></pre></td></tr></table></figure>
+
+<h3 id="ulimit"><a href="#ulimit" class="headerlink" title="ulimit"></a>ulimit</h3><p>查看进程允许打开的最大文件句柄数：ulimit -n。设置进程能打开的最大文件句柄数：ulimit -n xxx。</p>
+<p>ulimit在系统允许的情况下，提供对特定shell可利用的资源的控制（Provides control over the resources avaliable to the shell and to processes started by it, on systems that allow such control）。-H和-S选项设定指定资源的硬限制和软限制。硬限制设定之后不能再添加，而软限制则可以增加到硬限制规定的值。如果-H和-S选项都没有指定，则软限制和硬限制同时设定。限制值可以是指定资源的数值或者hard, soft, unlimited这些特殊值，其中hard代表当前硬限制, soft代表当前软件限制, unlimited代表不限制. 如果不指定限制值, 则打印指定资源的软限制值, 除非指定了-H选项.如果指定了不只一种资源, 则限制名和单位都会在限制值前显示出来.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@local ~]# ulimit -Sn</span><br><span class="line">65536</span><br><span class="line">[root@local ~]# ulimit -Hn</span><br><span class="line">65536</span><br></pre></td></tr></table></figure>
+
+<p>需要注意的是ulimit提供的是对特定shell可利用的资源的控制，而shell是与具体用户相关的。因此ulimit提供的是对单个用户的限制。包括以下项：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">[root@local ~]# ulimit -a</span><br><span class="line">core file size          (blocks, -c) 0</span><br><span class="line">data seg size           (kbytes, -d) unlimited</span><br><span class="line">scheduling priority             (-e) 0</span><br><span class="line">file size               (blocks, -f) unlimited</span><br><span class="line">pending signals                 (-i) 766843</span><br><span class="line">max locked memory       (kbytes, -l) 64</span><br><span class="line">max memory size         (kbytes, -m) unlimited</span><br><span class="line">open files                      (-n) 65536</span><br><span class="line">pipe size            (512 bytes, -p) 8</span><br><span class="line">POSIX message queues     (bytes, -q) 819200</span><br><span class="line">real-time priority              (-r) 0</span><br><span class="line">stack size              (kbytes, -s) 8192</span><br><span class="line">cpu time               (seconds, -t) unlimited</span><br><span class="line">max user processes              (-u) 766843</span><br><span class="line">virtual memory          (kbytes, -v) unlimited</span><br><span class="line">file locks                      (-x) unlimited</span><br></pre></td></tr></table></figure>
+
+<p>其中就有个“open files”的限制，默认是65536，也就是这个用户最大可以打开65536个文件。如果使用ulimit -n修改最大文件打开数，那么只对当前shell用户有用，同时也只对当前shell和这个shell fork出来的子shell生效，重启之后会重新恢复为默认值。</p>
+<p>limits.conf</p>
+<p>limits.conf这个文件是在/etc/security/目录下，因此这个文件是出于安全考虑的。limits.conf文件是用于提供对系统中的用户所使用的资源进行控制和限制，对所有用户的资源设定限制是非常重要的，这可以防止用户发起针对处理器和内存数量等的拒绝服务攻击。这些限制必须在用户登录时限制。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line">[root@lv215 ~]# cat /etc/security/limits.conf</span><br><span class="line"><span class="meta">#</span><span class="bash"> /etc/security/limits.conf</span></span><br><span class="line"><span class="meta">#</span></span><br><span class="line"><span class="meta">#</span><span class="bash">This file sets the resource limits <span class="keyword">for</span> the users logged <span class="keyword">in</span> via PAM.</span></span><br><span class="line"><span class="meta">#</span><span class="bash">It does not affect resource limits of the system services.</span></span><br><span class="line"><span class="meta">#</span></span><br><span class="line"><span class="meta">#</span><span class="bash">Also note that configuration files <span class="keyword">in</span> /etc/security/limits.d directory,</span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="built_in">which</span> are <span class="built_in">read</span> <span class="keyword">in</span> alphabetical order, override the settings <span class="keyword">in</span> this</span></span><br><span class="line"><span class="meta">#</span><span class="bash">file <span class="keyword">in</span> <span class="keyword">case</span> the domain is the same or more specific.</span></span><br><span class="line"><span class="meta">#</span><span class="bash">That means <span class="keyword">for</span> example that setting a <span class="built_in">limit</span> <span class="keyword">for</span> wildcard domain here</span></span><br><span class="line"><span class="meta">#</span><span class="bash">can be overriden with a wildcard setting <span class="keyword">in</span> a config file <span class="keyword">in</span> the</span></span><br><span class="line"><span class="meta">#</span><span class="bash">subdirectory, but a user specific setting here can be overriden only</span></span><br><span class="line"><span class="meta">#</span><span class="bash">with a user specific setting <span class="keyword">in</span> the subdirectory.</span></span><br><span class="line"><span class="meta">#</span></span><br><span class="line"><span class="meta">#</span><span class="bash">Each line describes a <span class="built_in">limit</span> <span class="keyword">for</span> a user <span class="keyword">in</span> the form:</span></span><br><span class="line"><span class="meta">#</span></span><br><span class="line"><span class="meta">#</span><span class="bash">&lt;domain&gt;        &lt;<span class="built_in">type</span>&gt;  &lt;item&gt;  &lt;value&gt;</span></span><br><span class="line"><span class="meta">#</span></span><br><span class="line"><span class="meta">#</span><span class="bash">Where:</span></span><br><span class="line"><span class="meta">#</span><span class="bash">&lt;domain&gt; can be:</span></span><br><span class="line"><span class="meta">#</span><span class="bash">        - a user name</span></span><br><span class="line"><span class="meta">#</span><span class="bash">        - a group name, with @group syntax</span></span><br><span class="line"><span class="meta">#</span><span class="bash">        - the wildcard *, <span class="keyword">for</span> default entry</span></span><br><span class="line"><span class="meta">#</span><span class="bash">        - the wildcard %, can be also used with %group syntax,</span></span><br><span class="line"><span class="meta">#</span><span class="bash">                 <span class="keyword">for</span> maxlogin <span class="built_in">limit</span></span></span><br><span class="line"><span class="meta">#</span></span><br><span class="line"><span class="meta">#</span><span class="bash">&lt;<span class="built_in">type</span>&gt; can have the two values:</span></span><br><span class="line"><span class="meta">#</span><span class="bash">        - <span class="string">"soft"</span> <span class="keyword">for</span> enforcing the soft limits</span></span><br><span class="line"><span class="meta">#</span><span class="bash">        - <span class="string">"hard"</span> <span class="keyword">for</span> enforcing hard limits</span></span><br><span class="line"><span class="meta">#</span></span><br><span class="line"><span class="meta">#</span><span class="bash">&lt;item&gt; can be one of the following:</span></span><br><span class="line"><span class="meta">#</span><span class="bash">        - core - limits the core file size (KB)</span></span><br><span class="line"><span class="meta">#</span><span class="bash">        - data - max data size (KB)</span></span><br><span class="line"><span class="meta">#</span><span class="bash">        - fsize - maximum filesize (KB)</span></span><br><span class="line"><span class="meta">#</span><span class="bash">        - memlock - max locked-in-memory address space (KB)</span></span><br><span class="line"><span class="meta">#</span><span class="bash">        - nofile - max number of open file descriptors</span></span><br><span class="line"><span class="meta">#</span><span class="bash">        - rss - max resident <span class="built_in">set</span> size (KB)</span></span><br><span class="line"><span class="meta">#</span><span class="bash">        - stack - max stack size (KB)</span></span><br><span class="line"><span class="meta">#</span><span class="bash">        - cpu - max CPU time (MIN)</span></span><br><span class="line"><span class="meta">#</span><span class="bash">        - nproc - max number of processes</span></span><br><span class="line"><span class="meta">#</span><span class="bash">        - as - address space <span class="built_in">limit</span> (KB)</span></span><br><span class="line"><span class="meta">#</span><span class="bash">        - maxlogins - max number of logins <span class="keyword">for</span> this user</span></span><br><span class="line"><span class="meta">#</span><span class="bash">        - maxsyslogins - max number of logins on the system</span></span><br><span class="line"><span class="meta">#</span><span class="bash">        - priority - the priority to run user process with</span></span><br><span class="line"><span class="meta">#</span><span class="bash">        - locks - max number of file locks the user can hold</span></span><br><span class="line"><span class="meta">#</span><span class="bash">        - sigpending - max number of pending signals</span></span><br><span class="line"><span class="meta">#</span><span class="bash">        - msgqueue - max memory used by POSIX message queues (bytes)</span></span><br><span class="line"><span class="meta">#</span><span class="bash">        - nice - max nice priority allowed to raise to values: [-20, 19]</span></span><br><span class="line"><span class="meta">#</span><span class="bash">        - rtprio - max realtime priority</span></span><br><span class="line"><span class="meta">#</span></span><br><span class="line"><span class="meta">#</span><span class="bash">&lt;domain&gt;      &lt;<span class="built_in">type</span>&gt;  &lt;item&gt;         &lt;value&gt;</span></span><br><span class="line"><span class="meta">#</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">*               soft    core            0</span></span><br><span class="line"><span class="meta">#</span><span class="bash">*               hard    rss             10000</span></span><br><span class="line"><span class="meta">#</span><span class="bash">@student        hard    nproc           20</span></span><br><span class="line"><span class="meta">#</span><span class="bash">@faculty        soft    nproc           20</span></span><br><span class="line"><span class="meta">#</span><span class="bash">@faculty        hard    nproc           50</span></span><br><span class="line"><span class="meta">#</span><span class="bash">ftp             hard    nproc           0</span></span><br><span class="line"><span class="meta">#</span><span class="bash">@student        -       maxlogins       4</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> End of file</span></span><br><span class="line">*        hard    nofile           65536</span><br><span class="line">*        soft    nofile           65536</span><br></pre></td></tr></table></figure>
+
+<p>其中含义如下：</p>
+<ul>
+<li>第一列表示域（domain）,可以使用用户名（root等），组名（以@开头）,通配置*和%，%可以用于%group参数。</li>
+<li>第二列表示类型(type),值可以是soft或者hard</li>
+<li>第三列表示项目(item),值可以是core, data, fsize, memlock, nofile, rss, stack, cpu, nproc, as, maxlogins, maxsyslogins, priority, locks, msgqueue, nie, rtprio。其中nofile(Number of Open File）就是文件打开数。</li>
+<li>第四列表示值.</li>
+</ul>
+<h3 id="为什么有限制？"><a href="#为什么有限制？" class="headerlink" title="为什么有限制？"></a>为什么有限制？</h3><p>为什么Linux内核对文件句柄数、线程和进程的最大打开数进行了限制？以及如果我们把它调的太大，会产生什么样的后果？</p>
+<p>原因1 - 资源问题：the operating system needs memory to manage each open file, and memory is a limited resource - especially on embedded systems.<br>原因2 - 安全问题：if there were no limits, a userland software would be able to create files endlessly until the server goes down.</p>
+<p>What’s more? If the file descriptors are tcp sockets, etc, then you risk using up a large amount for the socket buffers and other kernel objects, this memory is not going to be swappable.</p>
+<p>最主要的是资源问题，为防止某一单一进程打开过多文件描述符而耗尽系统资源，对进程打开文件数做了限制。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/07/06/Linux%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6/" data-id="ckca4kmak000hngp55jw72e8q" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2020/07/01/%E5%85%A5%E5%9D%91JavaCC/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">入坑JavaCC</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Develop/">Develop</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Maintenance/">Maintenance</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Test/">Test</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ClickHouse/" rel="tag">ClickHouse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DataX/" rel="tag">DataX</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flink/" rel="tag">Flink</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hive/" rel="tag">Hive</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Idea/" rel="tag">Idea</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OpenTSDB/" rel="tag">OpenTSDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Zeppelin/" rel="tag">Zeppelin</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ClickHouse/" style="font-size: 16.67px;">ClickHouse</a> <a href="/tags/DataX/" style="font-size: 10px;">DataX</a> <a href="/tags/Flink/" style="font-size: 13.33px;">Flink</a> <a href="/tags/Hive/" style="font-size: 10px;">Hive</a> <a href="/tags/Idea/" style="font-size: 10px;">Idea</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/OpenTSDB/" style="font-size: 20px;">OpenTSDB</a> <a href="/tags/Zeppelin/" style="font-size: 10px;">Zeppelin</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/07/06/Linux%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6/">Linux文件描述符</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/01/%E5%85%A5%E5%9D%91JavaCC/">入坑JavaCC</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/08/OpenTSDB%E6%9F%A5%E8%AF%A2%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/">OpenTSDB查询过程解析</a>
+          </li>
+        
+          <li>
+            <a href="/2020/05/28/OpenTSDB%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/">OpenTSDB源码解析--数据存储</a>
+          </li>
+        
+          <li>
+            <a href="/2020/05/19/OpenTSDB%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/">OpenTSDB服务启动过程解析</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 qiguoxiaosheng<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/categories" class="mobile-nav-link">Categories</a>
+  
+    <a href="/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>
