@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>CDH5.16中启用Kerberos | qiguoxiaosheng&#39;s blogs</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="1.在Cloudera Manager服务器上安装KDC服务 1sudo yum -y install krb5-server krb5-libs krb5-auth-dialog krb5-workstation  2.修改&#x2F;etc&#x2F;krb5.conf配置 1234567891011121314151617181920212223242526272829303132333435[root@had">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CDH5.16中启用Kerberos">
+<meta property="og:url" content="http://yoursite.com/2020/07/21/CDH5.16%E5%90%AF%E7%94%A8Kerberos/index.html">
+<meta property="og:site_name" content="qiguoxiaosheng&#39;s blogs">
+<meta property="og:description" content="1.在Cloudera Manager服务器上安装KDC服务 1sudo yum -y install krb5-server krb5-libs krb5-auth-dialog krb5-workstation  2.修改&#x2F;etc&#x2F;krb5.conf配置 1234567891011121314151617181920212223242526272829303132333435[root@had">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-07-21T06:48:40.751Z">
+<meta property="article:modified_time" content="2020-07-24T02:28:07.568Z">
+<meta property="article:author" content="qiguoxiaosheng">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="qiguoxiaosheng&#39;s blogs" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">qiguoxiaosheng&#39;s blogs</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/categories">Categories</a>
+        
+          <a class="main-nav-link" href="/tags">Tags</a>
+        
+          <a class="main-nav-link" href="/about">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-CDH5.16启用Kerberos" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/07/21/CDH5.16%E5%90%AF%E7%94%A8Kerberos/" class="article-date">
+  <time datetime="2020-07-21T06:48:40.751Z" itemprop="datePublished">2020-07-21</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      CDH5.16中启用Kerberos
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>1.在Cloudera Manager服务器上安装KDC服务</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum -y install krb5-server krb5-libs krb5-auth-dialog krb5-workstation</span><br></pre></td></tr></table></figure>
+
+<p>2.修改/etc/krb5.conf配置</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">[root@hadoop1 home]# vi /etc/krb5.conf</span><br><span class="line"><span class="meta">#</span><span class="bash"> Configuration snippets may be placed <span class="keyword">in</span> this directory as well</span></span><br><span class="line">includedir /etc/krb5.conf.d/</span><br><span class="line"></span><br><span class="line">[logging]</span><br><span class="line"> default = FILE:/var/log/krb5libs.log</span><br><span class="line"> kdc = FILE:/var/log/krb5kdc.log</span><br><span class="line"> admin_server = FILE:/var/log/kadmind.log</span><br><span class="line"></span><br><span class="line">[libdefaults]</span><br><span class="line"> dns_lookup_realm = false</span><br><span class="line"> ticket_lifetime = 24h</span><br><span class="line"> renew_lifetime = 7d</span><br><span class="line"> forwardable = true</span><br><span class="line"> rdns = false</span><br><span class="line"> pkinit_anchors = FILE:/etc/pki/tls/certs/ca-bundle.crt</span><br><span class="line"><span class="meta">#</span><span class="bash"> default_realm = EXAMPLE.COM</span></span><br><span class="line"> default_realm = XXX.COM</span><br><span class="line"><span class="meta">#</span><span class="bash"> default_ccache_name = KEYRING:persistent:%&#123;uid&#125;</span></span><br><span class="line"></span><br><span class="line">[realms]</span><br><span class="line"><span class="meta">#</span><span class="bash"> EXAMPLE.COM = &#123;</span></span><br><span class="line"><span class="meta">#</span><span class="bash">  kdc = kerberos.example.com</span></span><br><span class="line"><span class="meta">#</span><span class="bash">  admin_server = kerberos.example.com</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> &#125;</span></span><br><span class="line"> XXX.COM = &#123;</span><br><span class="line">   kdc = hadoop1.xyd.com</span><br><span class="line">   admin_server = hadoop1.xyd.com</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line">[domain_realm]</span><br><span class="line"><span class="meta">#</span><span class="bash"> .example.com = EXAMPLE.COM</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> example.com = EXAMPLE.COM</span></span><br><span class="line"> .xyd.com = XXX.COM</span><br><span class="line">  xyd.com = XXX.COM</span><br></pre></td></tr></table></figure>
+
+<p>3.修改/var/kerberos/krb5kdc/kadm5.acl配置</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@hadoop1 home]# more /var/kerberos/krb5kdc/kadm5.acl</span><br><span class="line">*/admin@XXX.COM *</span><br></pre></td></tr></table></figure>
+
+<p>4.修改/var/kerberos/krb5kdc/kdc.conf配置</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[kdcdefaults]</span><br><span class="line"> kdc_ports = 88</span><br><span class="line"> kdc_tcp_ports = 88</span><br><span class="line"></span><br><span class="line">[realms]</span><br><span class="line"> XXX.COM = &#123;</span><br><span class="line"><span class="meta">  #</span><span class="bash">master_key_type = aes256-cts</span></span><br><span class="line">  max_renewable_life = 7d 0h 0m 0s</span><br><span class="line">  acl_file = /var/kerberos/krb5kdc/kadm5.acl</span><br><span class="line">  dict_file = /usr/share/dict/words</span><br><span class="line">  admin_keytab = /var/kerberos/krb5kdc/kadm5.keytab</span><br><span class="line">  supported_enctypes = aes256-cts:normal aes128-cts:normal des3-hmac-sha1:normal arcfour-hmac:normal camellia256-cts:normal camellia128-cts:normal des-hmac-sha1:normal des-cbc-md5:normal des-cbc-crc:normal</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>5.创建Kerberos数据库</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">[root@hadoop1 home]# sudo kdb5_util create -r XXX.COM -s</span><br><span class="line">Loading random data</span><br><span class="line">Initializing database '/var/kerberos/krb5kdc/principal' for realm 'XXX.COM',</span><br><span class="line">master key name 'K/M@XXX.COM'</span><br><span class="line">You will be prompted for the database Master Password.</span><br><span class="line">It is important that you NOT FORGET this password.</span><br><span class="line">Enter KDC database master key:</span><br><span class="line">Re-enter KDC database master key to verify:</span><br></pre></td></tr></table></figure>
+
+<p>此处需要输入KDC数据库的密码（abc10@@@）</p>
+<p>6.创建Kerberos的管理账号</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@hadoop1 home]# sudo kadmin.local</span><br><span class="line">Authenticating as principal root/admin@XXX.COM with password.</span><br><span class="line">kadmin.local:  addprinc admin/admin@XXX.COM</span><br><span class="line">WARNING: no policy specified for admin/admin@XXX.COM; defaulting to no policy</span><br><span class="line">Enter password for principal "admin/admin@XXX.COM":</span><br><span class="line">Re-enter password for principal "admin/admin@XXX.COM":</span><br><span class="line">Principal "admin/admin@XXX.COM" created.</span><br><span class="line">kadmin.local:  exit</span><br></pre></td></tr></table></figure>
+
+<p>kadmin.local:  addprinc admin/admin@XXX.COM</p>
+<p>设置密码 abc@@@</p>
+<p>7.将Kerberos服务添加到自启动服务，并启动krb5kdc和kadmin服务</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@hadoop1 home]# sudo systemctl enable krb5kdc</span><br><span class="line">Created symlink from /etc/systemd/system/multi-user.target.wants/krb5kdc.service to /usr/lib/systemd/system/krb5kdc.service.</span><br><span class="line">[root@hadoop1 home]# sudo systemctl enable kadmin</span><br><span class="line">Created symlink from /etc/systemd/system/multi-user.target.wants/kadmin.service to /usr/lib/systemd/system/kadmin.service.</span><br><span class="line">[root@hadoop1 home]# sudo systemctl start krb5kdc</span><br><span class="line">[root@hadoop1 home]# sudo systemctl start kadmin</span><br></pre></td></tr></table></figure>
+
+<p>8.测试Kerberos的管理员账号</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@hadoop1 home]# kinit admin/admin@XXX.COM</span><br><span class="line">Password for admin/admin@XXX.COM:</span><br><span class="line">[root@hadoop1 home]# klist</span><br><span class="line">Ticket cache: FILE:/tmp/krb5cc_0</span><br><span class="line">Default principal: admin/admin@hadoop1.COM</span><br><span class="line"></span><br><span class="line">Valid starting       Expires              Service principal</span><br><span class="line">07/21/2020 15:34:28  07/22/2020 15:34:28  krbtgt/XXX.COM@XXX.COM</span><br><span class="line">        renew until 07/28/2020 15:34:28</span><br></pre></td></tr></table></figure>
+
+<p>9.为集群安装所有Kerberos客户端，包括Cloudera Manager</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum -y install krb5-libs krb5-workstation</span><br></pre></td></tr></table></figure>
+
+<p>在各个节点上执行上述语句，安装Kerberos客户端</p>
+<p>10.在Cloudera Manager Server服务器上安装额外的包</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum -y install openldap-clients</span><br></pre></td></tr></table></figure>
+
+<p>11.将KDC Server上的krb5.conf文件拷贝到所有Kerberos客户端</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scp /etc/krb5.conf root@remoteIp:/etc/</span><br></pre></td></tr></table></figure>
+
+<p><strong>3.CDH集群启用Kerberos</strong></p>
+<p>1.在KDC中给Cloudera Manager添加管理员账号</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@hadoop1 home]# sudo kadmin.local</span><br><span class="line">Authenticating as principal root/admin@XXX.COM with password.</span><br><span class="line">kadmin.local:  addprinc cloudera-scm/admin@XXX.COM</span><br><span class="line">WARNING: no policy specified for cloudera-scm/admin@XXX.COM; defaulting to no policy</span><br><span class="line">Enter password for principal "cloudera-scm/admin@XXX.COM":</span><br><span class="line">Re-enter password for principal "cloudera-scm/admin@XXX.COM":</span><br><span class="line">Principal "cloudera-scm/admin@XXX.COM" created.</span><br><span class="line">kadmin.local:  exit</span><br></pre></td></tr></table></figure>
+
+<p>kadmin.local:  addprinc cloudera-scm/admin@XXX.COM</p>
+<p>设置密码abc@@@</p>
+<p>2.进入Cloudera Manager的“管理”-&gt;“安全”界面</p>
+<p>3.选择“启用Kerberos”，进入如下界面</p>
+<p>4.确保如下列出的所有检查项都已完成</p>
+<p>5.点击“继续”，配置相关的KDC信息，包括类型、KDC服务器、KDC Realm、加密类型以及待创建的Service Principal（hdfs，yarn,，hbase，hive等）的更新生命期等</p>
+<p>6.不建议让Cloudera Manager来管理krb5.conf, 点击“继续”</p>
+<p>7.输入Cloudera Manager的Kerbers管理员账号，一定得和之前创建的账号一致，点击“继续”</p>
+<p>8.点击“继续”启用Kerberos</p>
+<p>9.Kerberos启用完成，点击“继续”</p>
+<p>10.勾选重启集群，点击“继续”</p>
+<p>11.集群重启完成，点击“继续”</p>
+<p>12.点击“继续”</p>
+<p>点击“完成”，至此已成功启用Kerberos。</p>
+<p><strong>遇到的问题</strong></p>
+<p>1、NameNode无法启动</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">PriviledgedActionException as:hdfs/xxxxa<span class="meta">@XXX</span>.COM (auth:KERBEROS) cause:org.apache.hadoop.ipc.RemoteException(javax.security.sasl.SaslException): GSS initiate failed</span><br><span class="line">Couldn<span class="string">'t setup connection for hdfs/xxxxa@XXX.COM to xxxxb/192.168.1.10:8022</span></span><br><span class="line"><span class="string">org.apache.hadoop.ipc.RemoteException(javax.security.sasl.SaslException): GSS initiate failed</span></span><br><span class="line"><span class="string">	at org.apache.hadoop.security.SaslRpcClient.saslConnect(SaslRpcClient.java:378)</span></span><br><span class="line"><span class="string">	at org.apache.hadoop.ipc.Client$Connection.setupSaslConnection(Client.java:594)</span></span><br><span class="line"><span class="string">	at org.apache.hadoop.ipc.Client$Connection.access$2000(Client.java:396)</span></span><br><span class="line"><span class="string">	at org.apache.hadoop.ipc.Client$Connection$2.run(Client.java:761)</span></span><br><span class="line"><span class="string">	at org.apache.hadoop.ipc.Client$Connection$2.run(Client.java:757)</span></span><br><span class="line"><span class="string">	at java.security.AccessController.doPrivileged(Native Method)</span></span><br><span class="line"><span class="string">	at javax.security.auth.Subject.doAs(Subject.java:422)</span></span><br><span class="line"><span class="string">	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1920)</span></span><br><span class="line"><span class="string">	at org.apache.hadoop.ipc.Client$Connection.setupIOstreams(Client.java:756)</span></span><br><span class="line"><span class="string">	at org.apache.hadoop.ipc.Client$Connection.access$3000(Client.java:396)</span></span><br><span class="line"><span class="string">	at org.apache.hadoop.ipc.Client.getConnection(Client.java:1557)</span></span><br><span class="line"><span class="string">	at org.apache.hadoop.ipc.Client.call(Client.java:1480)</span></span><br><span class="line"><span class="string">	at org.apache.hadoop.ipc.Client.call(Client.java:1441)</span></span><br><span class="line"><span class="string">	at org.apache.hadoop.ipc.ProtobufRpcEngine$Invoker.invoke(ProtobufRpcEngine.java:230)</span></span><br><span class="line"><span class="string">	at com.sun.proxy.$Proxy21.rollEditLog(Unknown Source)</span></span><br><span class="line"><span class="string">	at org.apache.hadoop.hdfs.protocolPB.NamenodeProtocolTranslatorPB.rollEditLog(NamenodeProtocolTranslatorPB.java:148)</span></span><br><span class="line"><span class="string">	at org.apache.hadoop.hdfs.server.namenode.ha.EditLogTailer$2.call(EditLogTailer.java:305)</span></span><br><span class="line"><span class="string">	at org.apache.hadoop.hdfs.server.namenode.ha.EditLogTailer$2.call(EditLogTailer.java:302)</span></span><br><span class="line"><span class="string">	at java.util.concurrent.FutureTask.run(FutureTask.java:266)</span></span><br><span class="line"><span class="string">	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)</span></span><br><span class="line"><span class="string">	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)</span></span><br><span class="line"><span class="string">	at java.lang.Thread.run(Thread.java:745)</span></span><br></pre></td></tr></table></figure>
+
+<p>此问题为JDK的一个BUG，需下载JCE包进行替换（路径为java_1.8/jre/lib/security/）。</p>
+<p>2、Kafka Broker服务异常</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">requirement failed :inter.broker.listener.name must be a listener name defined in adverstised.listeners. the valid options based on currently configured listeners are PLAINTEXT</span><br></pre></td></tr></table></figure>
+
+<p>原因为server.properties 中设置了重复的 adverstised.listeners 或者未设置 adverstised.listeners<br>处理方法：<br>删除重复的 adverstised.listeners 或者重新设置 adverstised.listeners</p>
+<p>参考资料：</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/07/21/CDH5.16%E5%90%AF%E7%94%A8Kerberos/" data-id="ckczlvq1i00008gp5bh1ib0g9" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/07/22/Kerberos%E4%BD%BF%E7%94%A8%E8%AE%B0%E5%BD%95/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Kerberos使用记录
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/07/15/%E6%B5%AE%E7%82%B9%E6%95%B0%E5%AD%98%E5%82%A8%E8%AF%A6%E8%A7%A3/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">浮点数存储详解</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Develop/">Develop</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Maintenance/">Maintenance</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Test/">Test</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ClickHouse/" rel="tag">ClickHouse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DataX/" rel="tag">DataX</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flink/" rel="tag">Flink</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hive/" rel="tag">Hive</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Idea/" rel="tag">Idea</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OpenTSDB/" rel="tag">OpenTSDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Zeppelin/" rel="tag">Zeppelin</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ClickHouse/" style="font-size: 16.67px;">ClickHouse</a> <a href="/tags/DataX/" style="font-size: 10px;">DataX</a> <a href="/tags/Flink/" style="font-size: 13.33px;">Flink</a> <a href="/tags/Hive/" style="font-size: 10px;">Hive</a> <a href="/tags/Idea/" style="font-size: 10px;">Idea</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/OpenTSDB/" style="font-size: 20px;">OpenTSDB</a> <a href="/tags/Zeppelin/" style="font-size: 10px;">Zeppelin</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/07/23/OpenTSDB%E8%AE%BF%E9%97%AE%E5%BC%80%E5%90%AFKerberos%E6%9C%8D%E5%8A%A1%E7%9A%84Hbase/">OpenTSDB访问开启Kerberos服务的Hbase</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/22/Kerberos%E4%BD%BF%E7%94%A8%E8%AE%B0%E5%BD%95/">Kerberos使用记录</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/21/CDH5.16%E5%90%AF%E7%94%A8Kerberos/">CDH5.16中启用Kerberos</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/15/%E6%B5%AE%E7%82%B9%E6%95%B0%E5%AD%98%E5%82%A8%E8%AF%A6%E8%A7%A3/">浮点数存储详解</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/06/HashedWheelTimer%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/">HashedWheelTimer原理解析</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 qiguoxiaosheng<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/categories" class="mobile-nav-link">Categories</a>
+  
+    <a href="/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

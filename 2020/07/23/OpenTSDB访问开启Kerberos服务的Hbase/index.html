@@ -5,13 +5,17 @@
   
 
   
-  <title>Tag: Hive | qiguoxiaosheng&#39;s blogs</title>
+  <title>OpenTSDB访问开启Kerberos服务的Hbase | qiguoxiaosheng&#39;s blogs</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="qiguoxiaosheng&#39;s blogs">
-<meta property="og:url" content="http://yoursite.com/tags/Hive/index.html">
+  <meta name="description" content="OpenTSDB 版本：2.4.0 在配置文件opentsdb.conf中添加以下配置项： 123456#--------KERBEROS-----hbase.security.auth.enable &#x3D; truehbase.security.authentication &#x3D; kerberoshbase.sasl.clientconfig &#x3D; Client#principal中一定是&quot;_HOST&quot;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenTSDB访问开启Kerberos服务的Hbase">
+<meta property="og:url" content="http://yoursite.com/2020/07/23/OpenTSDB%E8%AE%BF%E9%97%AE%E5%BC%80%E5%90%AFKerberos%E6%9C%8D%E5%8A%A1%E7%9A%84Hbase/index.html">
 <meta property="og:site_name" content="qiguoxiaosheng&#39;s blogs">
+<meta property="og:description" content="OpenTSDB 版本：2.4.0 在配置文件opentsdb.conf中添加以下配置项： 123456#--------KERBEROS-----hbase.security.auth.enable &#x3D; truehbase.security.authentication &#x3D; kerberoshbase.sasl.clientconfig &#x3D; Client#principal中一定是&quot;_HOST&quot;">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-07-23T08:47:06.854Z">
+<meta property="article:modified_time" content="2020-07-24T02:19:00.472Z">
 <meta property="article:author" content="qiguoxiaosheng">
 <meta name="twitter:card" content="summary">
   
@@ -68,40 +72,66 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-  
-  
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2020" class="archive-year">2020</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2020/04/14/DataX%E5%90%8C%E6%AD%A5Hive%E6%95%B0%E6%8D%AE%E8%87%B3ClickHouse/" class="archive-article-date">
-  <time datetime="2020-04-14T06:12:42.089Z" itemprop="datePublished">Apr 14</time>
+        <section id="main"><article id="post-OpenTSDB访问开启Kerberos服务的Hbase" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/07/23/OpenTSDB%E8%AE%BF%E9%97%AE%E5%BC%80%E5%90%AFKerberos%E6%9C%8D%E5%8A%A1%E7%9A%84Hbase/" class="article-date">
+  <time datetime="2020-07-23T08:47:06.854Z" itemprop="datePublished">2020-07-23</time>
 </a>
-      
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2020/04/14/DataX%E5%90%8C%E6%AD%A5Hive%E6%95%B0%E6%8D%AE%E8%87%B3ClickHouse/">DataX 同步Hive数据至ClickHouse</a>
+    <h1 class="article-title" itemprop="name">
+      OpenTSDB访问开启Kerberos服务的Hbase
     </h1>
   
 
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>OpenTSDB 版本：2.4.0</p>
+<p>在配置文件opentsdb.conf中添加以下配置项：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#--------KERBEROS-----</span></span><br><span class="line"><span class="meta">hbase.security.auth.enable</span> = <span class="string">true</span></span><br><span class="line"><span class="meta">hbase.security.authentication</span> = <span class="string">kerberos</span></span><br><span class="line"><span class="meta">hbase.sasl.clientconfig</span> = <span class="string">Client</span></span><br><span class="line"><span class="comment">#principal中一定是"_HOST"，其他会有问题</span></span><br><span class="line"><span class="meta">hbase.kerberos.regionserver.principal</span> = <span class="string">hbase/_HOST@ZNV.COM</span></span><br></pre></td></tr></table></figure>
 
+<p>在启动脚本tsdb中，未开启Kerberos时</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JVMARGS=$&#123;JVMARGS-'-enableassertions -enablesystemassertions'&#125;</span><br></pre></td></tr></table></figure>
+
+<p>开启Kerberos</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JVMARGS=$&#123;JVMARGS-'-enableassertions -enablesystemassertions -Djava.security.auth.login.config=/opt/opentsdb-2.4.0/conf/jaas.conf -Dzookeeper.sasl.client=false -Djava.security.krb5.conf=/opt/opentsdb-2.4.0/conf/krb5.conf'&#125;</span><br></pre></td></tr></table></figure>
+
+<p>jaas.conf文件内容</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">Client</span> <span class="string">&#123;</span></span><br><span class="line">  <span class="meta">com.sun.security.auth.module.Krb5LoginModule</span> <span class="string">required</span></span><br><span class="line">  <span class="attr">useKeyTab</span>=<span class="string">true</span></span><br><span class="line">  <span class="attr">useTicketCache</span>=<span class="string">false</span></span><br><span class="line">  <span class="attr">keyTab</span>=<span class="string">"/opt/opentsdb-2.4.0/conf/hbase.keytab"</span></span><br><span class="line">  <span class="attr">principal</span>=<span class="string">"hbase/remote.org@ZNV.COM";</span></span><br><span class="line"><span class="attr">&#125;;</span></span><br></pre></td></tr></table></figure>
+
+<p>其中keytab文件及本jaas.conf文件均可至Hbase服务器上安装目录下获取，CDH版中2个文件的位置为/var/run/cloudera-scm-agent/process/hbase。</p>
+<p>参考资料</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/07/23/OpenTSDB%E8%AE%BF%E9%97%AE%E5%BC%80%E5%90%AFKerberos%E6%9C%8D%E5%8A%A1%E7%9A%84Hbase/" data-id="ckczlvq31001i8gp5f7kp41mc" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2020/07/22/Kerberos%E4%BD%BF%E7%94%A8%E8%AE%B0%E5%BD%95/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Kerberos使用记录</div>
+    </a>
+  
+</nav>
+
+  
+</article>
 
 </section>
         

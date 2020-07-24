@@ -70,6 +70,314 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-OpenTSDB访问开启Kerberos服务的Hbase" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/07/23/OpenTSDB%E8%AE%BF%E9%97%AE%E5%BC%80%E5%90%AFKerberos%E6%9C%8D%E5%8A%A1%E7%9A%84Hbase/" class="article-date">
+  <time datetime="2020-07-23T08:47:06.854Z" itemprop="datePublished">2020-07-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/07/23/OpenTSDB%E8%AE%BF%E9%97%AE%E5%BC%80%E5%90%AFKerberos%E6%9C%8D%E5%8A%A1%E7%9A%84Hbase/">OpenTSDB访问开启Kerberos服务的Hbase</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>OpenTSDB 版本：2.4.0</p>
+<p>在配置文件opentsdb.conf中添加以下配置项：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#--------KERBEROS-----</span></span><br><span class="line"><span class="meta">hbase.security.auth.enable</span> = <span class="string">true</span></span><br><span class="line"><span class="meta">hbase.security.authentication</span> = <span class="string">kerberos</span></span><br><span class="line"><span class="meta">hbase.sasl.clientconfig</span> = <span class="string">Client</span></span><br><span class="line"><span class="comment">#principal中一定是"_HOST"，其他会有问题</span></span><br><span class="line"><span class="meta">hbase.kerberos.regionserver.principal</span> = <span class="string">hbase/_HOST@ZNV.COM</span></span><br></pre></td></tr></table></figure>
+
+<p>在启动脚本tsdb中，未开启Kerberos时</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JVMARGS=$&#123;JVMARGS-'-enableassertions -enablesystemassertions'&#125;</span><br></pre></td></tr></table></figure>
+
+<p>开启Kerberos</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JVMARGS=$&#123;JVMARGS-'-enableassertions -enablesystemassertions -Djava.security.auth.login.config=/opt/opentsdb-2.4.0/conf/jaas.conf -Dzookeeper.sasl.client=false -Djava.security.krb5.conf=/opt/opentsdb-2.4.0/conf/krb5.conf'&#125;</span><br></pre></td></tr></table></figure>
+
+<p>jaas.conf文件内容</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">Client</span> <span class="string">&#123;</span></span><br><span class="line">  <span class="meta">com.sun.security.auth.module.Krb5LoginModule</span> <span class="string">required</span></span><br><span class="line">  <span class="attr">useKeyTab</span>=<span class="string">true</span></span><br><span class="line">  <span class="attr">useTicketCache</span>=<span class="string">false</span></span><br><span class="line">  <span class="attr">keyTab</span>=<span class="string">"/opt/opentsdb-2.4.0/conf/hbase.keytab"</span></span><br><span class="line">  <span class="attr">principal</span>=<span class="string">"hbase/remote.org@ZNV.COM";</span></span><br><span class="line"><span class="attr">&#125;;</span></span><br></pre></td></tr></table></figure>
+
+<p>其中keytab文件及本jaas.conf文件均可至Hbase服务器上安装目录下获取，CDH版中2个文件的位置为/var/run/cloudera-scm-agent/process/hbase。</p>
+<p>参考资料</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/07/23/OpenTSDB%E8%AE%BF%E9%97%AE%E5%BC%80%E5%90%AFKerberos%E6%9C%8D%E5%8A%A1%E7%9A%84Hbase/" data-id="ckczlvq31001i8gp5f7kp41mc" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Kerberos使用记录" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/07/22/Kerberos%E4%BD%BF%E7%94%A8%E8%AE%B0%E5%BD%95/" class="article-date">
+  <time datetime="2020-07-22T02:35:01.046Z" itemprop="datePublished">2020-07-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/07/22/Kerberos%E4%BD%BF%E7%94%A8%E8%AE%B0%E5%BD%95/">Kerberos使用记录</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>新增用户</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/07/22/Kerberos%E4%BD%BF%E7%94%A8%E8%AE%B0%E5%BD%95/" data-id="ckczlvq24000d8gp57kp1af1r" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-CDH5.16启用Kerberos" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/07/21/CDH5.16%E5%90%AF%E7%94%A8Kerberos/" class="article-date">
+  <time datetime="2020-07-21T06:48:40.751Z" itemprop="datePublished">2020-07-21</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/07/21/CDH5.16%E5%90%AF%E7%94%A8Kerberos/">CDH5.16中启用Kerberos</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>1.在Cloudera Manager服务器上安装KDC服务</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum -y install krb5-server krb5-libs krb5-auth-dialog krb5-workstation</span><br></pre></td></tr></table></figure>
+
+<p>2.修改/etc/krb5.conf配置</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">[root@hadoop1 home]# vi /etc/krb5.conf</span><br><span class="line"><span class="meta">#</span><span class="bash"> Configuration snippets may be placed <span class="keyword">in</span> this directory as well</span></span><br><span class="line">includedir /etc/krb5.conf.d/</span><br><span class="line"></span><br><span class="line">[logging]</span><br><span class="line"> default = FILE:/var/log/krb5libs.log</span><br><span class="line"> kdc = FILE:/var/log/krb5kdc.log</span><br><span class="line"> admin_server = FILE:/var/log/kadmind.log</span><br><span class="line"></span><br><span class="line">[libdefaults]</span><br><span class="line"> dns_lookup_realm = false</span><br><span class="line"> ticket_lifetime = 24h</span><br><span class="line"> renew_lifetime = 7d</span><br><span class="line"> forwardable = true</span><br><span class="line"> rdns = false</span><br><span class="line"> pkinit_anchors = FILE:/etc/pki/tls/certs/ca-bundle.crt</span><br><span class="line"><span class="meta">#</span><span class="bash"> default_realm = EXAMPLE.COM</span></span><br><span class="line"> default_realm = XXX.COM</span><br><span class="line"><span class="meta">#</span><span class="bash"> default_ccache_name = KEYRING:persistent:%&#123;uid&#125;</span></span><br><span class="line"></span><br><span class="line">[realms]</span><br><span class="line"><span class="meta">#</span><span class="bash"> EXAMPLE.COM = &#123;</span></span><br><span class="line"><span class="meta">#</span><span class="bash">  kdc = kerberos.example.com</span></span><br><span class="line"><span class="meta">#</span><span class="bash">  admin_server = kerberos.example.com</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> &#125;</span></span><br><span class="line"> XXX.COM = &#123;</span><br><span class="line">   kdc = hadoop1.xyd.com</span><br><span class="line">   admin_server = hadoop1.xyd.com</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line">[domain_realm]</span><br><span class="line"><span class="meta">#</span><span class="bash"> .example.com = EXAMPLE.COM</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> example.com = EXAMPLE.COM</span></span><br><span class="line"> .xyd.com = XXX.COM</span><br><span class="line">  xyd.com = XXX.COM</span><br></pre></td></tr></table></figure>
+
+<p>3.修改/var/kerberos/krb5kdc/kadm5.acl配置</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@hadoop1 home]# more /var/kerberos/krb5kdc/kadm5.acl</span><br><span class="line">*/admin@XXX.COM *</span><br></pre></td></tr></table></figure>
+
+<p>4.修改/var/kerberos/krb5kdc/kdc.conf配置</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[kdcdefaults]</span><br><span class="line"> kdc_ports = 88</span><br><span class="line"> kdc_tcp_ports = 88</span><br><span class="line"></span><br><span class="line">[realms]</span><br><span class="line"> XXX.COM = &#123;</span><br><span class="line"><span class="meta">  #</span><span class="bash">master_key_type = aes256-cts</span></span><br><span class="line">  max_renewable_life = 7d 0h 0m 0s</span><br><span class="line">  acl_file = /var/kerberos/krb5kdc/kadm5.acl</span><br><span class="line">  dict_file = /usr/share/dict/words</span><br><span class="line">  admin_keytab = /var/kerberos/krb5kdc/kadm5.keytab</span><br><span class="line">  supported_enctypes = aes256-cts:normal aes128-cts:normal des3-hmac-sha1:normal arcfour-hmac:normal camellia256-cts:normal camellia128-cts:normal des-hmac-sha1:normal des-cbc-md5:normal des-cbc-crc:normal</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>5.创建Kerberos数据库</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">[root@hadoop1 home]# sudo kdb5_util create -r XXX.COM -s</span><br><span class="line">Loading random data</span><br><span class="line">Initializing database '/var/kerberos/krb5kdc/principal' for realm 'XXX.COM',</span><br><span class="line">master key name 'K/M@XXX.COM'</span><br><span class="line">You will be prompted for the database Master Password.</span><br><span class="line">It is important that you NOT FORGET this password.</span><br><span class="line">Enter KDC database master key:</span><br><span class="line">Re-enter KDC database master key to verify:</span><br></pre></td></tr></table></figure>
+
+<p>此处需要输入KDC数据库的密码（abc10@@@）</p>
+<p>6.创建Kerberos的管理账号</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@hadoop1 home]# sudo kadmin.local</span><br><span class="line">Authenticating as principal root/admin@XXX.COM with password.</span><br><span class="line">kadmin.local:  addprinc admin/admin@XXX.COM</span><br><span class="line">WARNING: no policy specified for admin/admin@XXX.COM; defaulting to no policy</span><br><span class="line">Enter password for principal "admin/admin@XXX.COM":</span><br><span class="line">Re-enter password for principal "admin/admin@XXX.COM":</span><br><span class="line">Principal "admin/admin@XXX.COM" created.</span><br><span class="line">kadmin.local:  exit</span><br></pre></td></tr></table></figure>
+
+<p>kadmin.local:  addprinc admin/admin@XXX.COM</p>
+<p>设置密码 abc@@@</p>
+<p>7.将Kerberos服务添加到自启动服务，并启动krb5kdc和kadmin服务</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@hadoop1 home]# sudo systemctl enable krb5kdc</span><br><span class="line">Created symlink from /etc/systemd/system/multi-user.target.wants/krb5kdc.service to /usr/lib/systemd/system/krb5kdc.service.</span><br><span class="line">[root@hadoop1 home]# sudo systemctl enable kadmin</span><br><span class="line">Created symlink from /etc/systemd/system/multi-user.target.wants/kadmin.service to /usr/lib/systemd/system/kadmin.service.</span><br><span class="line">[root@hadoop1 home]# sudo systemctl start krb5kdc</span><br><span class="line">[root@hadoop1 home]# sudo systemctl start kadmin</span><br></pre></td></tr></table></figure>
+
+<p>8.测试Kerberos的管理员账号</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@hadoop1 home]# kinit admin/admin@XXX.COM</span><br><span class="line">Password for admin/admin@XXX.COM:</span><br><span class="line">[root@hadoop1 home]# klist</span><br><span class="line">Ticket cache: FILE:/tmp/krb5cc_0</span><br><span class="line">Default principal: admin/admin@hadoop1.COM</span><br><span class="line"></span><br><span class="line">Valid starting       Expires              Service principal</span><br><span class="line">07/21/2020 15:34:28  07/22/2020 15:34:28  krbtgt/XXX.COM@XXX.COM</span><br><span class="line">        renew until 07/28/2020 15:34:28</span><br></pre></td></tr></table></figure>
+
+<p>9.为集群安装所有Kerberos客户端，包括Cloudera Manager</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum -y install krb5-libs krb5-workstation</span><br></pre></td></tr></table></figure>
+
+<p>在各个节点上执行上述语句，安装Kerberos客户端</p>
+<p>10.在Cloudera Manager Server服务器上安装额外的包</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum -y install openldap-clients</span><br></pre></td></tr></table></figure>
+
+<p>11.将KDC Server上的krb5.conf文件拷贝到所有Kerberos客户端</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scp /etc/krb5.conf root@remoteIp:/etc/</span><br></pre></td></tr></table></figure>
+
+<p><strong>3.CDH集群启用Kerberos</strong></p>
+<p>1.在KDC中给Cloudera Manager添加管理员账号</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@hadoop1 home]# sudo kadmin.local</span><br><span class="line">Authenticating as principal root/admin@XXX.COM with password.</span><br><span class="line">kadmin.local:  addprinc cloudera-scm/admin@XXX.COM</span><br><span class="line">WARNING: no policy specified for cloudera-scm/admin@XXX.COM; defaulting to no policy</span><br><span class="line">Enter password for principal "cloudera-scm/admin@XXX.COM":</span><br><span class="line">Re-enter password for principal "cloudera-scm/admin@XXX.COM":</span><br><span class="line">Principal "cloudera-scm/admin@XXX.COM" created.</span><br><span class="line">kadmin.local:  exit</span><br></pre></td></tr></table></figure>
+
+<p>kadmin.local:  addprinc cloudera-scm/admin@XXX.COM</p>
+<p>设置密码abc@@@</p>
+<p>2.进入Cloudera Manager的“管理”-&gt;“安全”界面</p>
+<p>3.选择“启用Kerberos”，进入如下界面</p>
+<p>4.确保如下列出的所有检查项都已完成</p>
+<p>5.点击“继续”，配置相关的KDC信息，包括类型、KDC服务器、KDC Realm、加密类型以及待创建的Service Principal（hdfs，yarn,，hbase，hive等）的更新生命期等</p>
+<p>6.不建议让Cloudera Manager来管理krb5.conf, 点击“继续”</p>
+<p>7.输入Cloudera Manager的Kerbers管理员账号，一定得和之前创建的账号一致，点击“继续”</p>
+<p>8.点击“继续”启用Kerberos</p>
+<p>9.Kerberos启用完成，点击“继续”</p>
+<p>10.勾选重启集群，点击“继续”</p>
+<p>11.集群重启完成，点击“继续”</p>
+<p>12.点击“继续”</p>
+<p>点击“完成”，至此已成功启用Kerberos。</p>
+<p><strong>遇到的问题</strong></p>
+<p>1、NameNode无法启动</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">PriviledgedActionException as:hdfs/xxxxa<span class="meta">@XXX</span>.COM (auth:KERBEROS) cause:org.apache.hadoop.ipc.RemoteException(javax.security.sasl.SaslException): GSS initiate failed</span><br><span class="line">Couldn<span class="string">'t setup connection for hdfs/xxxxa@XXX.COM to xxxxb/192.168.1.10:8022</span></span><br><span class="line"><span class="string">org.apache.hadoop.ipc.RemoteException(javax.security.sasl.SaslException): GSS initiate failed</span></span><br><span class="line"><span class="string">	at org.apache.hadoop.security.SaslRpcClient.saslConnect(SaslRpcClient.java:378)</span></span><br><span class="line"><span class="string">	at org.apache.hadoop.ipc.Client$Connection.setupSaslConnection(Client.java:594)</span></span><br><span class="line"><span class="string">	at org.apache.hadoop.ipc.Client$Connection.access$2000(Client.java:396)</span></span><br><span class="line"><span class="string">	at org.apache.hadoop.ipc.Client$Connection$2.run(Client.java:761)</span></span><br><span class="line"><span class="string">	at org.apache.hadoop.ipc.Client$Connection$2.run(Client.java:757)</span></span><br><span class="line"><span class="string">	at java.security.AccessController.doPrivileged(Native Method)</span></span><br><span class="line"><span class="string">	at javax.security.auth.Subject.doAs(Subject.java:422)</span></span><br><span class="line"><span class="string">	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1920)</span></span><br><span class="line"><span class="string">	at org.apache.hadoop.ipc.Client$Connection.setupIOstreams(Client.java:756)</span></span><br><span class="line"><span class="string">	at org.apache.hadoop.ipc.Client$Connection.access$3000(Client.java:396)</span></span><br><span class="line"><span class="string">	at org.apache.hadoop.ipc.Client.getConnection(Client.java:1557)</span></span><br><span class="line"><span class="string">	at org.apache.hadoop.ipc.Client.call(Client.java:1480)</span></span><br><span class="line"><span class="string">	at org.apache.hadoop.ipc.Client.call(Client.java:1441)</span></span><br><span class="line"><span class="string">	at org.apache.hadoop.ipc.ProtobufRpcEngine$Invoker.invoke(ProtobufRpcEngine.java:230)</span></span><br><span class="line"><span class="string">	at com.sun.proxy.$Proxy21.rollEditLog(Unknown Source)</span></span><br><span class="line"><span class="string">	at org.apache.hadoop.hdfs.protocolPB.NamenodeProtocolTranslatorPB.rollEditLog(NamenodeProtocolTranslatorPB.java:148)</span></span><br><span class="line"><span class="string">	at org.apache.hadoop.hdfs.server.namenode.ha.EditLogTailer$2.call(EditLogTailer.java:305)</span></span><br><span class="line"><span class="string">	at org.apache.hadoop.hdfs.server.namenode.ha.EditLogTailer$2.call(EditLogTailer.java:302)</span></span><br><span class="line"><span class="string">	at java.util.concurrent.FutureTask.run(FutureTask.java:266)</span></span><br><span class="line"><span class="string">	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)</span></span><br><span class="line"><span class="string">	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)</span></span><br><span class="line"><span class="string">	at java.lang.Thread.run(Thread.java:745)</span></span><br></pre></td></tr></table></figure>
+
+<p>此问题为JDK的一个BUG，需下载JCE包进行替换（路径为java_1.8/jre/lib/security/）。</p>
+<p>2、Kafka Broker服务异常</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">requirement failed :inter.broker.listener.name must be a listener name defined in adverstised.listeners. the valid options based on currently configured listeners are PLAINTEXT</span><br></pre></td></tr></table></figure>
+
+<p>原因为server.properties 中设置了重复的 adverstised.listeners 或者未设置 adverstised.listeners<br>处理方法：<br>删除重复的 adverstised.listeners 或者重新设置 adverstised.listeners</p>
+<p>参考资料：</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/07/21/CDH5.16%E5%90%AF%E7%94%A8Kerberos/" data-id="ckczlvq1i00008gp5bh1ib0g9" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-浮点数存储详解" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/07/15/%E6%B5%AE%E7%82%B9%E6%95%B0%E5%AD%98%E5%82%A8%E8%AF%A6%E8%A7%A3/" class="article-date">
+  <time datetime="2020-07-15T01:31:51.810Z" itemprop="datePublished">2020-07-15</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/07/15/%E6%B5%AE%E7%82%B9%E6%95%B0%E5%AD%98%E5%82%A8%E8%AF%A6%E8%A7%A3/">浮点数存储详解</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>追求极致的空间利用效率<br>$$<br>2<br>$$</p>
+<p>浮点数在计算机中的存储模式</p>
+<p>32位</p>
+<p>64位</p>
+<p>规格化/非规格化</p>
+<p>Java中的表示</p>
+<p>舍入</p>
+<p>浮点数计算</p>
+<p>浮点数数据类型转换 单精度转为双精度（硬件支持，未确定具体实现细节）</p>
+<p>单精度/双精度浮点数转为字符串</p>
+<p>参考资料：</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/07/15/%E6%B5%AE%E7%82%B9%E6%95%B0%E5%AD%98%E5%82%A8%E8%AF%A6%E8%A7%A3/" data-id="ckczlvq33001n8gp52i4kbfyq" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-HashedWheelTimer原理解析" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/07/06/HashedWheelTimer%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/" class="article-date">
+  <time datetime="2020-07-06T07:59:42.074Z" itemprop="datePublished">2020-07-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/07/06/HashedWheelTimer%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/">HashedWheelTimer原理解析</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/07/06/HashedWheelTimer%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/" data-id="ckczlvq2000078gp54xiiatuy" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-OpenTSDB之Deferred解析" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/07/06/OpenTSDB%E4%B9%8BDeferred%E8%A7%A3%E6%9E%90/" class="article-date">
+  <time datetime="2020-07-06T06:32:27.092Z" itemprop="datePublished">2020-07-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/07/06/OpenTSDB%E4%B9%8BDeferred%E8%A7%A3%E6%9E%90/">OpenTSDB之Deferred解析</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/07/06/OpenTSDB%E4%B9%8BDeferred%E8%A7%A3%E6%9E%90/" data-id="ckczlvq2t00108gp5a4rebun4" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-Linux文件描述符" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2020/07/06/Linux%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6/" class="article-date">
@@ -155,11 +463,13 @@
 <p>原因1 - 资源问题：the operating system needs memory to manage each open file, and memory is a limited resource - especially on embedded systems.<br>原因2 - 安全问题：if there were no limits, a userland software would be able to create files endlessly until the server goes down.</p>
 <p>What’s more? If the file descriptors are tcp sockets, etc, then you risk using up a large amount for the socket buffers and other kernel objects, this memory is not going to be swappable.</p>
 <p>最主要的是资源问题，为防止某一单一进程打开过多文件描述符而耗尽系统资源，对进程打开文件数做了限制。</p>
+<p>参考文献：</p>
+<p>[]: </p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/07/06/Linux%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6/" data-id="ckca4kmak000hngp55jw72e8q" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/07/06/Linux%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6/" data-id="ckczlvq2z001b8gp516m68alk" class="article-share-link">Share</a>
       
       
     </footer>
@@ -195,7 +505,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/07/01/%E5%85%A5%E5%9D%91JavaCC/" data-id="ckca4kmat0012ngp5fz637bot" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/07/01/%E5%85%A5%E5%9D%91JavaCC/" data-id="ckczlvq34001t8gp501agfi9z" class="article-share-link">Share</a>
       
       
     </footer>
@@ -260,7 +570,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/06/08/OpenTSDB%E6%9F%A5%E8%AF%A2%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/" data-id="ckca4kmas000zngp571p20ow2" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/06/08/OpenTSDB%E6%9F%A5%E8%AF%A2%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/" data-id="ckczlvq2x00168gp599ii9lgj" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenTSDB/" rel="tag">OpenTSDB</a></li></ul>
@@ -373,337 +683,11 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/28/OpenTSDB%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/" data-id="ckca4kmbd001wngp5cugra3cw" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/28/OpenTSDB%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/" data-id="ckczlvq3700218gp51ljr1yok" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenTSDB/" rel="tag">OpenTSDB</a></li></ul>
 
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-OpenTSDB启动过程解析" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2020/05/19/OpenTSDB%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/" class="article-date">
-  <time datetime="2020-05-19T08:11:31.936Z" itemprop="datePublished">2020-05-19</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Develop/">Develop</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/05/19/OpenTSDB%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/">OpenTSDB服务启动过程解析</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>服务启动类TSDMain位于net.opentsdb.tools包下，服务启动步骤为：</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/19/OpenTSDB%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/" data-id="ckca4kman000pngp5h6ma3ejj" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenTSDB/" rel="tag">OpenTSDB</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-OpenTSDB安装部署" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2020/05/19/OpenTSDB%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/" class="article-date">
-  <time datetime="2020-05-19T06:05:29.838Z" itemprop="datePublished">2020-05-19</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Maintenance/">Maintenance</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/05/19/OpenTSDB%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/">OpenTSDB安装部署</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>上一小节主要记录了<a href="https://qiguoxiaosheng.github.io/2020/04/20/OpenTSDB源码编译/" target="_blank" rel="noopener">OpenTSDB 源码编译过程</a>，此文对OpenTSDB的安装做一个简单的说明。</p>
-<p>Opentsdb WebUI依赖Gnuplot，Gnuplot是一个命令行的交互式绘图工具。用户通过输入命令，可以设置或修改绘图环境，并以图形描述数据或函数做更进一步的分析。如果用户不需要通过web浏览器访问OpenTSDB，可以跳过此步骤。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install gnuplot</span><br></pre></td></tr></table></figure>
-
-<p>将生成的安装包复制至希望运行的环境中，并解压，解压后的目录结构为</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">drwxr-xr-x. 2 root root   54 May 18 17:09 bin</span><br><span class="line">drwxr-xr-x. 2 root root   46 May 18 17:51 conf</span><br><span class="line">drwxr-xr-x. 3 root root 4096 May 18 17:02 gwt</span><br><span class="line">drwxr-xr-x. 2 root root 4096 May 18 17:02 lib</span><br></pre></td></tr></table></figure>
-
-<p>修改配置文件conf/opentsdb.conf</p>
-<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Where TSD should write it's cache files to</span></span><br><span class="line"><span class="comment"># *** REQUIRED ***</span></span><br><span class="line"><span class="meta">tsd.http.cachedir</span> =<span class="string">../cachedir</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Name of the HBase table where data points are stored, default is "tsdb"</span></span><br><span class="line"><span class="meta">tsd.storage.hbase.data_table</span> = <span class="string">tsdb</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Name of the HBase table where UID information is stored, default is "tsdb-uid"</span></span><br><span class="line"><span class="meta">tsd.storage.hbase.uid_table</span> = <span class="string">tsdb-uid</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># A comma separated list of Zookeeper hosts to connect to, with or without</span></span><br><span class="line"><span class="comment"># port specifiers, default is "localhost"</span></span><br><span class="line"><span class="meta">tsd.storage.hbase.zk_quorum</span> = <span class="string">localhost:2181</span></span><br></pre></td></tr></table></figure>
-
-<p>日志配置文件logback.xml按需修改。</p>
-<p>启动服务</p>
-<p>./opentsdb start</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/19/OpenTSDB%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/" data-id="ckca4kmbc001ungp56g035bm6" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenTSDB/" rel="tag">OpenTSDB</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-OpenTSDB3.0实践一" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2020/05/13/OpenTSDB3.0%E5%AE%9E%E8%B7%B5%E4%B8%80/" class="article-date">
-  <time datetime="2020-05-13T07:39:21.524Z" itemprop="datePublished">2020-05-13</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Develop/">Develop</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/05/13/OpenTSDB3.0%E5%AE%9E%E8%B7%B5%E4%B8%80/">OpenTSDB 3.0实践一</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>记录OpenTSDB3.0的使用方法</p>
-<p>1、创建Hbase表</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="string">'open300:tsdb-uid'</span>,</span><br><span class="line">  &#123;<span class="keyword">NAME</span> =&gt; <span class="string">'id'</span>, COMPRESSION =&gt; <span class="string">'SNAPPY'</span>, BLOOMFILTER =&gt; <span class="string">'ROW'</span>&#125;,</span><br><span class="line">  &#123;<span class="keyword">NAME</span> =&gt; <span class="string">'name'</span>, COMPRESSION =&gt; <span class="string">'SNAPPY'</span>, BLOOMFILTER =&gt; <span class="string">'ROW'</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">create</span> <span class="string">'open300:tsdb'</span>,</span><br><span class="line">  &#123;<span class="keyword">NAME</span> =&gt; <span class="string">'t'</span>, <span class="keyword">VERSIONS</span> =&gt; <span class="number">1</span>, COMPRESSION =&gt; <span class="string">'SNAPPY'</span>, BLOOMFILTER =&gt; <span class="string">'ROW'</span>&#125;</span><br><span class="line">  </span><br><span class="line"><span class="keyword">create</span> <span class="string">'open300:tsdb-tree'</span>,</span><br><span class="line">  &#123;<span class="keyword">NAME</span> =&gt; <span class="string">'t'</span>, <span class="keyword">VERSIONS</span> =&gt; <span class="number">1</span>, COMPRESSION =&gt; <span class="string">'SNAPPY'</span>, BLOOMFILTER =&gt; <span class="string">'ROW'</span>&#125;</span><br><span class="line">  </span><br><span class="line"><span class="keyword">create</span> <span class="string">'open300:tsdb-meta'</span>,</span><br><span class="line">  &#123;<span class="keyword">NAME</span> =&gt; <span class="string">'name'</span>, COMPRESSION =&gt; <span class="string">'SNAPPY'</span>, BLOOMFILTER =&gt; <span class="string">'ROW'</span>&#125;</span><br></pre></td></tr></table></figure>
-
-<p>2、启动服务</p>
-<p>修改配置文件opentsdb.yaml</p>
-<p>配置文件可以新建，也可以使用工程中自带的，此处为直接修改代码中自带的配置文件，主要修改了ZK地址、Hbase表名称。</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># The comma separated ZK quorum servers.</span></span><br><span class="line"><span class="attr">tsd.storage.zookeeper.quorum:</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span><span class="string">:2181</span></span><br><span class="line"><span class="comment"># The data and UID tables in HBase for TSDB data.</span></span><br><span class="line"><span class="attr">tsd.storage.data_table:</span> <span class="string">open300:tsdb</span></span><br><span class="line"><span class="attr">tsd.storage.uid_table:</span> <span class="string">open300:tsdb-uid</span></span><br></pre></td></tr></table></figure>
-
-<p>启动类TSDMain位于server-undertow模块下，指定启动参数</p>
-<p>–config.providers=file://D:\workspace\opentsdb-3.0\distribution\src\resources\opentsdb.yaml</p>
-<p>其中，字符串前缀“file://”不能少。</p>
-<p>服务启动后，可以通过浏览器访问<em><a href="http://localhost:4242/api/registry/plugins" target="_blank" rel="noopener">http://localhost:4242/api/registry/plugins</a></em>查看服务是否正在运行。</p>
-<p>3、写入测试</p>
-<p>尝试使用HTTP API写入几条数据 <a href="http://localhost:4242/api/put/" target="_blank" rel="noopener">http://localhost:4242/api/put/</a></p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">[&#123;</span><br><span class="line">    <span class="attr">"metric"</span>: <span class="string">"my.test.metric"</span>,</span><br><span class="line">    <span class="attr">"timestamp"</span>: <span class="number">1546300800</span>,</span><br><span class="line">    <span class="attr">"value"</span>: <span class="number">18</span>,</span><br><span class="line">    <span class="attr">"tags"</span>: &#123;</span><br><span class="line">       <span class="attr">"host"</span>: <span class="string">"web01"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;,</span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">"metric"</span>: <span class="string">"my.test.metric"</span>,</span><br><span class="line">    <span class="attr">"timestamp"</span>: <span class="number">1546300800</span>,</span><br><span class="line">    <span class="attr">"value"</span>: <span class="number">14</span>,</span><br><span class="line">    <span class="attr">"tags"</span>: &#123;</span><br><span class="line">       <span class="attr">"host"</span>: <span class="string">"web02"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;,&#123;</span><br><span class="line">    <span class="attr">"metric"</span>: <span class="string">"my.test.metric"</span>,</span><br><span class="line">    <span class="attr">"timestamp"</span>: <span class="number">1546300860</span>,</span><br><span class="line">    <span class="attr">"value"</span>: <span class="number">2</span>,</span><br><span class="line">    <span class="attr">"tags"</span>: &#123;</span><br><span class="line">       <span class="attr">"host"</span>: <span class="string">"web01"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;,</span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">"metric"</span>: <span class="string">"my.test.metric"</span>,</span><br><span class="line">    <span class="attr">"timestamp"</span>: <span class="number">1546300860</span>,</span><br><span class="line">    <span class="attr">"value"</span>: <span class="number">32.5</span>,</span><br><span class="line">    <span class="attr">"tags"</span>: &#123;</span><br><span class="line">       <span class="attr">"host"</span>: <span class="string">"web02"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-
-<p>服务抛出NPE异常</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">15</span>:<span class="number">57</span>:<span class="number">25.715</span> [XNIO-<span class="number">1</span> task-<span class="number">1</span>] ERROR net.opentsdb.servlet.exceptions.GenericExceptionMapper - Unexpected exception</span><br><span class="line">java.lang.NullPointerException: <span class="keyword">null</span></span><br><span class="line">	at net.opentsdb.servlet.resources.PutDataPointRpc.post(PutDataPointRpc.java:<span class="number">403</span>)</span><br><span class="line">	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)</span><br><span class="line">	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:<span class="number">62</span>)</span><br><span class="line">	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:<span class="number">43</span>)</span><br><span class="line">	at java.lang.reflect.Method.invoke(Method.java:<span class="number">498</span>)</span><br><span class="line">	at org.glassfish.jersey.server.model.internal.ResourceMethodInvocationHandlerFactory$<span class="number">1</span>.invoke(ResourceMethodInvocationHandlerFactory.java:<span class="number">81</span>)</span><br><span class="line">	at org.glassfish.jersey.server.model.internal.AbstractJavaResourceMethodDispatcher$<span class="number">1</span>.run(AbstractJavaResourceMethodDispatcher.java:<span class="number">151</span>)</span><br><span class="line">	at org.glassfish.jersey.server.model.internal.AbstractJavaResourceMethodDispatcher.invoke(AbstractJavaResourceMethodDispatcher.java:<span class="number">171</span>)</span><br><span class="line">	at org.glassfish.jersey.server.model.internal.JavaResourceMethodDispatcherProvider$ResponseOutInvoker.doDispatch(JavaResourceMethodDispatcherProvider.java:<span class="number">152</span>)</span><br><span class="line">	at org.glassfish.jersey.server.model.internal.AbstractJavaResourceMethodDispatcher.dispatch(AbstractJavaResourceMethodDispatcher.java:<span class="number">104</span>)</span><br><span class="line">	at org.glassfish.jersey.server.model.ResourceMethodInvoker.invoke(ResourceMethodInvoker.java:<span class="number">384</span>)</span><br><span class="line">	at org.glassfish.jersey.server.model.ResourceMethodInvoker.apply(ResourceMethodInvoker.java:<span class="number">342</span>)</span><br><span class="line">	at org.glassfish.jersey.server.model.ResourceMethodInvoker.apply(ResourceMethodInvoker.java:<span class="number">101</span>)</span><br><span class="line">	at org.glassfish.jersey.server.ServerRuntime$<span class="number">1</span>.run(ServerRuntime.java:<span class="number">271</span>)</span><br><span class="line">	at org.glassfish.jersey.internal.Errors$<span class="number">1</span>.call(Errors.java:<span class="number">271</span>)</span><br><span class="line">	at org.glassfish.jersey.internal.Errors$<span class="number">1</span>.call(Errors.java:<span class="number">267</span>)</span><br><span class="line">	at org.glassfish.jersey.internal.Errors.process(Errors.java:<span class="number">315</span>)</span><br><span class="line">	at org.glassfish.jersey.internal.Errors.process(Errors.java:<span class="number">297</span>)</span><br><span class="line">	at org.glassfish.jersey.internal.Errors.process(Errors.java:<span class="number">267</span>)</span><br><span class="line">	at org.glassfish.jersey.process.internal.RequestScope.runInScope(RequestScope.java:<span class="number">297</span>)</span><br><span class="line">	at org.glassfish.jersey.server.ServerRuntime.process(ServerRuntime.java:<span class="number">254</span>)</span><br><span class="line">	at org.glassfish.jersey.server.ApplicationHandler.handle(ApplicationHandler.java:<span class="number">1030</span>)</span><br><span class="line">	at org.glassfish.jersey.servlet.WebComponent.service(WebComponent.java:<span class="number">373</span>)</span><br><span class="line">	at org.glassfish.jersey.servlet.ServletContainer.service(ServletContainer.java:<span class="number">381</span>)</span><br><span class="line">	at org.glassfish.jersey.servlet.ServletContainer.service(ServletContainer.java:<span class="number">344</span>)</span><br><span class="line">	at org.glassfish.jersey.servlet.ServletContainer.service(ServletContainer.java:<span class="number">221</span>)</span><br><span class="line">	at io.undertow.servlet.handlers.ServletHandler.handleRequest(ServletHandler.java:<span class="number">74</span>)</span><br><span class="line">	at io.undertow.servlet.handlers.security.ServletSecurityRoleHandler.handleRequest(ServletSecurityRoleHandler.java:<span class="number">62</span>)</span><br><span class="line">	at io.undertow.servlet.handlers.ServletChain$<span class="number">1</span>.handleRequest(ServletChain.java:<span class="number">68</span>)</span><br><span class="line">	at io.undertow.servlet.handlers.ServletDispatchingHandler.handleRequest(ServletDispatchingHandler.java:<span class="number">36</span>)</span><br><span class="line">	at io.undertow.servlet.handlers.security.SSLInformationAssociationHandler.handleRequest(SSLInformationAssociationHandler.java:<span class="number">132</span>)</span><br><span class="line">	at io.undertow.servlet.handlers.security.ServletAuthenticationCallHandler.handleRequest(ServletAuthenticationCallHandler.java:<span class="number">57</span>)</span><br><span class="line">	at io.undertow.server.handlers.PredicateHandler.handleRequest(PredicateHandler.java:<span class="number">43</span>)</span><br><span class="line">	at io.undertow.security.handlers.AbstractConfidentialityHandler.handleRequest(AbstractConfidentialityHandler.java:<span class="number">46</span>)</span><br><span class="line">	at io.undertow.servlet.handlers.security.ServletConfidentialityConstraintHandler.handleRequest(ServletConfidentialityConstraintHandler.java:<span class="number">64</span>)</span><br><span class="line">	at io.undertow.security.handlers.AuthenticationMechanismsHandler.handleRequest(AuthenticationMechanismsHandler.java:<span class="number">60</span>)</span><br><span class="line">	at io.undertow.servlet.handlers.security.CachedAuthenticatedSessionHandler.handleRequest(CachedAuthenticatedSessionHandler.java:<span class="number">77</span>)</span><br><span class="line">	at io.undertow.security.handlers.AbstractSecurityContextAssociationHandler.handleRequest(AbstractSecurityContextAssociationHandler.java:<span class="number">43</span>)</span><br><span class="line">	at io.undertow.server.handlers.PredicateHandler.handleRequest(PredicateHandler.java:<span class="number">43</span>)</span><br><span class="line">	at io.undertow.server.handlers.PredicateHandler.handleRequest(PredicateHandler.java:<span class="number">43</span>)</span><br><span class="line">	at io.undertow.servlet.handlers.ServletInitialHandler.handleFirstRequest(ServletInitialHandler.java:<span class="number">292</span>)</span><br><span class="line">	at io.undertow.servlet.handlers.ServletInitialHandler.access$<span class="number">100</span>(ServletInitialHandler.java:<span class="number">81</span>)</span><br><span class="line">	at io.undertow.servlet.handlers.ServletInitialHandler$<span class="number">2</span>.call(ServletInitialHandler.java:<span class="number">138</span>)</span><br><span class="line">	at io.undertow.servlet.handlers.ServletInitialHandler$<span class="number">2</span>.call(ServletInitialHandler.java:<span class="number">135</span>)</span><br><span class="line">	at io.undertow.servlet.core.ServletRequestContextThreadSetupAction$<span class="number">1</span>.call(ServletRequestContextThreadSetupAction.java:<span class="number">48</span>)</span><br><span class="line">	at io.undertow.servlet.core.ContextClassLoaderSetupAction$<span class="number">1</span>.call(ContextClassLoaderSetupAction.java:<span class="number">43</span>)</span><br><span class="line">	at io.undertow.servlet.handlers.ServletInitialHandler.dispatchRequest(ServletInitialHandler.java:<span class="number">272</span>)</span><br><span class="line">	at io.undertow.servlet.handlers.ServletInitialHandler.access$<span class="number">000</span>(ServletInitialHandler.java:<span class="number">81</span>)</span><br><span class="line">	at io.undertow.servlet.handlers.ServletInitialHandler$<span class="number">1</span>.handleRequest(ServletInitialHandler.java:<span class="number">104</span>)</span><br><span class="line">	at io.undertow.server.Connectors.executeRootHandler(Connectors.java:<span class="number">364</span>)</span><br><span class="line">	at io.undertow.server.HttpServerExchange$<span class="number">1</span>.run(HttpServerExchange.java:<span class="number">830</span>)</span><br><span class="line">	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:<span class="number">1149</span>)</span><br><span class="line">	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:<span class="number">624</span>)</span><br><span class="line">	at java.lang.Thread.run(Thread.java:<span class="number">748</span>)</span><br></pre></td></tr></table></figure>
-
-
-
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/13/OpenTSDB3.0%E5%AE%9E%E8%B7%B5%E4%B8%80/" data-id="ckca4kmau0016ngp5ehws3iq3" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenTSDB/" rel="tag">OpenTSDB</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-JMeter工具的使用" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2020/05/09/JMeter%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8/" class="article-date">
-  <time datetime="2020-05-09T07:19:50.020Z" itemprop="datePublished">2020-05-09</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Test/">Test</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/05/09/JMeter%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8/">JMeter工具的使用</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/09/JMeter%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8/" data-id="ckca4kmag000angp5597526c4" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-Flink读写Kafka" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2020/04/29/Flink%E8%AF%BB%E5%86%99Kafka/" class="article-date">
-  <time datetime="2020-04-29T07:15:00.964Z" itemprop="datePublished">2020-04-29</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Develop/">Develop</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/04/29/Flink%E8%AF%BB%E5%86%99Kafka/">Flink读写Kafka</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>最近尝试使用Flink消费Kafka数据，并将处理后的数据写回Kafka。</p>
-<p>1、从Kafka中消费数据</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">FlinkKafkaConsumer&lt;String&gt; flinkKafkaConsumer = <span class="keyword">new</span> FlinkKafkaConsumer&lt;&gt;(topic, <span class="keyword">new</span> SimpleStringSchema(), props);</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * setStartFromEarliest() 或者 setStartFromLatest()：从最早或者最新的记录开始消费，</span></span><br><span class="line"><span class="comment">  * 在这些模式下，Kafka 中的 committed offset 将被忽略，不会用作起始位置。</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">flinkKafkaConsumer.setStartFromEarliest();</span><br><span class="line">env.addSource(flinkKafkaConsumer);</span><br></pre></td></tr></table></figure>
-
-<p>2、将结果数据写入Kafka</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">FlinkKafkaProducer finkKafkaProducer = <span class="keyword">new</span> FlinkKafkaProducer(topic, <span class="keyword">new</span> SimpleStringSchema(), props);</span><br><span class="line">record.addSink(finkKafkaProducer);</span><br></pre></td></tr></table></figure>
-
-<p>写完代码后，调试、打包、运行，以为万事大吉。程序运行一段时间后，突然发现写入的topic中部分分区没有数据，走查代码，写入的数据没有设置key，理论上讲数据应该是按轮询模式逐个写入目标topic的partition。然而，是我先入为主了，想当然了。查阅Flink相关资料，发现如果未指定分区器Partitioner，默认使用FlinkFixedPartitioner分区器，其分区算法为：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">open</span><span class="params">(<span class="keyword">int</span> parallelInstanceId, <span class="keyword">int</span> parallelInstances)</span> </span>&#123;</span><br><span class="line">    Preconditions.checkArgument(parallelInstanceId &gt;= <span class="number">0</span>, <span class="string">"Id of this subtask cannot be negative."</span>);</span><br><span class="line">    Preconditions.checkArgument(parallelInstances &gt; <span class="number">0</span>, <span class="string">"Number of subtasks must be larger than 0."</span>);</span><br><span class="line">    <span class="keyword">this</span>.parallelInstanceId = parallelInstanceId;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">partition</span><span class="params">(T record, <span class="keyword">byte</span>[] key, <span class="keyword">byte</span>[] value, String targetTopic, <span class="keyword">int</span>[] partitions)</span> </span>&#123;</span><br><span class="line">    Preconditions.checkArgument(partitions != <span class="keyword">null</span> &amp;&amp; partitions.length &gt; <span class="number">0</span>, <span class="string">"Partitions of the target topic is empty."</span>);</span><br><span class="line">    <span class="keyword">return</span> partitions[<span class="keyword">this</span>.parallelInstanceId % partitions.length];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>其中，parallelInstanceId表示当前task的index，partitions表示kafka的topic的分区数。</p>
-<p>重新查看写的代码，并未设置并行度，而运行程序的机器为8core，topic的分区数为10，按默认的分区策略，则会有2个分区一直不会写数据。</p>
-<p>3、解决方法</p>
-<p>找到原因了，就可以有针对性的解决了。解决方法主要有以下几种：</p>
-<ol>
-<li>parallism设置成为与kafka topic 分区数一致大小。</li>
-<li>将flinkKafkaPartitioner指定为空，并且制定写入kafka的key。</li>
-<li>将flinkKafkaPartitioner与写入的key都置为空。</li>
-<li>自定义一个FlinkKafkaPartitioner，重写partition方法</li>
-<li>实现KafkaSerializationSchema接口</li>
-</ol>
-<p>这里选择了方法5</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">KafkaSerializationSchemaImpl</span> <span class="keyword">implements</span> <span class="title">KafkaSerializationSchema</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String topic;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">KafkaSerializationSchemaImpl</span><span class="params">(String topic)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.topic = topic;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> ProducerRecord&lt;<span class="keyword">byte</span>[], <span class="keyword">byte</span>[]&gt; serialize(Object element, <span class="meta">@Nullable</span> Long aLong) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ProducerRecord(<span class="keyword">this</span>.topic, element.toString().getBytes(StandardCharsets.UTF_8));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>重新测试，问题解决。</p>
-<p>参考资料：</p>
-<ol>
-<li><a href="https://ci.apache.org/projects/flink/flink-docs-release-1.10/zh/dev/connectors/kafka.html" target="_blank" rel="noopener">Apache Kafka 连接器</a></li>
-<li><a href="https://www.jianshu.com/p/222afef21c52" target="_blank" rel="noopener">记一次Flink写入Kafka坑点</a></li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/29/Flink%E8%AF%BB%E5%86%99Kafka/" data-id="ckca4kma90001ngp50yed7af1" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flink/" rel="tag">Flink</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-Java中科学计数法" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2020/04/28/Java%E4%B8%AD%E7%A7%91%E5%AD%A6%E8%AE%A1%E6%95%B0%E6%B3%95/" class="article-date">
-  <time datetime="2020-04-28T08:18:11.284Z" itemprop="datePublished">2020-04-28</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Develop/">Develop</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/04/28/Java%E4%B8%AD%E7%A7%91%E5%AD%A6%E8%AE%A1%E6%95%B0%E6%B3%95/">Java中科学计数法</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在处理IOT数据时，时长会有些数据表示的不规范，比如采集的数据经过接入程序处理后，部分数值是以科学计数法表示的，因此，在后期计算前，需对数据进行规范化处理。</p>
-<p>处理科学计数法，一般使用的方式为将原数据转换为BigDecimal，然而，将把处理后的数据以字符串（toString）发送到下游时，发现仍有数据是以科学技术法表示的<code>_</code>。</p>
-<p>查阅资料，发现BigDecimal类的中包含多个转成字符串的方法。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">toEngineeringString()</span><br><span class="line">toPlainString()</span><br><span class="line">toString()</span><br></pre></td></tr></table></figure>
-
-<p>测试不同的方法</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="keyword">new</span> BigDecimal(<span class="string">"2.3991984E17"</span>));</span><br><span class="line">        System.out.println(<span class="keyword">new</span> BigDecimal(<span class="string">"2.3991984E17"</span>).toString());</span><br><span class="line">        System.out.println(<span class="keyword">new</span> BigDecimal(<span class="string">"2.3991984E17"</span>).toPlainString());</span><br><span class="line">        System.out.println(<span class="keyword">new</span> BigDecimal(<span class="string">"2.3991984E17"</span>).toEngineeringString());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>输出的结果为：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">2.3991984E+17</span><br><span class="line">2.3991984E+17</span><br><span class="line">239919840000000000</span><br><span class="line">239.91984E+15</span><br></pre></td></tr></table></figure>
-
-<p>因此，若希望转换的字符中以非科学计数法表示，则在转换时需要使用toPlainString方法。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/28/Java%E4%B8%AD%E7%A7%91%E5%AD%A6%E8%AE%A1%E6%95%B0%E6%B3%95/" data-id="ckca4kmam000mngp5a1vyeei2" class="article-share-link">Share</a>
-      
-      
     </footer>
   </div>
   
@@ -715,7 +699,7 @@
 
   <nav id="page-nav">
     
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
   </nav>
 
 </section>
@@ -768,23 +752,23 @@
       <ul>
         
           <li>
-            <a href="/2020/07/06/Linux%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6/">Linux文件描述符</a>
+            <a href="/2020/07/23/OpenTSDB%E8%AE%BF%E9%97%AE%E5%BC%80%E5%90%AFKerberos%E6%9C%8D%E5%8A%A1%E7%9A%84Hbase/">OpenTSDB访问开启Kerberos服务的Hbase</a>
           </li>
         
           <li>
-            <a href="/2020/07/01/%E5%85%A5%E5%9D%91JavaCC/">入坑JavaCC</a>
+            <a href="/2020/07/22/Kerberos%E4%BD%BF%E7%94%A8%E8%AE%B0%E5%BD%95/">Kerberos使用记录</a>
           </li>
         
           <li>
-            <a href="/2020/06/08/OpenTSDB%E6%9F%A5%E8%AF%A2%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/">OpenTSDB查询过程解析</a>
+            <a href="/2020/07/21/CDH5.16%E5%90%AF%E7%94%A8Kerberos/">CDH5.16中启用Kerberos</a>
           </li>
         
           <li>
-            <a href="/2020/05/28/OpenTSDB%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/">OpenTSDB源码解析--数据存储</a>
+            <a href="/2020/07/15/%E6%B5%AE%E7%82%B9%E6%95%B0%E5%AD%98%E5%82%A8%E8%AF%A6%E8%A7%A3/">浮点数存储详解</a>
           </li>
         
           <li>
-            <a href="/2020/05/19/OpenTSDB%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/">OpenTSDB服务启动过程解析</a>
+            <a href="/2020/07/06/HashedWheelTimer%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/">HashedWheelTimer原理解析</a>
           </li>
         
       </ul>

@@ -5,13 +5,17 @@
   
 
   
-  <title>Tag: Hive | qiguoxiaosheng&#39;s blogs</title>
+  <title>浮点数存储详解 | qiguoxiaosheng&#39;s blogs</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="qiguoxiaosheng&#39;s blogs">
-<meta property="og:url" content="http://yoursite.com/tags/Hive/index.html">
+  <meta name="description" content="追求极致的空间利用效率$$2$$ 浮点数在计算机中的存储模式 32位 64位 规格化&#x2F;非规格化 Java中的表示 舍入 浮点数计算 浮点数数据类型转换 单精度转为双精度（硬件支持，未确定具体实现细节） 单精度&#x2F;双精度浮点数转为字符串 参考资料：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浮点数存储详解">
+<meta property="og:url" content="http://yoursite.com/2020/07/15/%E6%B5%AE%E7%82%B9%E6%95%B0%E5%AD%98%E5%82%A8%E8%AF%A6%E8%A7%A3/index.html">
 <meta property="og:site_name" content="qiguoxiaosheng&#39;s blogs">
+<meta property="og:description" content="追求极致的空间利用效率$$2$$ 浮点数在计算机中的存储模式 32位 64位 规格化&#x2F;非规格化 Java中的表示 舍入 浮点数计算 浮点数数据类型转换 单精度转为双精度（硬件支持，未确定具体实现细节） 单精度&#x2F;双精度浮点数转为字符串 参考资料：">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-07-15T01:31:51.810Z">
+<meta property="article:modified_time" content="2020-07-21T06:08:37.284Z">
 <meta property="article:author" content="qiguoxiaosheng">
 <meta name="twitter:card" content="summary">
   
@@ -68,40 +72,71 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-  
-  
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2020" class="archive-year">2020</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2020/04/14/DataX%E5%90%8C%E6%AD%A5Hive%E6%95%B0%E6%8D%AE%E8%87%B3ClickHouse/" class="archive-article-date">
-  <time datetime="2020-04-14T06:12:42.089Z" itemprop="datePublished">Apr 14</time>
+        <section id="main"><article id="post-浮点数存储详解" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/07/15/%E6%B5%AE%E7%82%B9%E6%95%B0%E5%AD%98%E5%82%A8%E8%AF%A6%E8%A7%A3/" class="article-date">
+  <time datetime="2020-07-15T01:31:51.810Z" itemprop="datePublished">2020-07-15</time>
 </a>
-      
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2020/04/14/DataX%E5%90%8C%E6%AD%A5Hive%E6%95%B0%E6%8D%AE%E8%87%B3ClickHouse/">DataX 同步Hive数据至ClickHouse</a>
+    <h1 class="article-title" itemprop="name">
+      浮点数存储详解
     </h1>
   
 
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>追求极致的空间利用效率<br>$$<br>2<br>$$</p>
+<p>浮点数在计算机中的存储模式</p>
+<p>32位</p>
+<p>64位</p>
+<p>规格化/非规格化</p>
+<p>Java中的表示</p>
+<p>舍入</p>
+<p>浮点数计算</p>
+<p>浮点数数据类型转换 单精度转为双精度（硬件支持，未确定具体实现细节）</p>
+<p>单精度/双精度浮点数转为字符串</p>
+<p>参考资料：</p>
 
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/07/15/%E6%B5%AE%E7%82%B9%E6%95%B0%E5%AD%98%E5%82%A8%E8%AF%A6%E8%A7%A3/" data-id="ckczlvq33001n8gp52i4kbfyq" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/07/21/CDH5.16%E5%90%AF%E7%94%A8Kerberos/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          CDH5.16中启用Kerberos
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/07/06/HashedWheelTimer%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">HashedWheelTimer原理解析</div>
+    </a>
+  
+</nav>
+
+  
+</article>
 
 </section>
         
