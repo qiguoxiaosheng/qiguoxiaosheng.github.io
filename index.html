@@ -107,11 +107,15 @@
 
 <p>其中keytab文件及本jaas.conf文件均可至Hbase服务器上安装目录下获取，CDH版中2个文件的位置为/var/run/cloudera-scm-agent/process/hbase。</p>
 <p>参考资料</p>
+<ol>
+<li><a href="https://www.jianshu.com/p/35c687e56d9f" target="_blank" rel="noopener">https://www.jianshu.com/p/35c687e56d9f</a>    “opentsdb过kerberos认证”</li>
+<li><a href="https://github.com/OpenTSDB/opentsdb/issues/1062" target="_blank" rel="noopener">https://github.com/OpenTSDB/opentsdb/issues/1062</a>    “security hbase problem:Sasl initialization failed with a status of [1]: org.hbase.async.SecureRpcHelpe”</li>
+</ol>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/07/23/OpenTSDB%E8%AE%BF%E9%97%AE%E5%BC%80%E5%90%AFKerberos%E6%9C%8D%E5%8A%A1%E7%9A%84Hbase/" data-id="ckd5je52e001m28p55am1ccbb" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/07/23/OpenTSDB%E8%AE%BF%E9%97%AE%E5%BC%80%E5%90%AFKerberos%E6%9C%8D%E5%8A%A1%E7%9A%84Hbase/" data-id="ckd5jplc6001m1cp53m3o2osa" class="article-share-link">Share</a>
       
       
     </footer>
@@ -148,7 +152,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/07/22/Kerberos%E4%BD%BF%E7%94%A8%E8%AE%B0%E5%BD%95/" data-id="ckd5je526000x28p50jyna0uc" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/07/22/Kerberos%E4%BD%BF%E7%94%A8%E8%AE%B0%E5%BD%95/" data-id="ckd5jplbz000v1cp53nt29hqu" class="article-share-link">Share</a>
       
       
     </footer>
@@ -245,11 +249,18 @@
 
 <p>原因为server.properties 中设置了重复的 adverstised.listeners 或者未设置 adverstised.listeners<br>处理方法：<br>删除重复的 adverstised.listeners 或者重新设置 adverstised.listeners</p>
 <p>参考资料：</p>
+<ol>
+<li><a href="https://cloud.tencent.com/developer/article/1078812" target="_blank" rel="noopener">https://cloud.tencent.com/developer/article/1078812</a>    “如何在Redhat7.3的CDH5.14中启用Kerberos”</li>
+<li><a href="https://docs.cloudera.com/documentation/enterprise/latest/topics/cm_sg_s4_kerb_wizard.html#concept_ssg_x5y_l4" target="_blank" rel="noopener">https://docs.cloudera.com/documentation/enterprise/latest/topics/cm_sg_s4_kerb_wizard.html#concept_ssg_x5y_l4</a></li>
+<li><a href="https://blog.csdn.net/qq_24651739/article/details/103398491" target="_blank" rel="noopener">https://blog.csdn.net/qq_24651739/article/details/103398491</a>    “org.apache.hadoop.ipc.RemoteException(javax.securi ty.sasl.SaslException): GSS initiate failed”</li>
+<li><a href="https://docs.cloudera.com/HDPDocuments/HDP3/HDP-3.1.0/installing-ranger/content/kerberos_installing_the_jce.html" target="_blank" rel="noopener">https://docs.cloudera.com/HDPDocuments/HDP3/HDP-3.1.0/installing-ranger/content/kerberos_installing_the_jce.html</a>    “Install the JCE for Kerberos”</li>
+<li><a href="https://blog.csdn.net/zsyoung/article/details/100102551" target="_blank" rel="noopener">https://blog.csdn.net/zsyoung/article/details/100102551</a>    “kafka 配置 kerberos 中遇到的问题”</li>
+</ol>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/07/21/CDH5.16%E5%90%AF%E7%94%A8Kerberos/" data-id="ckd5je51h000028p5c09y5vyj" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/07/21/CDH5.16%E5%90%AF%E7%94%A8Kerberos/" data-id="ckd5jplb900001cp5etuo6q8o" class="article-share-link">Share</a>
       
       
     </footer>
@@ -292,14 +303,26 @@
 <p>浮点数数据类型转换 单精度转为双精度（硬件支持，未确定具体实现细节）</p>
 <p>单精度/双精度浮点数转为字符串</p>
 <p>参考资料：</p>
-<p><a href="https://www.h-schmidt.net/FloatConverter/IEEE754.html" target="_blank" rel="noopener">https://www.h-schmidt.net/FloatConverter/IEEE754.html</a></p>
-<p><a href="https://bartaz.github.io/ieee754-visualization/" target="_blank" rel="noopener">https://bartaz.github.io/ieee754-visualization/</a></p>
-<p>THE FLOATING-POINT GUIDE(<a href="https://floating-point-gui.de/references/" target="_blank" rel="noopener">https://floating-point-gui.de/references/</a> )</p>
+<ol>
+<li><a href="https://www.h-schmidt.net/FloatConverter/IEEE754.html" target="_blank" rel="noopener">https://www.h-schmidt.net/FloatConverter/IEEE754.html</a></li>
+<li><a href="https://bartaz.github.io/ieee754-visualization/" target="_blank" rel="noopener">https://bartaz.github.io/ieee754-visualization/</a></li>
+<li><a href="https://floating-point-gui.de/references/" target="_blank" rel="noopener">https://floating-point-gui.de/references/</a> THE FLOATING-POINT GUIDE</li>
+<li><a href="https://zhuanlan.zhihu.com/p/61442236" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/61442236</a> 走进 JDK 之 Float</li>
+<li><a href="https://stackoverflow.com/questions/11772776/how-are-double-precision-floating-point-numbers-converted-to-single-precision-fl" target="_blank" rel="noopener">https://stackoverflow.com/questions/11772776/how-are-double-precision-floating-point-numbers-converted-to-single-precision-fl</a></li>
+<li><a href="https://stackoverflow.com/questions/33652466/what-is-the-definition-of-convert-single-precision-to-double-precision-floating" target="_blank" rel="noopener">https://stackoverflow.com/questions/33652466/what-is-the-definition-of-convert-single-precision-to-double-precision-floating</a></li>
+<li><a href="https://www.wikihow.com/Convert-a-Number-from-Decimal-to-IEEE-754-Floating-Point-Representation" target="_blank" rel="noopener">https://www.wikihow.com/Convert-a-Number-from-Decimal-to-IEEE-754-Floating-Point-Representation</a></li>
+<li><a href="https://www.felixcloutier.com/x86/cvtss2sd" target="_blank" rel="noopener">https://www.felixcloutier.com/x86/cvtss2sd</a></li>
+<li>“深入理解计算机系统（第三版）2.4/3.11”</li>
+<li><a href="https://ieeexplore.ieee.org/document/8766229/metrics#metrics" target="_blank" rel="noopener">https://ieeexplore.ieee.org/document/8766229/metrics#metrics</a> “754-2019 - IEEE Standard for Floating-Point Arithmetic”</li>
+<li><a href="https://hg.openjdk.java.net/jdk8/jdk8/jdk/shortlog/687fd7c7986d" target="_blank" rel="noopener">https://hg.openjdk.java.net/jdk8/jdk8/jdk/shortlog/687fd7c7986d</a> “openjdk”</li>
+<li><a href="https://github.com/openjdk/jdk" target="_blank" rel="noopener">https://github.com/openjdk/jdk</a></li>
+<li><a href="http://www.matools.com/api/java8" target="_blank" rel="noopener">http://www.matools.com/api/java8</a> “java在线API”</li>
+</ol>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/07/15/%E6%B5%AE%E7%82%B9%E6%95%B0%E5%AD%98%E5%82%A8%E8%AF%A6%E8%A7%A3/" data-id="ckd5je52h001w28p5b47a85vl" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/07/15/%E6%B5%AE%E7%82%B9%E6%95%B0%E5%AD%98%E5%82%A8%E8%AF%A6%E8%A7%A3/" data-id="ckd5jplc9001w1cp50iuq8ius" class="article-share-link">Share</a>
       
       
     </footer>
@@ -335,7 +358,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/07/06/HashedWheelTimer%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/" data-id="ckd5je51z000c28p5240n709v" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/07/06/HashedWheelTimer%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/" data-id="ckd5jplbs000d1cp51srs7jpy" class="article-share-link">Share</a>
       
       
     </footer>
@@ -393,7 +416,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/07/06/OpenTSDB%E4%B9%8BDeferred%E8%A7%A3%E6%9E%90/" data-id="ckd5je529001528p50ezi26ll" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/07/06/OpenTSDB%E4%B9%8BDeferred%E8%A7%A3%E6%9E%90/" data-id="ckd5jplc100151cp57h4yfaes" class="article-share-link">Share</a>
       
       
     </footer>
@@ -489,11 +512,14 @@
 <p>What’s more? If the file descriptors are tcp sockets, etc, then you risk using up a large amount for the socket buffers and other kernel objects, this memory is not going to be swappable.</p>
 <p>最主要的是资源问题，为防止某一单一进程打开过多文件描述符而耗尽系统资源，对进程打开文件数做了限制。</p>
 <p>参考文献：</p>
+<ol>
+<li><a href="https://mp.weixin.qq.com/s?subscene=3&amp;__biz=MzU0MzQ5MDA0Mw==&amp;mid=2247484040&amp;idx=1&amp;sn=5eeb3b777ea9c47267fc829fb2482b83&amp;chksm=fb0be81ccc7c610a385c3505a2aebe8708e0509ffd06afb05773af7dc93fc770c91a91e5f630&amp;scene=7&amp;ascene=65&amp;devicetype=android-29&amp;version=3.0.25.1805&amp;nettype=cmnet&amp;abtest_cookie=AAACAA%3D%3D&amp;lang=zh_CN&amp;exportkey=AUf1cgx2bjxGWSfWCBZr%2FKc%3D&amp;pass_ticket=F7zZsG2WgI8Oq9V2kkVUJtftv2JEEeLyA%2FXz9j1Av8pU2wezBmwORCa7f74brprY&amp;wx_header=1&amp;platform=win" target="_blank" rel="noopener">https://mp.weixin.qq.com/s?subscene=3&amp;__biz=MzU0MzQ5MDA0Mw==&amp;mid=2247484040&amp;idx=1&amp;sn=5eeb3b777ea9c47267fc829fb2482b83&amp;chksm=fb0be81ccc7c610a385c3505a2aebe8708e0509ffd06afb05773af7dc93fc770c91a91e5f630&amp;scene=7&amp;ascene=65&amp;devicetype=android-29&amp;version=3.0.25.1805&amp;nettype=cmnet&amp;abtest_cookie=AAACAA%3D%3D&amp;lang=zh_CN&amp;exportkey=AUf1cgx2bjxGWSfWCBZr%2FKc%3D&amp;pass_ticket=F7zZsG2WgI8Oq9V2kkVUJtftv2JEEeLyA%2FXz9j1Av8pU2wezBmwORCa7f74brprY&amp;wx_header=1&amp;platform=win</a> 文件句柄？文件描述符？傻傻分不清楚</li>
+</ol>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/07/06/Linux%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6/" data-id="ckd5je527001028p5c95zg2o2" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/07/06/Linux%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6/" data-id="ckd5jplc0000y1cp5grht8bv9" class="article-share-link">Share</a>
       
       
     </footer>
@@ -529,7 +555,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/07/01/%E5%85%A5%E5%9D%91JavaCC/" data-id="ckd5je52g001t28p54i4cc1y5" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/07/01/%E5%85%A5%E5%9D%91JavaCC/" data-id="ckd5jplc8001s1cp5gowj9zpr" class="article-share-link">Share</a>
       
       
     </footer>
@@ -594,7 +620,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/06/08/OpenTSDB%E6%9F%A5%E8%AF%A2%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/" data-id="ckd5je52c001g28p5fks55jk2" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/06/08/OpenTSDB%E6%9F%A5%E8%AF%A2%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/" data-id="ckd5jplc5001h1cp58ugtfrum" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenTSDB/" rel="tag">OpenTSDB</a></li></ul>
@@ -707,7 +733,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/28/OpenTSDB%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/" data-id="ckd5je52b001f28p590bw76g0" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/28/OpenTSDB%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/" data-id="ckd5jplc3001b1cp50k64ded9" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenTSDB/" rel="tag">OpenTSDB</a></li></ul>

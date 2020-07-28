@@ -15,7 +15,7 @@
 <meta property="og:description" content="ClickHouse简介 应用场景： 1.绝大多数请求都是用于读访问的 2.数据需要以大批次（大于1000行）进行更新，而不是单行更新；或者根本没有更新操作 3.数据只是添加到数据库，没有必要修改 4.读取数据时，会从数据库中提取出大量的行，但只用到一小部分列 5.表很“宽”，即表中包含大量的列 6.查询频率相对较低（通常每台服务器每秒查询数百次或更少） 7.对于简单查询，允许大约50毫秒的延迟">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-04-14T06:01:14.602Z">
-<meta property="article:modified_time" content="2020-05-19T06:15:30.821Z">
+<meta property="article:modified_time" content="2020-07-28T06:12:36.945Z">
 <meta property="article:author" content="qiguoxiaosheng">
 <meta property="article:tag" content="ClickHouse">
 <meta name="twitter:card" content="summary">
@@ -110,11 +110,14 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql --protocol tcp -u default -P 9004 -h 192.168.0.3 -p password</span><br></pre></td></tr></table></figure>
 
 <p>参考资料</p>
+<ol>
+<li><a href="https://www.jianshu.com/p/a5bf490247ea" target="_blank" rel="noopener">https://www.jianshu.com/p/a5bf490247ea</a> clickhouse 基础知识</li>
+</ol>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/04/14/ClickHouse%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8/" data-id="ckd5je51r000228p574ai3map" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/04/14/ClickHouse%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8/" data-id="ckd5jplbi00011cp5gu57fw88" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ClickHouse/" rel="tag">ClickHouse</a></li></ul>
