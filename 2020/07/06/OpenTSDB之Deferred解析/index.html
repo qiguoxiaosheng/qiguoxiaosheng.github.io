@@ -7,13 +7,15 @@
   
   <title>OpenTSDB之Deferred解析 | qiguoxiaosheng&#39;s blogs</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="article">
+  <meta name="description" content="在OpenTSDB源代码中，Deferred出现频率之高，让人无法忽视它的存在，也是因为它，把代码看得云里雾里，是是而非。索性专门抽出一段时间，专门研究下Deferred究竟为何高（niu）深（bi）的技术。首先找到Deferred类的的说明： 123456 A thread-safe implementation of a deferred result for easy asynchronou">
+<meta property="og:type" content="article">
 <meta property="og:title" content="OpenTSDB之Deferred解析">
 <meta property="og:url" content="http://yoursite.com/2020/07/06/OpenTSDB%E4%B9%8BDeferred%E8%A7%A3%E6%9E%90/index.html">
 <meta property="og:site_name" content="qiguoxiaosheng&#39;s blogs">
+<meta property="og:description" content="在OpenTSDB源代码中，Deferred出现频率之高，让人无法忽视它的存在，也是因为它，把代码看得云里雾里，是是而非。索性专门抽出一段时间，专门研究下Deferred究竟为何高（niu）深（bi）的技术。首先找到Deferred类的的说明： 123456 A thread-safe implementation of a deferred result for easy asynchronou">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-07-06T06:32:27.092Z">
-<meta property="article:modified_time" content="2020-07-24T02:28:32.871Z">
+<meta property="article:modified_time" content="2020-07-28T06:03:55.412Z">
 <meta property="article:author" content="qiguoxiaosheng">
 <meta name="twitter:card" content="summary">
   
@@ -92,11 +94,33 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <p>在OpenTSDB源代码中，Deferred出现频率之高，让人无法忽视它的存在，也是因为它，把代码看得云里雾里，是是而非。索性专门抽出一段时间，专门研究下Deferred究竟为何高（niu）深（bi）的技术。首先找到Deferred类的的说明：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"> A thread-safe implementation of a deferred result <span class="keyword">for</span> easy asynchronous processing.</span><br><span class="line"> This implementation is based on Twisted<span class="string">'s Python &#123;@code Deferred&#125; API.</span></span><br><span class="line"><span class="string"> *   &lt;li&gt;&lt;"http://su.pr/1PlbY7"&gt;Deferred Reference&lt;/li&gt;</span></span><br><span class="line"><span class="string"> *   &lt;li&gt;&lt;"http://su.pr/608GS1"&gt;A tutorial (Deferred in depth)&lt;/li&gt;</span></span><br><span class="line"><span class="string"> *   &lt;li&gt;&lt;"http://su.pr/2D6G9l"&gt;Source code of &#123;@code defer.py&#125;&lt;/li&gt;</span></span><br><span class="line"><span class="string">This API is a simple and elegant way of managing asynchronous and dynamic "pipelines" (processing chains) without having to explicitly define a finite state machine.</span></span><br></pre></td></tr></table></figure>
+
+<p>接着，顺藤摸瓜，找到了Twisted，官网资料看的一头雾水，干脆直接求助某度。以下摘录自大（网）牛（友）的总结，“Twisted is event-based, asynchronous framework ”，这个“异步”功能的代表就是 deferred。</p>
+<p>deferred 的作用类似于“多线程”，负责保障多头连接、多项任务的异步执行。当然，deferred “异步”功能的实现，与多线程完全不同，具有以下特点：</p>
+<p>１. deferred 产生的 event，是函数调用返回的对象；</p>
+<p>２. deferred 代表一个连接任务，负责报告任务执行的延迟情况和最终结果；</p>
+<p>３. 对deferred 的操作，通过预定的“事件响应器”（event handler）进行。</p>
+<p>有了deferred，即可对任务的执行进行管理控制。防止程序的运行，由于等待某项任务的完成而陷入阻塞停滞，提高整体运行的效率。</p>
+<p>如果编写过非阻塞网络程序的人都知道，C语言中有个函数connect, 原型是：int connect(int fd, const void *addr, int addrlen); 此函数发起一个套接字fd上的到server addr的连接。  如果fd是阻塞的，那么connect将一直阻塞直到连接成功建立或者连接失败。这个连接可能立即建立，也可能等待很久后才建立成功返回，那么程序将阻塞在这个地方，不能干其他的事情。这就是阻塞程序的缺点，但阻塞程序编程比较简单，而且在大多时候都是立即返回，所以在实际中并没有被淘汰。如果fd被设置成了非阻塞的，那么不论连接建立成功与否，connect会立即返回。如果出错或者连接已发起，但未成功，connect都会返回-1,但系统会设置errno,通过errno的值我们知道具体是出了什么错。这里我们关注的是errno的值[EINPROGRESS]，man手册是这样说的：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Nonblocking I/O is enabled <span class="keyword">using</span> `O_NONBLOCK`, `O_NDELAY`, <span class="keyword">or</span> `FIOSNBIO`, <span class="keyword">and</span> the connection cannot be completed immediately. This is <span class="keyword">not</span> a failure. Make the `<span class="built_in">connect</span>()` call again a few seconds later. Alternatively, wait <span class="keyword">for</span> completion by calling `select()` <span class="keyword">and</span> selecting <span class="keyword">for</span> <span class="built_in">write</span>.</span><br></pre></td></tr></table></figure>
+
+<p>这不是一个错误，这表明连接已经发起，但还未成功。我们可以在一个时间段以后通过getsockopt检查连接是否成功，也可以通过重新调用connect，或者select的监听可写来判断监听是否成功。 这三种可以根据自己的情况选用。</p>
+<p>上面说了一些题外话，但对于我们理解defer确实大大有益。因为在用twisted编写网络服务器的时候，一般都是基于单线程事件处理，那么一旦某一个连接需要大量的时间，就会影响后续的连接，从而影响了系统在单位时间的吞吐量。这些需要花费大量时间的操作一般是指磁盘IO和数据库操作。如果让他们阻塞起，会白白浪费很多cpu时间，那么我们想要的就是它能够在调用后立即返回，我们去处理其他的事情。待到IO和数据库操作完成后有一个东西来通知我们，我们再去接着处理它。这样就能大大得提高了cpu的利用率，从而在资源一定的情况下提高了服务器的性能。而我们需要的这个它，就是 twisted为我提供的defer。</p>
+<p>在twisted的multi callbacks 中有下面一段话，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Multiple callbacks can be added to a Deferred. The first callback in the Deferred&#39;s callback chain will be called with the result, the second with the result of the first callback, and so on. Why do we need this? Well, consider a Deferred returned by twisted.enterprise.adbapi - the result of a SQL query. A web widget might add a callback that converts this result into HTML, and pass the Deferred onwards, where the callback will be used by twisted to return the result to the HTTP client. The callback chain will be bypassed in case of errors or exceptions.</span><br></pre></td></tr></table></figure>
+
+<p>通过这段话我们知道，我们可以给twisted添加多个callback，而且每一个callback都是以上一个的返回结果作为传入参数被调用，这些callback会被依次调用。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">When the result is ready, give it to the Deferred object. .callback(result) if the operation succeeded, .errback(failure) if it failed. Note that failure is typically an instance of a twisted.python.failure.Failureinstance.</span><br><span class="line">Deferred object triggers previously-added (call&#x2F;err)back with the result or failure. Execution then follows the following rules, going down the chain of callbacks to be processed.</span><br><span class="line">Result of the callback is always passed as the first argument to the next callback, creating a chain of processors.</span><br><span class="line">If a callback raises an exception, switch to errback.</span><br><span class="line">An unhandled failure gets passed down the line of errbacks, this creating an asynchronous analog to a series to a series of except:statements.</span><br><span class="line">If an errback doesn&#39;t raise an exception or return a twisted.python.failure.Failure instance, switch to callback.</span><br></pre></td></tr></table></figure>
+
+
+
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/07/06/OpenTSDB%E4%B9%8BDeferred%E8%A7%A3%E6%9E%90/" data-id="ckczlvq2t00108gp5a4rebun4" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/07/06/OpenTSDB%E4%B9%8BDeferred%E8%A7%A3%E6%9E%90/" data-id="ckd5je529001528p50ezi26ll" class="article-share-link">Share</a>
       
       
     </footer>
