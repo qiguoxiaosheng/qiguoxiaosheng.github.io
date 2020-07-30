@@ -7,15 +7,15 @@
   
   <title>Kerberos使用记录 | qiguoxiaosheng&#39;s blogs</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="新增用户">
+  <meta name="description" content="#kdestroy，退出当前kerberos用户，即你最后使用kinit过的那个用户 kadmin.local&gt;listprincs 列出所有存在数据库中的人或服务 kadmin.local&gt;delprinc zookeeper&#x2F;hadoop01.example.org@EXAMPLE.COM 删除人或服务 kadmin.local&gt;addprinc admin&#x2F;admin 添">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Kerberos使用记录">
 <meta property="og:url" content="http://yoursite.com/2020/07/22/Kerberos%E4%BD%BF%E7%94%A8%E8%AE%B0%E5%BD%95/index.html">
 <meta property="og:site_name" content="qiguoxiaosheng&#39;s blogs">
-<meta property="og:description" content="新增用户">
+<meta property="og:description" content="#kdestroy，退出当前kerberos用户，即你最后使用kinit过的那个用户 kadmin.local&gt;listprincs 列出所有存在数据库中的人或服务 kadmin.local&gt;delprinc zookeeper&#x2F;hadoop01.example.org@EXAMPLE.COM 删除人或服务 kadmin.local&gt;addprinc admin&#x2F;admin 添">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-07-22T02:35:01.046Z">
-<meta property="article:modified_time" content="2020-07-22T02:36:02.270Z">
+<meta property="article:modified_time" content="2020-07-29T07:56:37.978Z">
 <meta property="article:author" content="qiguoxiaosheng">
 <meta name="twitter:card" content="summary">
   
@@ -94,12 +94,25 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>新增用户</p>
+        <ul>
+<li>#kdestroy，退出当前kerberos用户，即你最后使用kinit过的那个用户</li>
+<li>kadmin.local&gt;listprincs 列出所有存在数据库中的人或服务</li>
+<li>kadmin.local&gt;delprinc zookeeper/hadoop01.example.org@EXAMPLE.COM 删除人或服务</li>
+<li>kadmin.local&gt;addprinc admin/admin 添加人或服务</li>
+<li>kadmin.local&gt;q 退出kadmin</li>
+<li>kadmin: addprinc -randkey root/hadoop01.example.org@EXAMPLE.COM </li>
+<li>kadmin: xst -k root.keytab root/hadoop01.example.org 导出证书</li>
+<li># klist -kt root.keytab 列出这个keytab中保存的所有人或服务</li>
+</ul>
+<p>参考资料</p>
+<p><a href="https://www.bbsmax.com/A/VGzlyYqVJb/" target="_blank" rel="noopener">https://www.bbsmax.com/A/VGzlyYqVJb/</a></p>
+<p><a href="https://www.cyrusimap.org/sasl/sasl/gssapi.html" target="_blank" rel="noopener">https://www.cyrusimap.org/sasl/sasl/gssapi.html</a></p>
+<p><a href="https://www.jianshu.com/p/fc2d2dbd510b" target="_blank" rel="noopener">https://www.jianshu.com/p/fc2d2dbd510b</a></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/07/22/Kerberos%E4%BD%BF%E7%94%A8%E8%AE%B0%E5%BD%95/" data-id="ckd5jplbz000v1cp53nt29hqu" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/07/22/Kerberos%E4%BD%BF%E7%94%A8%E8%AE%B0%E5%BD%95/" data-id="ckd8njbhp000xtsp5dlzn541c" class="article-share-link">Share</a>
       
       
     </footer>
@@ -178,6 +191,14 @@
       <ul>
         
           <li>
+            <a href="/2020/07/30/OpenTSDB%20UID%E7%94%9F%E6%88%90%E8%A7%84%E5%88%99/">OpenTSDB UID生成规则</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/29/OpenTSDB%20Salt%E7%94%9F%E6%88%90%E6%96%B9%E5%BC%8F/">OpenTSDB Salt值生成方式</a>
+          </li>
+        
+          <li>
             <a href="/2020/07/23/OpenTSDB%E8%AE%BF%E9%97%AE%E5%BC%80%E5%90%AFKerberos%E6%9C%8D%E5%8A%A1%E7%9A%84Hbase/">OpenTSDB访问开启Kerberos服务的Hbase</a>
           </li>
         
@@ -187,14 +208,6 @@
         
           <li>
             <a href="/2020/07/21/CDH5.16%E5%90%AF%E7%94%A8Kerberos/">CDH5.16中启用Kerberos</a>
-          </li>
-        
-          <li>
-            <a href="/2020/07/15/%E6%B5%AE%E7%82%B9%E6%95%B0%E5%AD%98%E5%82%A8%E8%AF%A6%E8%A7%A3/">浮点数存储详解</a>
-          </li>
-        
-          <li>
-            <a href="/2020/07/06/HashedWheelTimer%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/">HashedWheelTimer原理解析</a>
           </li>
         
       </ul>

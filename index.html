@@ -70,6 +70,124 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-OpenTSDB UID生成规则" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/07/30/OpenTSDB%20UID%E7%94%9F%E6%88%90%E8%A7%84%E5%88%99/" class="article-date">
+  <time datetime="2020-07-30T02:13:00.436Z" itemprop="datePublished">2020-07-30</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/07/30/OpenTSDB%20UID%E7%94%9F%E6%88%90%E8%A7%84%E5%88%99/">OpenTSDB UID生成规则</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>先来看下AddDataExample.java类中，是如何获取UID的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Declare new metric</span></span><br><span class="line"> String metricName = <span class="string">"my.tsdb.test.metric"</span>;</span><br><span class="line"> <span class="comment">// First check to see it doesn't already exist</span></span><br><span class="line"> <span class="keyword">byte</span>[] byteMetricUID; <span class="comment">// we don't actually need this for the first</span></span><br><span class="line">                       <span class="comment">// .addPoint() call below.</span></span><br><span class="line"> <span class="comment">// <span class="doctag">TODO:</span> Ideally we could just call a not-yet-implemented tsdb.uIdExists()</span></span><br><span class="line"> <span class="comment">// function. </span></span><br><span class="line"> <span class="comment">// Note, however, that this is optional. If auto metric is enabled</span></span><br><span class="line"> <span class="comment">// (tsd.core.auto_create_metrics), the UID will be assigned in call to </span></span><br><span class="line"> <span class="comment">// addPoint().</span></span><br><span class="line"> <span class="keyword">try</span> &#123;</span><br><span class="line">   byteMetricUID = tsdb.getUID(UniqueIdType.METRIC, metricName);</span><br><span class="line"> &#125; <span class="keyword">catch</span> (IllegalArgumentException iae) &#123;</span><br><span class="line">   System.out.println(<span class="string">"Metric name not valid."</span>);</span><br><span class="line">   iae.printStackTrace();</span><br><span class="line">   System.exit(<span class="number">1</span>);</span><br><span class="line"> &#125; <span class="keyword">catch</span> (NoSuchUniqueName nsune) &#123;</span><br><span class="line">   <span class="comment">// If not, great. Create it.</span></span><br><span class="line">   byteMetricUID = tsdb.assignUid(<span class="string">"metric"</span>, metricName);</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>大体流程是先从缓存/Hbase中查找metric对应的UID，若不存在，则生成新的UID。从注释上了解到上述代码中的查找是非必须的，因为在TSDB.addPoint()方法中会对metric及tag是否存在UID进行判断及生成不存在的UID，具体代码部分为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Deferred&lt;Object&gt; <span class="title">addPoint</span><span class="params">(<span class="keyword">final</span> String metric,</span></span></span><br><span class="line"><span class="function"><span class="params">                                 <span class="keyword">final</span> <span class="keyword">long</span> timestamp,</span></span></span><br><span class="line"><span class="function"><span class="params">                                 <span class="keyword">final</span> <span class="keyword">long</span> value,</span></span></span><br><span class="line"><span class="function"><span class="params">                                 <span class="keyword">final</span> Map&lt;String, String&gt; tags)</span> </span>&#123;</span><br><span class="line">  ...</span><br><span class="line"></span><br><span class="line">  <span class="keyword">final</span> <span class="keyword">short</span> flags = (<span class="keyword">short</span>) (v.length - <span class="number">1</span>);  <span class="comment">// Just the length.</span></span><br><span class="line">  <span class="keyword">return</span> addPointInternal(metric, timestamp, v, tags, flags);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">final</span> Deferred&lt;Object&gt; <span class="title">addPointInternal</span><span class="params">(<span class="keyword">final</span> String metric,</span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="keyword">final</span> <span class="keyword">long</span> timestamp,</span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="keyword">final</span> <span class="keyword">byte</span>[] value,</span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="keyword">final</span> Map&lt;String, String&gt; tags,</span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="keyword">final</span> <span class="keyword">short</span> flags)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  checkTimestampAndTags(metric, timestamp, value, tags, flags);</span><br><span class="line">  <span class="comment">// 此处row = salt + metric + base_time + tagk + tagv，其中salt、base_time仅占位待填充数据</span></span><br><span class="line">  <span class="keyword">final</span> <span class="keyword">byte</span>[] row = IncomingDataPoints.rowKeyTemplate(<span class="keyword">this</span>, metric, tags);</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Returns a partially initialized row key for this metric and these tags. The</span></span><br><span class="line"><span class="comment"> * only thing left to fill in is the base timestamp.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">byte</span>[] rowKeyTemplate(<span class="keyword">final</span> TSDB tsdb, <span class="keyword">final</span> String metric,</span><br><span class="line">    <span class="keyword">final</span> Map&lt;String, String&gt; tags) &#123;</span><br><span class="line">  <span class="keyword">final</span> <span class="keyword">short</span> metric_width = tsdb.metrics.width();</span><br><span class="line">  <span class="keyword">final</span> <span class="keyword">short</span> tag_name_width = tsdb.tag_names.width();</span><br><span class="line">  <span class="keyword">final</span> <span class="keyword">short</span> tag_value_width = tsdb.tag_values.width();</span><br><span class="line">  <span class="keyword">final</span> <span class="keyword">short</span> num_tags = (<span class="keyword">short</span>) tags.size();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">int</span> row_size = (Const.SALT_WIDTH() + metric_width + Const.TIMESTAMP_BYTES + tag_name_width * num_tags + tag_value_width * num_tags);</span><br><span class="line">  <span class="keyword">final</span> <span class="keyword">byte</span>[] row = <span class="keyword">new</span> <span class="keyword">byte</span>[row_size];</span><br><span class="line"></span><br><span class="line">  <span class="keyword">short</span> pos = (<span class="keyword">short</span>) Const.SALT_WIDTH();</span><br><span class="line"></span><br><span class="line">  copyInRowKey(row, pos, (tsdb.config.auto_metric() ? tsdb.metrics.getOrCreateId(metric) : tsdb.metrics.getId(metric)));</span><br><span class="line">  pos += metric_width;</span><br><span class="line"></span><br><span class="line">  pos += Const.TIMESTAMP_BYTES;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">final</span> <span class="keyword">byte</span>[] tag : Tags.resolveOrCreateAll(tsdb, tags)) &#123;</span><br><span class="line">    copyInRowKey(row, pos, tag);</span><br><span class="line">    pos += tag.length;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> row;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中，两个核心方法为tsdb.metrics.getOrCreateId(metric)和Tags.resolveOrCreateAll(tsdb, tags)，分别对应metric的UID及tags的UID。</p>
+<p>首先看一下getOrCreateId方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** Map of pending UID assignments</span></span><br><span class="line"><span class="comment">* 记录正在分配UID的字符串，避免并发调用UniqueID方法为同一字符串分配UID出现多个UID的情况</span></span><br><span class="line"><span class="comment">* */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> HashMap&lt;String, Deferred&lt;<span class="keyword">byte</span>[]&gt;&gt; pending_assignments = <span class="keyword">new</span> HashMap&lt;String, Deferred&lt;<span class="keyword">byte</span>[]&gt;&gt;();</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">byte</span>[] getOrCreateId(<span class="keyword">final</span> String name) <span class="keyword">throws</span> HBaseException &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> getIdAsync(name).joinUninterruptibly();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (NoSuchUniqueName e) &#123;</span><br><span class="line">      <span class="comment">// 是否设置了UID Filter插件</span></span><br><span class="line">      <span class="keyword">if</span> (tsdb != <span class="keyword">null</span> &amp;&amp; tsdb.getUidFilter() != <span class="keyword">null</span> &amp;&amp; tsdb.getUidFilter().fillterUIDAssignments()) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">          <span class="keyword">if</span> (!tsdb.getUidFilter().allowUIDAssignment(type, name, <span class="keyword">null</span>, <span class="keyword">null</span>).join()) &#123;</span><br><span class="line">            rejected_assignments++;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> FailedToAssignUniqueIdException(<span class="keyword">new</span> String(kind), name, <span class="number">0</span>, <span class="string">"Blocked by UID filter."</span>);</span><br><span class="line">          &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (FailedToAssignUniqueIdException e1) &#123;</span><br><span class="line">          <span class="keyword">throw</span> e1;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e1) &#123;</span><br><span class="line">          LOG.error(<span class="string">"Interrupted"</span>, e1);</span><br><span class="line">          Thread.currentThread().interrupt();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e1) &#123;</span><br><span class="line">          <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"Should never be here"</span>, e1);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      </span><br><span class="line">      Deferred&lt;<span class="keyword">byte</span>[]&gt; assignment = <span class="keyword">null</span>;</span><br><span class="line">      <span class="keyword">boolean</span> pending = <span class="keyword">false</span>;</span><br><span class="line">      <span class="keyword">synchronized</span> (pending_assignments) &#123;</span><br><span class="line">        assignment = pending_assignments.get(name);</span><br><span class="line">        <span class="keyword">if</span> (assignment == <span class="keyword">null</span>) &#123;</span><br><span class="line">          <span class="comment">// to prevent UID leaks that can be caused when multiple time</span></span><br><span class="line">          <span class="comment">// series for the same metric or tags arrive, we need to write a </span></span><br><span class="line">          <span class="comment">// deferred to the pending map as quickly as possible. Then we can </span></span><br><span class="line">          <span class="comment">// start the assignment process after we've stashed the deferred </span></span><br><span class="line">          <span class="comment">// and released the lock</span></span><br><span class="line">          assignment = <span class="keyword">new</span> Deferred&lt;<span class="keyword">byte</span>[]&gt;();</span><br><span class="line">          pending_assignments.put(name, assignment);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          pending = <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      </span><br><span class="line">      <span class="keyword">if</span> (pending) &#123;</span><br><span class="line">        LOG.info(<span class="string">"Already waiting for UID assignment: "</span> + name);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">          <span class="keyword">return</span> assignment.joinUninterruptibly();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e1) &#123;</span><br><span class="line">          <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"Should never be here"</span>, e1);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      </span><br><span class="line">      <span class="comment">// start the assignment dance after stashing the deferred</span></span><br><span class="line">      <span class="keyword">byte</span>[] uid = <span class="keyword">null</span>;</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        uid = <span class="keyword">new</span> UniqueIdAllocator(name, assignment).tryAllocate().joinUninterruptibly();</span><br><span class="line">      &#125; <span class="keyword">catch</span> (RuntimeException e1) &#123;</span><br><span class="line">        <span class="keyword">throw</span> e1;</span><br><span class="line">      &#125; <span class="keyword">catch</span> (Exception e1) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"Should never be here"</span>, e);</span><br><span class="line">      &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (pending_assignments) &#123;</span><br><span class="line">          <span class="keyword">if</span> (pending_assignments.remove(name) != <span class="keyword">null</span>) &#123;</span><br><span class="line">            LOG.info(<span class="string">"Completed pending assignment for: "</span> + name);</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> uid;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"Should never be here"</span>, e);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>处理的具体流程为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">graph TD</span><br><span class="line">A[开始]</span><br><span class="line">B(从Cache&#x2F;Hbase中查询UID)</span><br><span class="line">C&#123;是否存在UID&#125;</span><br><span class="line">D&#123;是否配置了UIDFilter插件&#125;</span><br><span class="line">E&#123;校验待分配的name是否符合设定的规则&#125;</span><br><span class="line">F&#123;是否存在并发分配&#125;</span><br><span class="line">G[将待分配的name加入pending_assignments对象,调用UniqueIdAllocator类的tryAllocate方法进行生成UID]</span><br><span class="line">H[分配过程同步阻塞,是否完成分配]</span><br><span class="line">I[返回ID]</span><br><span class="line">A--&gt;B--&gt;C</span><br><span class="line">C--yes--&gt;I</span><br><span class="line">C--no--&gt;D</span><br><span class="line">D--yes--&gt;E</span><br><span class="line">D--no--&gt;I</span><br><span class="line">E--yes--&gt;F</span><br><span class="line">F--yes--&gt;H</span><br><span class="line">F--no--&gt;G</span><br><span class="line">G--&gt;H--yes--&gt;I</span><br><span class="line">style A fill:#f9f,stroke:#333,stroke-width:4px,fill-opacity:0.5</span><br></pre></td></tr></table></figure>
+
+
+
+<p>从Cache/Hbase中查询代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Deferred&lt;<span class="keyword">byte</span>[]&gt; getIdAsync(<span class="keyword">final</span> String name) &#123;</span><br><span class="line">  <span class="comment">// 从缓存中查询UID</span></span><br><span class="line">  <span class="keyword">final</span> <span class="keyword">byte</span>[] id = getIdFromCache(name);</span><br><span class="line">  <span class="keyword">if</span> (id != <span class="keyword">null</span>) &#123;</span><br><span class="line">    incrementCacheHits();</span><br><span class="line">    <span class="keyword">return</span> Deferred.fromResult(id);</span><br><span class="line">  &#125;</span><br><span class="line">  incrementCacheMiss();</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 从Hbase中查询UID，若命中，则将结果添加中缓存；否则，抛出NoSuchUniqueName异常</span></span><br><span class="line">  Deferred&lt;<span class="keyword">byte</span>[]&gt; d = getIdFromHBase(name).addCallback(<span class="keyword">new</span> GetIdCB());</span><br><span class="line">  <span class="keyword">return</span> d;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 为了便于阅读，此处调整了源码中内部类GetIdCB的位置</span></span><br><span class="line">  class GetIdCB implements Callback&lt;byte[], byte[]&gt; &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">byte</span>[] call(<span class="keyword">final</span> <span class="keyword">byte</span>[] id) &#123;</span><br><span class="line">      <span class="keyword">if</span> (id == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> NoSuchUniqueName(kind(), name);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">if</span> (id.length != id_width) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">"Found id.length = "</span> + id.length</span><br><span class="line">                                        + <span class="string">" which is != "</span> + id_width</span><br><span class="line">                                        + <span class="string">" required for '"</span> + kind() + <span class="string">'\''</span>);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">if</span> (use_mode) &#123;</span><br><span class="line">        <span class="keyword">switch</span>(mode) &#123;</span><br><span class="line">        <span class="keyword">case</span> READONLY:</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> WRITEONLY:</span><br><span class="line">          addIdToCache(name, id);</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">          addNameToCache(id, name);</span><br><span class="line">          addIdToCache(name, id);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        addIdToCache(name, id);</span><br><span class="line">        addNameToCache(id, name);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> id;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下来，生成UID的重点来了，下面详细看下UniqueIdAllocator类中的tryAllocate()方法的具体实现。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * Implements the process to allocate a new UID.</span></span><br><span class="line"><span class="comment">  * This callback is re-used multiple times in a four step process:</span></span><br><span class="line"><span class="comment">  *   1. Allocate a new UID via atomic increment.</span></span><br><span class="line"><span class="comment">  *   2. Create the reverse mapping (ID to name).</span></span><br><span class="line"><span class="comment">  *   3. Create the forward mapping (name to ID).</span></span><br><span class="line"><span class="comment">  *   4. Return the new UID to the caller.</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"> <span class="keyword">private</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">UniqueIdAllocator</span> <span class="keyword">implements</span> <span class="title">Callback</span>&lt;<span class="title">Object</span>, <span class="title">Object</span>&gt; </span>&#123;</span><br><span class="line">   ......</span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">byte</span> ALLOCATE_UID = <span class="number">0</span>;</span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">byte</span> CREATE_REVERSE_MAPPING = <span class="number">1</span>;</span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">byte</span> CREATE_FORWARD_MAPPING = <span class="number">2</span>;</span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">byte</span> DONE = <span class="number">3</span>;</span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">byte</span> state = ALLOCATE_UID;  <span class="comment">// Current state of the process.</span></span><br><span class="line"></span><br><span class="line">   UniqueIdAllocator(<span class="keyword">final</span> String name, <span class="keyword">final</span> Deferred&lt;<span class="keyword">byte</span>[]&gt; assignment) &#123;</span><br><span class="line">     <span class="keyword">this</span>.name = name;</span><br><span class="line">     <span class="keyword">this</span>.assignment = assignment;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   Deferred&lt;<span class="keyword">byte</span>[]&gt; tryAllocate() &#123;</span><br><span class="line">     attempt--;</span><br><span class="line">     state = ALLOCATE_UID;</span><br><span class="line">     call(<span class="keyword">null</span>);</span><br><span class="line">     <span class="keyword">return</span> assignment;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="meta">@Override</span></span><br><span class="line">   <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">   <span class="function"><span class="keyword">public</span> Object <span class="title">call</span><span class="params">(<span class="keyword">final</span> Object arg)</span> </span>&#123;</span><br><span class="line">     <span class="comment">// 执行一系列的检查判断</span></span><br><span class="line">     ......</span><br><span class="line">     </span><br><span class="line">     <span class="keyword">final</span> Deferred d;</span><br><span class="line">     <span class="keyword">switch</span> (state) &#123;</span><br><span class="line">       <span class="keyword">case</span> ALLOCATE_UID:</span><br><span class="line">         d = allocateUid();</span><br><span class="line">         <span class="keyword">break</span>;</span><br><span class="line">       <span class="keyword">case</span> CREATE_REVERSE_MAPPING:</span><br><span class="line">         d = createReverseMapping(arg);</span><br><span class="line">         <span class="keyword">break</span>;</span><br><span class="line">       <span class="keyword">case</span> CREATE_FORWARD_MAPPING:</span><br><span class="line">         d = createForwardMapping(arg);</span><br><span class="line">         <span class="keyword">break</span>;</span><br><span class="line">       <span class="keyword">case</span> DONE:</span><br><span class="line">         <span class="keyword">return</span> done(arg);</span><br><span class="line">       <span class="keyword">default</span>:</span><br><span class="line">         <span class="keyword">throw</span> <span class="keyword">new</span> AssertionError(<span class="string">"Should never be here!"</span>);</span><br><span class="line">     &#125;</span><br><span class="line">      <span class="comment">// pipline</span></span><br><span class="line">     <span class="keyword">return</span> d.addBoth(<span class="keyword">this</span>).addErrback(<span class="keyword">new</span> ErrBack());</span><br><span class="line">   &#125;</span><br><span class="line">  ......</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>第一步，ALLOCATE_UID</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** Generates either a random or a serial ID. If random, we need to</span></span><br><span class="line"><span class="comment"> * make sure that there isn't a UID collision.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> Deferred&lt;Long&gt; <span class="title">allocateUid</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  LOG.info(<span class="string">"Creating "</span> + (randomize_id ? <span class="string">"a random "</span> : <span class="string">"an "</span>) + <span class="string">"ID for kind='"</span> + kind() + <span class="string">"' name='"</span> + name + <span class="string">'\''</span>);</span><br><span class="line">  <span class="comment">// 更新分配状态</span></span><br><span class="line">  state = CREATE_REVERSE_MAPPING;</span><br><span class="line">  <span class="keyword">if</span> (randomize_id) &#123;</span><br><span class="line">    <span class="comment">// 随机生成ID</span></span><br><span class="line">    <span class="keyword">return</span> Deferred.fromResult(RandomUniqueId.getRandomUID());</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// 自增ID</span></span><br><span class="line">    <span class="keyword">return</span> client.atomicIncrement(<span class="keyword">new</span> AtomicIncrementRequest(table, MAXID_ROW, ID_FAMILY, kind));</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中随机生成的生成函数为</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** Use the SecureRandom class to avoid blocking calls */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> SecureRandom random_generator = <span class="keyword">new</span> SecureRandom(</span><br><span class="line">    Bytes.fromLong(System.currentTimeMillis()));</span><br></pre></td></tr></table></figure>
+
+<p>第二步，CREATE_REVERSE_MAPPING，创建从ID至Name的映射关系，先执行此步骤的原因是防止中途失败，返回一个只包含Name到ID，而无ID至Name的映射的结果。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Create the reverse mapping.</span></span><br><span class="line"><span class="comment"> * We do this before the forward one so that if we die before creating</span></span><br><span class="line"><span class="comment"> * the forward mapping we don't run the risk of "publishing" a</span></span><br><span class="line"><span class="comment"> * partially assigned ID.  The reverse mapping on its own is harmless</span></span><br><span class="line"><span class="comment"> * but the forward mapping without reverse mapping is bad as it would</span></span><br><span class="line"><span class="comment"> * point to an ID that cannot be resolved.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> Deferred&lt;Boolean&gt; <span class="title">createReverseMapping</span><span class="params">(<span class="keyword">final</span> Object arg)</span> </span>&#123;</span><br><span class="line">  <span class="comment">// arg为第一步生成的UID</span></span><br><span class="line">  <span class="keyword">if</span> (!(arg <span class="keyword">instanceof</span> Long)) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">"Expected a Long but got "</span> + arg);</span><br><span class="line">  &#125;</span><br><span class="line">  id = (Long) arg;</span><br><span class="line">  <span class="keyword">if</span> (id &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">"Got a negative ID from HBase: "</span> + id);</span><br><span class="line">  &#125;</span><br><span class="line">  LOG.info(<span class="string">"Got ID="</span> + id + <span class="string">" for kind='"</span> + kind() + <span class="string">"' name='"</span> + name + <span class="string">"'"</span>);</span><br><span class="line">  row = Bytes.fromLong(id);</span><br><span class="line">  <span class="comment">// row.length should actually be 8.</span></span><br><span class="line">  <span class="keyword">if</span> (row.length &lt; id_width) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">"OMG, row.length = "</span> + row.length</span><br><span class="line">                                    + <span class="string">" which is less than "</span> + id_width</span><br><span class="line">                                    + <span class="string">" for id="</span> + id</span><br><span class="line">                                    + <span class="string">" row="</span> + Arrays.toString(row));</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// Verify that we're going to drop bytes that are 0.</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; row.length - id_width; i++) &#123;</span><br><span class="line">    <span class="keyword">if</span> (row[i] != <span class="number">0</span>) &#123;</span><br><span class="line">      <span class="keyword">final</span> String message = <span class="string">"All Unique IDs for "</span> + kind()</span><br><span class="line">        + <span class="string">" on "</span> + id_width + <span class="string">" bytes are already assigned!"</span>;</span><br><span class="line">      LOG.error(<span class="string">"OMG "</span> + message);</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(message);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// Shrink the ID on the requested number of bytes. 默认3个字节</span></span><br><span class="line">  row = Arrays.copyOfRange(row, row.length - id_width, row.length);</span><br><span class="line"></span><br><span class="line">  state = CREATE_FORWARD_MAPPING;</span><br><span class="line">  <span class="comment">// We are CAS'ing the KV into existence -- the second argument is how</span></span><br><span class="line">  <span class="comment">// we tell HBase we want to atomically create the KV, so that if there</span></span><br><span class="line">  <span class="comment">// is already a KV in this cell, we'll fail.  Technically we could do</span></span><br><span class="line">  <span class="comment">// just a `put' here, as we have a freshly allocated UID, so there is</span></span><br><span class="line">  <span class="comment">// not reason why a KV should already exist for this UID, but just to</span></span><br><span class="line">  <span class="comment">// err on the safe side and catch really weird corruption cases, we do</span></span><br><span class="line">  <span class="comment">// a CAS instead to create the KV.</span></span><br><span class="line">  <span class="keyword">return</span> client.compareAndSet(reverseMapping(), HBaseClient.EMPTY_ARRAY);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 将id--&gt;name的映射数据写入Hbase的tsdb-uid表中</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> PutRequest <span class="title">reverseMapping</span><span class="params">()</span> </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">new</span> PutRequest(table, row, NAME_FAMILY, kind, toBytes(name));</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>第三步，CREATE_FORWARD_MAPPING，将Name到ID的映射关系存入Hbase的tsdb-uid表中。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> Deferred&lt;?&gt; createForwardMapping(<span class="keyword">final</span> Object arg) &#123;</span><br><span class="line">  <span class="keyword">if</span> (!(arg <span class="keyword">instanceof</span> Boolean)) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">"Expected a Boolean but got "</span> + arg);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (!((Boolean) arg)) &#123;  <span class="comment">// Previous CAS failed. </span></span><br><span class="line">    <span class="keyword">if</span> (randomize_id) &#123;</span><br><span class="line">      <span class="comment">// This random Id is already used by another row</span></span><br><span class="line">      LOG.warn(<span class="string">"Detected random id collision and retrying kind='"</span> + </span><br><span class="line">          kind() + <span class="string">"' name='"</span> + name + <span class="string">"'"</span>);</span><br><span class="line">      random_id_collisions++;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="comment">// something is really messed up then</span></span><br><span class="line">      LOG.error(<span class="string">"WTF!  Failed to CAS reverse mapping: "</span> + reverseMapping()</span><br><span class="line">          + <span class="string">" -- run an fsck against the UID table!"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    attempt--;</span><br><span class="line">    state = ALLOCATE_UID;</span><br><span class="line">    <span class="keyword">return</span> Deferred.fromResult(<span class="keyword">false</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  state = DONE;</span><br><span class="line">  <span class="keyword">return</span> client.compareAndSet(forwardMapping(), HBaseClient.EMPTY_ARRAY);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> PutRequest <span class="title">forwardMapping</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> PutRequest(table, toBytes(name), ID_FAMILY, kind, row);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>第四步，DONE</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> Deferred&lt;<span class="keyword">byte</span>[]&gt; done(<span class="keyword">final</span> Object arg) &#123;</span><br><span class="line">  ......</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 将name--id的映射关系加入缓存</span></span><br><span class="line">  cacheMapping(name, row);</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span> (tsdb != <span class="keyword">null</span> &amp;&amp; tsdb.getConfig().enable_realtime_uid()) &#123;</span><br><span class="line">    <span class="keyword">final</span> UIDMeta meta = <span class="keyword">new</span> UIDMeta(type, row, name);</span><br><span class="line">    meta.storeNew(tsdb);</span><br><span class="line">    LOG.info(<span class="string">"Wrote UIDMeta for: "</span> + name);</span><br><span class="line">    tsdb.indexUIDMeta(meta);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">synchronized</span>(pending_assignments) &#123;</span><br><span class="line">    <span class="keyword">if</span> (pending_assignments.remove(name) != <span class="keyword">null</span>) &#123;</span><br><span class="line">      LOG.info(<span class="string">"Completed pending assignment for: "</span> + name);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  assignment.callback(row);</span><br><span class="line">  <span class="keyword">return</span> assignment;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里记录下，为何先执行第二步（先保存id到name的映射关系），再执行第三步（保存name到id的映射关系），而不是反过来。</p>
+<p>假设先执行了第三步，保存了name到id的映射关系，然后出现异常，后续操作失败，则tsdb-uid表中只保留了name到id的关系，没有保存id到name的关系。在后续查询中，使用name查询时则为此次未完全分配的UID，如果使用该UID查询name时，则会出现失败异常。而按照代码中的顺序，先保存id到name的映射关系，即使出现异常，后续通过name查询时也会重新分配UID，保证最终生成的id与name间的映射是双向的。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/07/30/OpenTSDB%20UID%E7%94%9F%E6%88%90%E8%A7%84%E5%88%99/" data-id="ckd8njbhs0015tsp56kf0hbow" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-OpenTSDB Salt生成方式" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/07/29/OpenTSDB%20Salt%E7%94%9F%E6%88%90%E6%96%B9%E5%BC%8F/" class="article-date">
+  <time datetime="2020-07-29T08:20:07.226Z" itemprop="datePublished">2020-07-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/07/29/OpenTSDB%20Salt%E7%94%9F%E6%88%90%E6%96%B9%E5%BC%8F/">OpenTSDB Salt值生成方式</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>废话不多说，直接上代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Calculates and writes an array of one or more salt bytes at the front of</span></span><br><span class="line"><span class="comment"> * the given row key. </span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * The salt is calculated by taking the Java hash code of the metric and </span></span><br><span class="line"><span class="comment"> * tag UIDs and returning a modulo based on the number of salt buckets.</span></span><br><span class="line"><span class="comment"> * The result will always be a positive integer from 0 to salt buckets.</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * <span class="doctag">NOTE:</span> The row key passed in MUST have allocated the &#123;<span class="doctag">@code</span> width&#125; number of</span></span><br><span class="line"><span class="comment"> * bytes at the front of the row key or this call will overwrite data.</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * WARNING: If the width is set to a positive value, then the bucket must be</span></span><br><span class="line"><span class="comment"> * at least 1 or greater.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> row_key The pre-allocated row key to write the salt to</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 2.2</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">prefixKeyWithSalt</span><span class="params">(<span class="keyword">final</span> <span class="keyword">byte</span>[] row_key)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (Const.SALT_WIDTH() &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (row_key.length &lt; (Const.SALT_WIDTH() + TSDB.metrics_width()) || </span><br><span class="line">      (Bytes.memcmp(row_key, <span class="keyword">new</span> <span class="keyword">byte</span>[Const.SALT_WIDTH() + TSDB.metrics_width()], </span><br><span class="line">          Const.SALT_WIDTH(), TSDB.metrics_width()) == <span class="number">0</span>)) &#123;</span><br><span class="line">      <span class="comment">// ^ Don't salt the global annotation row, leave it at zero</span></span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> tags_start = Const.SALT_WIDTH() + TSDB.metrics_width() +  Const.TIMESTAMP_BYTES;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// we want the metric and tags, not the timestamp</span></span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">byte</span>[] salt_base =  <span class="keyword">new</span> <span class="keyword">byte</span>[row_key.length - Const.SALT_WIDTH() - Const.TIMESTAMP_BYTES];</span><br><span class="line">    System.arraycopy(row_key, Const.SALT_WIDTH(), salt_base, <span class="number">0</span>, TSDB.metrics_width());</span><br><span class="line"></span><br><span class="line">    System.arraycopy(row_key, tags_start,salt_base, TSDB.metrics_width(), row_key.length - tags_start);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// salt值为abs(hashcode(metric_uid + tagk_uid + tagv_uid) % salt_buckets)</span></span><br><span class="line">    <span class="keyword">int</span> modulo = Arrays.hashCode(salt_base) % Const.SALT_BUCKETS();</span><br><span class="line">    <span class="keyword">if</span> (modulo &lt; <span class="number">0</span>) &#123;</span><br><span class="line">      <span class="comment">// make sure we return a positive salt.</span></span><br><span class="line">      modulo = modulo * -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">   <span class="comment">// byte array storage big-edian</span></span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">byte</span>[] salt = getSaltBytes(modulo);</span><br><span class="line">    System.arraycopy(salt, <span class="number">0</span>, row_key, <span class="number">0</span>, Const.SALT_WIDTH());</span><br><span class="line">  &#125; <span class="comment">// else salting is disabled so it's a no-op</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>关键信息为：salt = hashcode(metric_uid + tagk_uid + tagv_uid) % salt_buckets</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/07/29/OpenTSDB%20Salt%E7%94%9F%E6%88%90%E6%96%B9%E5%BC%8F/" data-id="ckd8njbhr0012tsp52ut65aoi" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-OpenTSDB访问开启Kerberos服务的Hbase" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2020/07/23/OpenTSDB%E8%AE%BF%E9%97%AE%E5%BC%80%E5%90%AFKerberos%E6%9C%8D%E5%8A%A1%E7%9A%84Hbase/" class="article-date">
@@ -115,7 +233,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/07/23/OpenTSDB%E8%AE%BF%E9%97%AE%E5%BC%80%E5%90%AFKerberos%E6%9C%8D%E5%8A%A1%E7%9A%84Hbase/" data-id="ckd5jplc6001m1cp53m3o2osa" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/07/23/OpenTSDB%E8%AE%BF%E9%97%AE%E5%BC%80%E5%90%AFKerberos%E6%9C%8D%E5%8A%A1%E7%9A%84Hbase/" data-id="ckd8njbhz001ttsp5ansi374o" class="article-share-link">Share</a>
       
       
     </footer>
@@ -147,12 +265,25 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>新增用户</p>
+        <ul>
+<li>#kdestroy，退出当前kerberos用户，即你最后使用kinit过的那个用户</li>
+<li>kadmin.local&gt;listprincs 列出所有存在数据库中的人或服务</li>
+<li>kadmin.local&gt;delprinc zookeeper/hadoop01.example.org@EXAMPLE.COM 删除人或服务</li>
+<li>kadmin.local&gt;addprinc admin/admin 添加人或服务</li>
+<li>kadmin.local&gt;q 退出kadmin</li>
+<li>kadmin: addprinc -randkey root/hadoop01.example.org@EXAMPLE.COM </li>
+<li>kadmin: xst -k root.keytab root/hadoop01.example.org 导出证书</li>
+<li># klist -kt root.keytab 列出这个keytab中保存的所有人或服务</li>
+</ul>
+<p>参考资料</p>
+<p><a href="https://www.bbsmax.com/A/VGzlyYqVJb/" target="_blank" rel="noopener">https://www.bbsmax.com/A/VGzlyYqVJb/</a></p>
+<p><a href="https://www.cyrusimap.org/sasl/sasl/gssapi.html" target="_blank" rel="noopener">https://www.cyrusimap.org/sasl/sasl/gssapi.html</a></p>
+<p><a href="https://www.jianshu.com/p/fc2d2dbd510b" target="_blank" rel="noopener">https://www.jianshu.com/p/fc2d2dbd510b</a></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/07/22/Kerberos%E4%BD%BF%E7%94%A8%E8%AE%B0%E5%BD%95/" data-id="ckd5jplbz000v1cp53nt29hqu" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/07/22/Kerberos%E4%BD%BF%E7%94%A8%E8%AE%B0%E5%BD%95/" data-id="ckd8njbhp000xtsp5dlzn541c" class="article-share-link">Share</a>
       
       
     </footer>
@@ -260,7 +391,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/07/21/CDH5.16%E5%90%AF%E7%94%A8Kerberos/" data-id="ckd5jplb900001cp5etuo6q8o" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/07/21/CDH5.16%E5%90%AF%E7%94%A8Kerberos/" data-id="ckd8njbh10000tsp597br1f9t" class="article-share-link">Share</a>
       
       
     </footer>
@@ -322,7 +453,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/07/15/%E6%B5%AE%E7%82%B9%E6%95%B0%E5%AD%98%E5%82%A8%E8%AF%A6%E8%A7%A3/" data-id="ckd5jplc9001w1cp50iuq8ius" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/07/15/%E6%B5%AE%E7%82%B9%E6%95%B0%E5%AD%98%E5%82%A8%E8%AF%A6%E8%A7%A3/" data-id="ckd8njbi1001ztsp50h31aa7s" class="article-share-link">Share</a>
       
       
     </footer>
@@ -358,7 +489,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/07/06/HashedWheelTimer%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/" data-id="ckd5jplbs000d1cp51srs7jpy" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/07/06/HashedWheelTimer%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/" data-id="ckd8njbhk000gtsp5aqci0ovg" class="article-share-link">Share</a>
       
       
     </footer>
@@ -416,7 +547,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/07/06/OpenTSDB%E4%B9%8BDeferred%E8%A7%A3%E6%9E%90/" data-id="ckd5jplc100151cp57h4yfaes" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/07/06/OpenTSDB%E4%B9%8BDeferred%E8%A7%A3%E6%9E%90/" data-id="ckd8njbht001ctsp5bikd1gqt" class="article-share-link">Share</a>
       
       
     </footer>
@@ -519,7 +650,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/07/06/Linux%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6/" data-id="ckd5jplc0000y1cp5grht8bv9" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/07/06/Linux%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6/" data-id="ckd8njbhq0010tsp527za28gj" class="article-share-link">Share</a>
       
       
     </footer>
@@ -555,189 +686,9 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/07/01/%E5%85%A5%E5%9D%91JavaCC/" data-id="ckd5jplc8001s1cp5gowj9zpr" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/07/01/%E5%85%A5%E5%9D%91JavaCC/" data-id="ckd8njbi0001wtsp537vzgtjj" class="article-share-link">Share</a>
       
       
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-OpenTSDB查询过程解析" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2020/06/08/OpenTSDB%E6%9F%A5%E8%AF%A2%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/" class="article-date">
-  <time datetime="2020-06-08T09:05:11.233Z" itemprop="datePublished">2020-06-08</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Develop/">Develop</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/06/08/OpenTSDB%E6%9F%A5%E8%AF%A2%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/">OpenTSDB查询过程解析</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>OpenTSDB进行查询过程的大致步骤为：</p>
-<ol>
-<li>网络层收到客户端的请求，将查询条件解析成TSQuery对象；</li>
-<li>调用TSQuery.buildQueries()方法或buildQueriesAsync()方法，根据TSQuery封装TSSubQuery对象创建Query对象；</li>
-<li>调用Query.run()方法或者runAsync()方法，该方法完成对Hbase表额查询及查询结果的整理。</li>
-</ol>
-<p>其中，TSQuery.buildQueries()也是通过调用buildQueriesAsync()方法来实现的。buildQueries()处代码为</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Compiles the TSQuery into an array of Query objects for execution.</span></span><br><span class="line"><span class="comment"> * If the user has not set a down sampler explicitly, and they don't want </span></span><br><span class="line"><span class="comment"> * millisecond resolution, then we set the down sampler to 1 second to handle</span></span><br><span class="line"><span class="comment"> * situations where storage may have multiple data points per second.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> tsdb The tsdb to use for &#123;<span class="doctag">@link</span> TSDB#newQuery&#125;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> A deferred array of queries to wait on for compilation.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 2.2</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> Deferred&lt;Query[]&gt; buildQueriesAsync(<span class="keyword">final</span> TSDB tsdb) &#123;</span><br><span class="line">  <span class="comment">// 将TSSubQuery对象与解析得到的TsdbQuery对象一一对应</span></span><br><span class="line">  <span class="keyword">final</span> Query[] tsdb_queries = <span class="keyword">new</span> Query[queries.size()];</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">final</span> List&lt;Deferred&lt;Object&gt;&gt; deferreds =</span><br><span class="line">      <span class="keyword">new</span> ArrayList&lt;Deferred&lt;Object&gt;&gt;(queries.size());</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; queries.size(); i++) &#123;</span><br><span class="line">    <span class="comment">// 创建TsdbQuery对象</span></span><br><span class="line">    <span class="keyword">final</span> Query query = tsdb.newQuery();</span><br><span class="line">    <span class="comment">// 初始化TsdbQuery对象</span></span><br><span class="line">    deferreds.add(query.configureFromQuery(<span class="keyword">this</span>, i));</span><br><span class="line">    tsdb_queries[i] = query;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  class GroupFinished implements Callback&lt;Query[], ArrayList&lt;Object&gt;&gt; &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Query[] call(<span class="keyword">final</span> ArrayList&lt;Object&gt; deferreds) &#123;</span><br><span class="line">      <span class="keyword">return</span> tsdb_queries;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="string">"Query compile group callback"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> Deferred.group(deferreds).addCallback(<span class="keyword">new</span> GroupFinished());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>query.configureFromQuery()初始化TsdbQuery对象的大致过程如下：</p>
-<ol>
-<li>从TSQuery中查找相应的TSSubQuery对象，并根据该对象初始化TsdbQuery中的start_time，end_time，aggregator，downsampler，query_index等字段。</li>
-<li>若该子查询使用tsuid进行查询，则检测tsuids字段中所有的metric是否相等</li>
-<li>若该子查询未使用tsuid进行查询，则<ol>
-<li>解析metric字段，获取对应的UID；</li>
-<li>如果该子查询中使用了TagVFilter进行过滤，则需要解析其中涉及的tagk及tagv，获取对应的UID；</li>
-<li>调用findGroupBys()方法，初始化group_bys字段及row_key_literals字段。findGroupBys()方法执行步骤如下：<ol>
-<li>对TsdbQuery.filters集合按tagk进行排序；</li>
-<li>迭代tagk相同的TagVFilter，记录TagVFilter.group_by字段为true的TagFilter的个数。如果此次迭代中存在的TagVLiteralOrFilter类型的TagFilter，则同时会用literals集合和literal_filters集合记录其相关信息。</li>
-<li>根据步骤2中获取的信息，初始化TsdbQuery.group_bys字段及row_key_literals字段。</li>
-</ol>
-</li>
-</ol>
-</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/06/08/OpenTSDB%E6%9F%A5%E8%AF%A2%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/" data-id="ckd5jplc5001h1cp58ugtfrum" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenTSDB/" rel="tag">OpenTSDB</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-OpenTSDB数据存储" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2020/05/28/OpenTSDB%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/" class="article-date">
-  <time datetime="2020-05-28T06:55:15.884Z" itemprop="datePublished">2020-05-28</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Develop/">Develop</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/05/28/OpenTSDB%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/">OpenTSDB源码解析--数据存储</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>本小节主要记录OpenTSDB是如何存储数据的。</p>
-<h4 id="rowkey"><a href="#rowkey" class="headerlink" title="rowkey"></a>rowkey</h4><table>
-<thead>
-<tr>
-<th>salt</th>
-<th>metric_uid</th>
-<th>base_time</th>
-<th>tagk1_uid</th>
-<th>tagv1_uid</th>
-<th>……</th>
-<th>tagkN_uid</th>
-<th>tagvN_uid</th>
-</tr>
-</thead>
-<tbody><tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
-<h4 id="qualifier"><a href="#qualifier" class="headerlink" title="qualifier"></a>qualifier</h4><p>存储的时序数据的精度是秒级时，qualifier的长度为2个字节。从高位到低位来看，其中高12位 保存了从base_time开始的秒级偏移量（offset），接下来的4位是flag标志，主要用来标识该点的数据类型及所占用的字节长度。</p>
-<table>
-<thead>
-<tr>
-<th>2个字节，16位</th>
-<th></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>offset</td>
-<td>flag</td>
-</tr>
-<tr>
-<td>12</td>
-<td>4</td>
-</tr>
-</tbody></table>
-<p>存储的时序数据的精度是毫秒时，qualifier的长度为4个字节，从高位到低位来看，高4位始终为1，用于标识其精度为毫秒级。接下来的22位保存了从base_time开始的毫秒级偏移量，随后的2位为保留位，暂无使用，最后4位为flag标识位，作用同上。</p>
-<table>
-<thead>
-<tr>
-<th>4字节，32位</th>
-<th></th>
-<th></th>
-<th></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>填充1</td>
-<td>offset</td>
-<td>保留</td>
-<td>flag</td>
-</tr>
-<tr>
-<td>4位</td>
-<td>22位</td>
-<td>2位</td>
-<td>4位</td>
-</tr>
-</tbody></table>
-<p>flag 最高位表示数值的类型: 0表示整数，1表示浮点数；后三位表示值的长度：000表示1个字节，001表示2个字节，011表示4个字节，111表示8个字节。</p>
-<h4 id="压缩优化"><a href="#压缩优化" class="headerlink" title="压缩优化"></a>压缩优化</h4><p>为了节省存储空间，OpenTSDB在写入时会将rowkey记录到compactionQueue中，并启动一个后台线程，定期对compactionQueue中的时序数据进行压缩，压缩的操作为将compactionQueue中同一行中不同列的数据点汇总起来，写入一个列中。具体如：</p>
-<p>假设原数据为 {row1,t:05A,v1}, {row1,t:05B,v2}, {row1,t:05C,v3}，则压缩后的数据为{row1,t:05A05B05C,v1v2v3}</p>
-<h4 id="追加模式"><a href="#追加模式" class="headerlink" title="追加模式"></a>追加模式</h4><p> 除了压缩优化方式外，OpenTSDB还提供了一种直接追加写入点的方式，即在写入时将同一个rowkey的数据写入一个共同的qualifier中，这样可以即可以达到压缩存储的效果，也能省去开启单独压缩线程的资源消耗。具体存储方式为{row1,t:05,Av1Bv2Cv3}，即qualifier固定，值为&lt;offset1&gt;&lt;v1&gt;&lt;offset2&gt;&lt;v2&gt;……&lt;offsetN&gt;&lt;vN&gt;。</p>
-<p>但追加模式也有它的缺点，数据值保存的顺序是按写入的顺序保存的，并不能保证是按offset值排序的。</p>
-<h4 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h4><p>[1] OpenTSDB技术内幕</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/28/OpenTSDB%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/" data-id="ckd5jplc3001b1cp50k64ded9" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenTSDB/" rel="tag">OpenTSDB</a></li></ul>
-
     </footer>
   </div>
   
@@ -802,6 +753,14 @@
       <ul>
         
           <li>
+            <a href="/2020/07/30/OpenTSDB%20UID%E7%94%9F%E6%88%90%E8%A7%84%E5%88%99/">OpenTSDB UID生成规则</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/29/OpenTSDB%20Salt%E7%94%9F%E6%88%90%E6%96%B9%E5%BC%8F/">OpenTSDB Salt值生成方式</a>
+          </li>
+        
+          <li>
             <a href="/2020/07/23/OpenTSDB%E8%AE%BF%E9%97%AE%E5%BC%80%E5%90%AFKerberos%E6%9C%8D%E5%8A%A1%E7%9A%84Hbase/">OpenTSDB访问开启Kerberos服务的Hbase</a>
           </li>
         
@@ -811,14 +770,6 @@
         
           <li>
             <a href="/2020/07/21/CDH5.16%E5%90%AF%E7%94%A8Kerberos/">CDH5.16中启用Kerberos</a>
-          </li>
-        
-          <li>
-            <a href="/2020/07/15/%E6%B5%AE%E7%82%B9%E6%95%B0%E5%AD%98%E5%82%A8%E8%AF%A6%E8%A7%A3/">浮点数存储详解</a>
-          </li>
-        
-          <li>
-            <a href="/2020/07/06/HashedWheelTimer%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/">HashedWheelTimer原理解析</a>
           </li>
         
       </ul>
