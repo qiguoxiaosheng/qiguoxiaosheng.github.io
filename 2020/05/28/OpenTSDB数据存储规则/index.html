@@ -5,17 +5,17 @@
   
 
   
-  <title>OpenTSDB源码解析--数据存储 | qiguoxiaosheng&#39;s blogs</title>
+  <title>OpenTSDB数据存储规则 | qiguoxiaosheng&#39;s blogs</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="本小节主要记录OpenTSDB是如何存储数据的。 rowkey   salt metric_uid base_time tagk1_uid tagv1_uid …… tagkN_uid tagvN_uid              qualifier存储的时序数据的精度是秒级时，qualifier的长度为2个字节。从高位到低位来看，其中高12位 保存了从base_time开始的秒级偏移量（offs">
 <meta property="og:type" content="article">
-<meta property="og:title" content="OpenTSDB源码解析--数据存储">
-<meta property="og:url" content="http://yoursite.com/2020/05/28/OpenTSDB%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/index.html">
+<meta property="og:title" content="OpenTSDB数据存储规则">
+<meta property="og:url" content="http://yoursite.com/2020/05/28/OpenTSDB%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E8%A7%84%E5%88%99/index.html">
 <meta property="og:site_name" content="qiguoxiaosheng&#39;s blogs">
 <meta property="og:description" content="本小节主要记录OpenTSDB是如何存储数据的。 rowkey   salt metric_uid base_time tagk1_uid tagv1_uid …… tagkN_uid tagvN_uid              qualifier存储的时序数据的精度是秒级时，qualifier的长度为2个字节。从高位到低位来看，其中高12位 保存了从base_time开始的秒级偏移量（offs">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-05-28T06:55:15.884Z">
-<meta property="article:modified_time" content="2020-05-28T08:24:34.441Z">
+<meta property="article:modified_time" content="2020-07-31T02:10:01.303Z">
 <meta property="article:author" content="qiguoxiaosheng">
 <meta property="article:tag" content="OpenTSDB">
 <meta name="twitter:card" content="summary">
@@ -73,9 +73,9 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-OpenTSDB数据存储" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-OpenTSDB数据存储规则" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2020/05/28/OpenTSDB%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/" class="article-date">
+    <a href="/2020/05/28/OpenTSDB%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E8%A7%84%E5%88%99/" class="article-date">
   <time datetime="2020-05-28T06:55:15.884Z" itemprop="datePublished">2020-05-28</time>
 </a>
     
@@ -91,7 +91,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      OpenTSDB源码解析--数据存储
+      OpenTSDB数据存储规则
     </h1>
   
 
@@ -174,7 +174,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/28/OpenTSDB%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/" data-id="ckd8njbhw001itsp5d6oo9zjz" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/28/OpenTSDB%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E8%A7%84%E5%88%99/" data-id="ckdjuaj4c001c0kp5hyu54coy" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenTSDB/" rel="tag">OpenTSDB</a></li></ul>
@@ -242,7 +242,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li></ul>
     </div>
   </div>
 
@@ -255,23 +255,23 @@
       <ul>
         
           <li>
+            <a href="/2020/08/05/Java%E4%B8%AD%E7%9A%84Clone/">Java中的Clone</a>
+          </li>
+        
+          <li>
+            <a href="/2020/08/05/Java%E4%B8%AD%E5%BC%95%E7%94%A8%E7%9A%84%E7%B1%BB%E5%9E%8B/">Java中的引用类型</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/31/OpenTSDB%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E4%B9%8BCompact%E6%A8%A1%E5%BC%8F/">OpenTSDB数据存储之Compact模式</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/31/OpenTSDB%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E4%B9%8BAppend%E6%A8%A1%E5%BC%8F/">OpenTSDB数据存储之Append模式</a>
+          </li>
+        
+          <li>
             <a href="/2020/07/30/OpenTSDB%20UID%E7%94%9F%E6%88%90%E8%A7%84%E5%88%99/">OpenTSDB UID生成规则</a>
-          </li>
-        
-          <li>
-            <a href="/2020/07/29/OpenTSDB%20Salt%E7%94%9F%E6%88%90%E6%96%B9%E5%BC%8F/">OpenTSDB Salt值生成方式</a>
-          </li>
-        
-          <li>
-            <a href="/2020/07/23/OpenTSDB%E8%AE%BF%E9%97%AE%E5%BC%80%E5%90%AFKerberos%E6%9C%8D%E5%8A%A1%E7%9A%84Hbase/">OpenTSDB访问开启Kerberos服务的Hbase</a>
-          </li>
-        
-          <li>
-            <a href="/2020/07/22/Kerberos%E4%BD%BF%E7%94%A8%E8%AE%B0%E5%BD%95/">Kerberos使用记录</a>
-          </li>
-        
-          <li>
-            <a href="/2020/07/21/CDH5.16%E5%90%AF%E7%94%A8Kerberos/">CDH5.16中启用Kerberos</a>
           </li>
         
       </ul>

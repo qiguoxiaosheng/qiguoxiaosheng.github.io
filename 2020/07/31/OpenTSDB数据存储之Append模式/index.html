@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>OpenTSDB数据存储之Append模式 | qiguoxiaosheng&#39;s blogs</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950Deferred&lt;Object&gt; sendRpcToRegion(final HBaseRpc request) &amp;#123;  if (cannotRetryRequest(request)) &amp;#123">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenTSDB数据存储之Append模式">
+<meta property="og:url" content="http://yoursite.com/2020/07/31/OpenTSDB%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E4%B9%8BAppend%E6%A8%A1%E5%BC%8F/index.html">
+<meta property="og:site_name" content="qiguoxiaosheng&#39;s blogs">
+<meta property="og:description" content="1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950Deferred&lt;Object&gt; sendRpcToRegion(final HBaseRpc request) &amp;#123;  if (cannotRetryRequest(request)) &amp;#123">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-07-31T02:07:06.892Z">
+<meta property="article:modified_time" content="2020-07-31T06:01:43.851Z">
+<meta property="article:author" content="qiguoxiaosheng">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="qiguoxiaosheng&#39;s blogs" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">qiguoxiaosheng&#39;s blogs</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/categories">Categories</a>
+        
+          <a class="main-nav-link" href="/tags">Tags</a>
+        
+          <a class="main-nav-link" href="/about">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-OpenTSDB数据存储之Append模式" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/07/31/OpenTSDB%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E4%B9%8BAppend%E6%A8%A1%E5%BC%8F/" class="article-date">
+  <time datetime="2020-07-31T02:07:06.892Z" itemprop="datePublished">2020-07-31</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      OpenTSDB数据存储之Append模式
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Deferred&lt;Object&gt; <span class="title">sendRpcToRegion</span><span class="params">(<span class="keyword">final</span> HBaseRpc request)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (cannotRetryRequest(request)) &#123;</span><br><span class="line">    <span class="keyword">return</span> tooManyAttempts(request, <span class="keyword">null</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  request.attempt++;</span><br><span class="line">  <span class="keyword">final</span> <span class="keyword">byte</span>[] table = request.table;</span><br><span class="line">  <span class="keyword">final</span> <span class="keyword">byte</span>[] key = request.key;</span><br><span class="line">  <span class="keyword">final</span> RegionInfo region = getRegion(table, key);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (region != <span class="keyword">null</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (knownToBeNSREd(region)) &#123;</span><br><span class="line">      <span class="keyword">final</span> NotServingRegionException nsre = <span class="keyword">new</span> NotServingRegionException(<span class="string">"Region known to be unavailable"</span>, request);</span><br><span class="line">      <span class="keyword">final</span> Deferred&lt;Object&gt; d = request.getDeferred();</span><br><span class="line">      handleNSRE(request, region.name(), nsre);</span><br><span class="line">      <span class="keyword">return</span> d;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">final</span> RegionClient client = clientFor(region);</span><br><span class="line">    <span class="keyword">if</span> (client != <span class="keyword">null</span> &amp;&amp; client.isAlive()) &#123;</span><br><span class="line">      request.setRegion(region);</span><br><span class="line">      <span class="keyword">final</span> Deferred&lt;Object&gt; d = request.getDeferred();</span><br><span class="line">      client.sendRpc(request);</span><br><span class="line">      <span class="keyword">return</span> d;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> locateRegion(request, table, key).addBothDeferring(<span class="keyword">new</span> RetryRpc());</span><br><span class="line">  </span><br><span class="line">   <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">RetryRpc</span> <span class="keyword">implements</span> <span class="title">Callback</span>&lt;<span class="title">Deferred</span>&lt;<span class="title">Object</span>&gt;, <span class="title">Object</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Deferred&lt;Object&gt; <span class="title">call</span><span class="params">(<span class="keyword">final</span> Object arg)</span> </span>&#123;</span><br><span class="line">      <span class="keyword">if</span> (arg <span class="keyword">instanceof</span> NonRecoverableException) &#123;</span><br><span class="line">        <span class="comment">// No point in retrying here, so fail the RPC.</span></span><br><span class="line">        HBaseException e = (NonRecoverableException) arg;</span><br><span class="line">        <span class="keyword">if</span> (e <span class="keyword">instanceof</span> HasFailedRpcException</span><br><span class="line">            &amp;&amp; ((HasFailedRpcException) e).getFailedRpc() != request) &#123;</span><br><span class="line">          <span class="comment">// If we get here it's because a dependent RPC (such as a META</span></span><br><span class="line">          <span class="comment">// lookup) has failed.  Therefore the exception we're getting</span></span><br><span class="line">          <span class="comment">// indicates that the META lookup failed, but we need to return</span></span><br><span class="line">          <span class="comment">// to our caller here that it's their RPC that failed.  Here we</span></span><br><span class="line">          <span class="comment">// re-create the exception but with the correct RPC in argument.</span></span><br><span class="line">          e = e.make(e, request);  <span class="comment">// e is likely a PleaseThrottleException.</span></span><br><span class="line">        &#125;</span><br><span class="line">        request.callback(e);</span><br><span class="line">        <span class="keyword">return</span> Deferred.fromError(e);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> sendRpcToRegion(request);  <span class="comment">// Retry the RPC.</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="string">"retry RPC"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/07/31/OpenTSDB%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E4%B9%8BAppend%E6%A8%A1%E5%BC%8F/" data-id="ckdjuaj4900150kp5dqlg94z9" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/07/31/OpenTSDB%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E4%B9%8BCompact%E6%A8%A1%E5%BC%8F/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          OpenTSDB数据存储之Compact模式
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/07/30/OpenTSDB%20UID%E7%94%9F%E6%88%90%E8%A7%84%E5%88%99/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">OpenTSDB UID生成规则</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Develop/">Develop</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Maintenance/">Maintenance</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Test/">Test</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ClickHouse/" rel="tag">ClickHouse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DataX/" rel="tag">DataX</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flink/" rel="tag">Flink</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hive/" rel="tag">Hive</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Idea/" rel="tag">Idea</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OpenTSDB/" rel="tag">OpenTSDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Zeppelin/" rel="tag">Zeppelin</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ClickHouse/" style="font-size: 16.67px;">ClickHouse</a> <a href="/tags/DataX/" style="font-size: 10px;">DataX</a> <a href="/tags/Flink/" style="font-size: 13.33px;">Flink</a> <a href="/tags/Hive/" style="font-size: 10px;">Hive</a> <a href="/tags/Idea/" style="font-size: 10px;">Idea</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/OpenTSDB/" style="font-size: 20px;">OpenTSDB</a> <a href="/tags/Zeppelin/" style="font-size: 10px;">Zeppelin</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/08/05/Java%E4%B8%AD%E7%9A%84Clone/">Java中的Clone</a>
+          </li>
+        
+          <li>
+            <a href="/2020/08/05/Java%E4%B8%AD%E5%BC%95%E7%94%A8%E7%9A%84%E7%B1%BB%E5%9E%8B/">Java中的引用类型</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/31/OpenTSDB%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E4%B9%8BCompact%E6%A8%A1%E5%BC%8F/">OpenTSDB数据存储之Compact模式</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/31/OpenTSDB%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E4%B9%8BAppend%E6%A8%A1%E5%BC%8F/">OpenTSDB数据存储之Append模式</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/30/OpenTSDB%20UID%E7%94%9F%E6%88%90%E8%A7%84%E5%88%99/">OpenTSDB UID生成规则</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 qiguoxiaosheng<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/categories" class="mobile-nav-link">Categories</a>
+  
+    <a href="/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>
