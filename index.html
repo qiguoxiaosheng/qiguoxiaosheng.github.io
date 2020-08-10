@@ -119,7 +119,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/08/05/Java%E4%B8%AD%E7%9A%84Clone/" data-id="ckdjuaj3w000a0kp5bcbh2tqn" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/08/05/Java%E4%B8%AD%E7%9A%84Clone/" data-id="ckdnxw3xr000ut4p51w28boks" class="article-share-link">Share</a>
       
       
     </footer>
@@ -184,7 +184,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/08/05/Java%E4%B8%AD%E5%BC%95%E7%94%A8%E7%9A%84%E7%B1%BB%E5%9E%8B/" data-id="ckdjuaj3v00090kp58fdjd2bu" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/08/05/Java%E4%B8%AD%E5%BC%95%E7%94%A8%E7%9A%84%E7%B1%BB%E5%9E%8B/" data-id="ckdnxw3xq000qt4p512f37cfe" class="article-share-link">Share</a>
       
       
     </footer>
@@ -220,7 +220,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/07/31/OpenTSDB%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E4%B9%8BCompact%E6%A8%A1%E5%BC%8F/" data-id="ckdjuaj4d001e0kp58ke1e1e6" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/07/31/OpenTSDB%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E4%B9%8BCompact%E6%A8%A1%E5%BC%8F/" data-id="ckdnxw3y3001nt4p507toazke" class="article-share-link">Share</a>
       
       
     </footer>
@@ -252,11 +252,23 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Deferred&lt;Object&gt; <span class="title">sendRpcToRegion</span><span class="params">(<span class="keyword">final</span> HBaseRpc request)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (cannotRetryRequest(request)) &#123;</span><br><span class="line">    <span class="keyword">return</span> tooManyAttempts(request, <span class="keyword">null</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  request.attempt++;</span><br><span class="line">  <span class="keyword">final</span> <span class="keyword">byte</span>[] table = request.table;</span><br><span class="line">  <span class="keyword">final</span> <span class="keyword">byte</span>[] key = request.key;</span><br><span class="line">  <span class="keyword">final</span> RegionInfo region = getRegion(table, key);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (region != <span class="keyword">null</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (knownToBeNSREd(region)) &#123;</span><br><span class="line">      <span class="keyword">final</span> NotServingRegionException nsre = <span class="keyword">new</span> NotServingRegionException(<span class="string">"Region known to be unavailable"</span>, request);</span><br><span class="line">      <span class="keyword">final</span> Deferred&lt;Object&gt; d = request.getDeferred();</span><br><span class="line">      handleNSRE(request, region.name(), nsre);</span><br><span class="line">      <span class="keyword">return</span> d;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">final</span> RegionClient client = clientFor(region);</span><br><span class="line">    <span class="keyword">if</span> (client != <span class="keyword">null</span> &amp;&amp; client.isAlive()) &#123;</span><br><span class="line">      request.setRegion(region);</span><br><span class="line">      <span class="keyword">final</span> Deferred&lt;Object&gt; d = request.getDeferred();</span><br><span class="line">      client.sendRpc(request);</span><br><span class="line">      <span class="keyword">return</span> d;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> locateRegion(request, table, key).addBothDeferring(<span class="keyword">new</span> RetryRpc());</span><br><span class="line">  </span><br><span class="line">   <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">RetryRpc</span> <span class="keyword">implements</span> <span class="title">Callback</span>&lt;<span class="title">Deferred</span>&lt;<span class="title">Object</span>&gt;, <span class="title">Object</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Deferred&lt;Object&gt; <span class="title">call</span><span class="params">(<span class="keyword">final</span> Object arg)</span> </span>&#123;</span><br><span class="line">      <span class="keyword">if</span> (arg <span class="keyword">instanceof</span> NonRecoverableException) &#123;</span><br><span class="line">        <span class="comment">// No point in retrying here, so fail the RPC.</span></span><br><span class="line">        HBaseException e = (NonRecoverableException) arg;</span><br><span class="line">        <span class="keyword">if</span> (e <span class="keyword">instanceof</span> HasFailedRpcException</span><br><span class="line">            &amp;&amp; ((HasFailedRpcException) e).getFailedRpc() != request) &#123;</span><br><span class="line">          <span class="comment">// If we get here it's because a dependent RPC (such as a META</span></span><br><span class="line">          <span class="comment">// lookup) has failed.  Therefore the exception we're getting</span></span><br><span class="line">          <span class="comment">// indicates that the META lookup failed, but we need to return</span></span><br><span class="line">          <span class="comment">// to our caller here that it's their RPC that failed.  Here we</span></span><br><span class="line">          <span class="comment">// re-create the exception but with the correct RPC in argument.</span></span><br><span class="line">          e = e.make(e, request);  <span class="comment">// e is likely a PleaseThrottleException.</span></span><br><span class="line">        &#125;</span><br><span class="line">        request.callback(e);</span><br><span class="line">        <span class="keyword">return</span> Deferred.fromError(e);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> sendRpcToRegion(request);  <span class="comment">// Retry the RPC.</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="string">"retry RPC"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        <p>在之前的《OpenTSDB数据存储规则》一文中提到了OpenTSDB提供了一种直接追加写入点的方式，即在写入时将同一个rowkey的数据写入一个共同的qualifier中，存储格式为{row1,t:05,Av1Bv2Cv3}，即qualifier固定，值为&lt;offset1&gt;&lt;v1&gt;&lt;offset2&gt;&lt;v2&gt;……&lt;offsetN&gt;&lt;vN&gt;。</p>
+<p>具体的实现细节为：TSDB.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(config.use_otsdb_timestamp()) &#123;</span><br><span class="line">    LOG.error(<span class="string">"Cannot use Date Tiered Compaction with AppendPoints. Please turn off either of them."</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">final</span> AppendDataPoints kv = <span class="keyword">new</span> AppendDataPoints(qualifier, value);</span><br><span class="line"><span class="keyword">final</span> AppendRequest point = <span class="keyword">new</span> AppendRequest(table, row, FAMILY,</span><br><span class="line">        AppendDataPoints.APPEND_COLUMN_QUALIFIER, kv.getBytes());</span><br><span class="line">result = client.append(point);</span><br></pre></td></tr></table></figure>
+
+<p>在往Hbase中写数据时，value值部分为 kv.getBytes()</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Concatenates the qualifier and value for appending to a column in the </span></span><br><span class="line"><span class="comment"> * backing data store.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> A byte array to append to the value of a column.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">byte</span>[] getBytes() &#123;</span><br><span class="line">  <span class="keyword">final</span> <span class="keyword">byte</span>[] bytes = <span class="keyword">new</span> <span class="keyword">byte</span>[qualifier.length + value.length];</span><br><span class="line">  System.arraycopy(<span class="keyword">this</span>.qualifier, <span class="number">0</span>, bytes, <span class="number">0</span>, qualifier.length);</span><br><span class="line">  System.arraycopy(value, <span class="number">0</span>, bytes, qualifier.length, value.length);</span><br><span class="line">  <span class="keyword">return</span> bytes;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>由上述getBytes方法可以看出，此次写入的value值为qualifier+value。</p>
+<p>通过api/put插入3条数据，值分别为1,2,3，并在每次插入完成后查询tsdb表，结果为：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">\x00\x00\x02_0\xAA \x00\x00\x01\x00\x00\x01\x column=t:\x05\x00\x00, timestamp=1597028460864, value=\x9B\xA0\x01</span><br><span class="line">00\x00\x02\x00\x00\x02</span><br><span class="line">\x00\x00\x02_0\xAA \x00\x00\x01\x00\x00\x01\x column=t:\x05\x00\x00, timestamp=1597028525239, value=\x9B\xA0\x01\x9B\xF0\x02</span><br><span class="line">00\x00\x02\x00\x00\x02</span><br><span class="line">\x00\x00\x02_0\xAA \x00\x00\x01\x00\x00\x01\x column=t:\x05\x00\x00, timestamp=1597028560241, value=\x9B\xA0\x01\x9B\xF0\x02\x9C@\x03</span><br><span class="line">00\x00\x02\x00\x00\x02</span><br></pre></td></tr></table></figure>
+
+<p>每次新增的值是直接追加到上前期数据的后面的，这里有一个小细节，插入Hbase时使用的为append方法，而不是我们常用的put。即client.append(point)，在压缩模式中使用的是client.put(point)。put、append方法都是Hbase原生支持的数据写入方法。</p>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/07/31/OpenTSDB%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E4%B9%8BAppend%E6%A8%A1%E5%BC%8F/" data-id="ckdjuaj4900150kp5dqlg94z9" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/07/31/OpenTSDB%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E4%B9%8BAppend%E6%A8%A1%E5%BC%8F/" data-id="ckdnxw3y2001lt4p5ha7ubgz5" class="article-share-link">Share</a>
       
       
     </footer>
@@ -334,7 +346,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/07/30/OpenTSDB%20UID%E7%94%9F%E6%88%90%E8%A7%84%E5%88%99/" data-id="ckdjuaj4e001g0kp58m1mh9hu" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/07/30/OpenTSDB%20UID%E7%94%9F%E6%88%90%E8%A7%84%E5%88%99/" data-id="ckdnxw3xx001at4p592jd8ixv" class="article-share-link">Share</a>
       
       
     </footer>
@@ -374,7 +386,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/07/29/OpenTSDB%20Salt%E7%94%9F%E6%88%90%E6%96%B9%E5%BC%8F/" data-id="ckdjuaj4800120kp55pqm6x69" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/07/29/OpenTSDB%20Salt%E7%94%9F%E6%88%90%E6%96%B9%E5%BC%8F/" data-id="ckdnxw3xw0017t4p512e91luo" class="article-share-link">Share</a>
       
       
     </footer>
@@ -429,7 +441,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/07/23/OpenTSDB%E8%AE%BF%E9%97%AE%E5%BC%80%E5%90%AFKerberos%E6%9C%8D%E5%8A%A1%E7%9A%84Hbase/" data-id="ckdjuaj4z00270kp5g3l8hat1" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/07/23/OpenTSDB%E8%AE%BF%E9%97%AE%E5%BC%80%E5%90%AFKerberos%E6%9C%8D%E5%8A%A1%E7%9A%84Hbase/" data-id="ckdnxw3y6001yt4p5dn9dekue" class="article-share-link">Share</a>
       
       
     </footer>
@@ -479,7 +491,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/07/22/Kerberos%E4%BD%BF%E7%94%A8%E8%AE%B0%E5%BD%95/" data-id="ckdjuaj44000t0kp5buso2ttp" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/07/22/Kerberos%E4%BD%BF%E7%94%A8%E8%AE%B0%E5%BD%95/" data-id="ckdnxw3xu0013t4p525ova6lf" class="article-share-link">Share</a>
       
       
     </footer>
@@ -587,7 +599,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/07/21/CDH5.16%E5%90%AF%E7%94%A8Kerberos/" data-id="ckdjuaj3o00010kp51yy8fr0d" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/07/21/CDH5.16%E5%90%AF%E7%94%A8Kerberos/" data-id="ckdnxw3x50000t4p5gvvi4ako" class="article-share-link">Share</a>
       
       
     </footer>
@@ -648,7 +660,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/07/15/%E6%B5%AE%E7%82%B9%E6%95%B0%E5%AD%98%E5%82%A8%E8%AF%A6%E8%A7%A3/" data-id="ckdjuaj4l001y0kp51mfsf2xp" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/07/15/%E6%B5%AE%E7%82%B9%E6%95%B0%E5%AD%98%E5%82%A8%E8%AF%A6%E8%A7%A3/" data-id="ckdnxw3y90029t4p528tnbng4" class="article-share-link">Share</a>
       
       
     </footer>
